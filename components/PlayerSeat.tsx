@@ -1,0 +1,119 @@
+import { useState } from "react";
+import { User, Card, PlayerAction } from "@/lib/redux/slices/tableSlice";
+import PlayerStrength from "./PlayerStrength";
+import CardSelector from "./CardSelector";
+import RangeSelector from "./RangeSelector";
+import PlayerActionDropdown from "./PlayerActionDropdown";
+
+interface PlayerSeatProps {
+  user: User;
+  position: { left: string; top: string; transform: string };
+  isHero?: boolean;
+  onHeroClick?: () => void;
+  onToggleStrength: () => void; // Функция для переключения силы игрока
+  onCardsChange?: (cards: [Card | null, Card | null]) => void; // Функция для изменения карт (опциональная)
+  onRangeChange?: (range: string[]) => void; // Функция для изменения диапазона (опциональная)
+  onActionChange?: (action: PlayerAction | null) => void; // Функция для изменения действия (опциональная)
+  allPlayersActions: (PlayerAction | null)[]; // Действия всех игроков за столом
+}
+
+export default function PlayerSeat({
+  user,
+  position,
+  isHero = false,
+  onHeroClick,
+  onToggleStrength,
+  onCardsChange,
+  onRangeChange,
+  onActionChange,
+  allPlayersActions,
+}: PlayerSeatProps) {
+  const [isRangeSelectorOpen, setIsRangeSelectorOpen] = useState(false);
+
+  const handlePlayerClick = () => {
+    if (isHero && onHeroClick) {
+      onHeroClick();
+    } else if (!isHero && onRangeChange) {
+      // Открываем попап диапазона для не-Hero игроков
+      setIsRangeSelectorOpen(true);
+    }
+  };
+
+  const handleRangeChange = (range: string[]) => {
+    if (onRangeChange) {
+      onRangeChange(range);
+    }
+  };
+
+  const handleActionChange = (action: PlayerAction | null) => {
+    if (onActionChange) {
+      onActionChange(action);
+    }
+  };
+  return (
+    <div className="absolute z-20" style={position}>
+      <div className="flex flex-col items-center gap-2">
+        {/* Кружок позиции */}
+        {/* Выбор карт для Hero */}
+        {isHero && onCardsChange && (
+          <div className="mt-1">
+            <CardSelector
+              currentCards={user.cards}
+              onCardsChange={onCardsChange}
+            />
+          </div>
+        )}
+        <div className="relative">
+          <div
+            onClick={handlePlayerClick}
+            className={`relative w-20 h-20 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 ${
+              isHero
+                ? "border-[3px] border-yellow-400 shadow-lg shadow-yellow-400/50 cursor-pointer"
+                : "border-2 border-gray-600 cursor-pointer hover:border-blue-500"
+            } flex flex-col items-center justify-center transition-all duration-200 ${
+              isHero ? "hover:scale-105" : "hover:scale-105"
+            }`}
+          >
+            <span className="text-xs font-bold text-white">
+              {user.position}
+            </span>
+            <span className="text-[10px] text-gray-400">{user.stack}</span>
+            {isHero && (
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-[10px] font-bold text-gray-900">H</span>
+              </div>
+            )}
+          </div>
+
+          {/* Индикатор силы игрока */}
+          <PlayerStrength
+            strength={user.strength}
+            onToggle={onToggleStrength}
+          />
+        </div>
+
+        {/* Dropdown для выбора действия игрока */}
+        {onActionChange && (
+          <div className="mt-1">
+            <PlayerActionDropdown
+              currentAction={user.action}
+              onActionChange={handleActionChange}
+              allPlayersActions={allPlayersActions}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Попап выбора диапазона для не-Hero игроков */}
+      {!isHero && (
+        <RangeSelector
+          isOpen={isRangeSelectorOpen}
+          onClose={() => setIsRangeSelectorOpen(false)}
+          playerName={user.name}
+          currentRange={user.range}
+          onRangeChange={handleRangeChange}
+        />
+      )}
+    </div>
+  );
+}

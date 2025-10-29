@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_wait_for",
+      "Bash(npm run dev:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "playwright"
+  ]
+}

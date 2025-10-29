@@ -50,12 +50,43 @@ export default function PlayerSeat({
       onActionChange(action);
     }
   };
+  // Функция для получения стиля и текста фишки позиции
+  const getPositionChip = () => {
+    switch (user.position) {
+      case "BTN":
+        return {
+          bg: "bg-white",
+          text: "text-gray-900",
+          shadow: "shadow-white/50",
+          label: "D",
+        };
+      case "SB":
+        return {
+          bg: "bg-green-500",
+          text: "text-white",
+          shadow: "shadow-green-500/50",
+          label: "SB",
+        };
+      case "BB":
+        return {
+          bg: "bg-red-500",
+          text: "text-white",
+          shadow: "shadow-red-500/50",
+          label: "BB",
+        };
+      default:
+        return null;
+    }
+  };
+
+  const positionChip = getPositionChip();
+
   return (
     <div className="absolute z-20" style={position}>
       <div className="flex flex-col items-center gap-2">
         {/* Кружок позиции */}
         {/* Выбор карт для Hero */}
-        {isHero && onCardsChange && (
+        {isHero && onCardsChange && user.cards && (
           <div className="mt-1">
             <CardSelector
               currentCards={user.cards}
@@ -84,6 +115,19 @@ export default function PlayerSeat({
               </div>
             )}
           </div>
+
+          {/* Фишка позиции (BTN/SB/BB) */}
+          {positionChip && (
+            <div
+              className={`absolute -bottom-2 -left-2 w-8 h-8 ${positionChip.bg} rounded-full flex items-center justify-center shadow-lg ${positionChip.shadow} border-2 border-gray-800`}
+            >
+              <span
+                className={`text-[10px] font-bold ${positionChip.text} tracking-tight`}
+              >
+                {positionChip.label}
+              </span>
+            </div>
+          )}
 
           {/* Индикатор силы игрока */}
           <PlayerStrength

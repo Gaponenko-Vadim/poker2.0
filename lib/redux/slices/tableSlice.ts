@@ -59,7 +59,7 @@ export interface User {
   stack: number; // Стек игрока
   strength: PlayerStrength; // Сила игрока (фиксированная настройка)
   position: TablePosition; // Текущая позиция за столом (меняется каждую раздачу)
-  cards: [Card | null, Card | null]; // Две карты игрока (null если не выбраны) - формат: ["6hearts", "5diamonds"]
+  cards?: [Card | null, Card | null]; // Две карты игрока (только для Hero) - формат: ["6hearts", "5diamonds"]
   range: string[]; // Диапазон рук игрока - формат: ["AA", "AKs", "AKo", "22"]
   action: PlayerAction | null; // Выбранное действие игрока (null если не выбрано)
 }
@@ -103,7 +103,7 @@ const generateUsers = (count: number): User[] => {
     stack: 1500,
     strength: "medium" as PlayerStrength, // По умолчанию все средние
     position: positions[i % positions.length], // Присвоение начальной позиции
-    cards: [null, null] as [Card | null, Card | null], // По умолчанию карты не выбраны
+    ...(i === 0 && { cards: [null, null] as [Card | null, Card | null] }), // Карты только для Hero (первый игрок)
     range: [] as string[], // По умолчанию диапазон пустой
     action: null as PlayerAction | null, // По умолчанию действие не выбрано
   }));

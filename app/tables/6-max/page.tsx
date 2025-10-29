@@ -95,15 +95,38 @@ export default function SixMaxPage() {
           />
         </section>
 
-        {/* Панель отладки - отображение объекта Hero */}
-        <section className="max-w-4xl mx-auto mt-8">
+        {/* Панель отладки - отображение всех игроков */}
+        <section className="max-w-6xl mx-auto mt-8">
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
             <h3 className="text-xl font-bold text-yellow-400 mb-4">
-              Объект Hero (из Redux Store)
+              Все игроки за столом (из Redux Store)
             </h3>
-            <pre className="bg-gray-950 border border-gray-700 rounded p-4 text-sm text-gray-300 overflow-x-auto">
-              {JSON.stringify(users[heroIndex], null, 2)}
-            </pre>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {users.map((user, index) => (
+                <div
+                  key={index}
+                  className={`bg-gray-950 border rounded p-4 ${
+                    index === heroIndex
+                      ? "border-yellow-400 ring-2 ring-yellow-400/50"
+                      : "border-gray-700"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-bold text-emerald-400">
+                      {user.name} ({user.position})
+                    </h4>
+                    {index === heroIndex && (
+                      <span className="text-xs bg-yellow-400 text-gray-900 px-2 py-1 rounded font-bold">
+                        HERO
+                      </span>
+                    )}
+                  </div>
+                  <pre className="text-xs text-gray-300 overflow-x-auto">
+                    {JSON.stringify(user, null, 2)}
+                  </pre>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </main>

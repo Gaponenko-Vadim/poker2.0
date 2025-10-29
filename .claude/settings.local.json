@@ -3,7 +3,8 @@
     "allow": [
       "mcp__playwright__browser_press_key",
       "mcp__playwright__browser_wait_for",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "mcp__playwright__browser_type"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -1,10 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { login, logout } from '@/lib/redux/slices/authSlice';
+import { login, logout, restoreSession } from '@/lib/redux/slices/authSlice';
 import { ArrowLeftIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
+import RegistrationPopup from './RegistrationPopup';
+import LoginPopup from './LoginPopup';
 
 interface HeaderProps {
   // Показывать ли кнопку "Назад"
@@ -27,13 +30,42 @@ export default function Header({
   const dispatch = useAppDispatch();
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+
+  // Восстановление сессии из localStorage при загрузке
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const email = localStorage.getItem('userEmail');
+
+    if (token && email) {
+      dispatch(restoreSession({ token, email }));
+    }
+  }, [dispatch]);
+
+  // Обработчик успешной аутентификации
+  const handleAuthSuccess = (token: string, email: string) => {
+    dispatch(login({ token, email }));
+  };
+
   // Обработчик клика по кнопке входа/выхода
   const handleAuthClick = () => {
     if (isAuthenticated) {
       dispatch(logout());
     } else {
-      dispatch(login());
+      setIsLoginOpen(true);
     }
+  };
+
+  // Переключение между попапами
+  const switchToRegister = () => {
+    setIsLoginOpen(false);
+    setIsRegisterOpen(true);
+  };
+
+  const switchToLogin = () => {
+    setIsRegisterOpen(false);
+    setIsLoginOpen(true);
   };
 
   return (
@@ -84,8 +116,16 @@ export default function Header({
             {isAuthenticated && user && (
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-emerald-500/30">
                 <UserCircleIcon className="w-6 h-6 text-emerald-400" />
-                <span className="text-sm font-medium text-gray-300">{user.name}</span>
+                <span className="text-sm font-medium text-gray-300">{user.email}</span>
               </div>
+            )}
+            {!isAuthenticated && (
+              <button
+                onClick={() => setIsRegisterOpen(true)}
+                className="px-4 py-2 text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
+              >
+                Регистрация
+              </button>
             )}
             <button
               onClick={handleAuthClick}
@@ -98,6 +138,20 @@ export default function Header({
           </div>
         </div>
       </div>
+
+      {/* Попапы аутентификации */}
+      <LoginPopup
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onSuccess={handleAuthSuccess}
+        onSwitchToRegister={switchToRegister}
+      />
+      <RegistrationPopup
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        onSuccess={handleAuthSuccess}
+        onSwitchToLogin={switchToLogin}
+      />
     </header>
   );
 }

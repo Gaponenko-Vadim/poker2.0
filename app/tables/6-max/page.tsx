@@ -1,19 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
+import TournamentSettings from "@/components/TournamentSettings";
+import RangeBuilderPopup from "@/components/RangeBuilderPopup";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import {
   rotateSixMaxTable,
   setSixMaxPlayerStrength,
+  setSixMaxPlayerPlayStyle,
+  setSixMaxPlayerStackSize,
   setSixMaxPlayerCards,
   setSixMaxPlayerRange,
   setSixMaxPlayerAction,
+  setSixMaxPlayerBet,
+  setSixMaxBuyIn,
+  setSixMaxAnte,
+  setSixMaxStage,
+  setSixMaxStartingStack,
+  setSixMaxBounty,
+  setSixMaxCategory,
   PlayerStrength,
+  PlayerPlayStyle,
+  StackSize,
   Card,
   PlayerAction,
+  TournamentStage,
+  TournamentCategory,
 } from "@/lib/redux/slices/tableSlice";
 import { getNextStrength } from "@/lib/utils/playerStrength";
+import { getNextPlayStyle } from "@/lib/utils/playerPlayStyle";
+import { getNextStackSize } from "@/lib/utils/stackSize";
 
 /**
  * Страница турнира 6-Max
@@ -22,9 +40,22 @@ import { getNextStrength } from "@/lib/utils/playerStrength";
 export default function SixMaxPage() {
   const dispatch = useAppDispatch();
 
+  // Стейт для управления попапом конструктора диапазонов
+  const [isRangeBuilderOpen, setIsRangeBuilderOpen] = useState(false);
+
   // Получаем данные из Redux store
   const users = useAppSelector((state) => state.table.sixMaxUsers);
   const heroIndex = useAppSelector((state) => state.table.sixMaxHeroIndex);
+  const buyIn = useAppSelector((state) => state.table.sixMaxBuyIn);
+  const ante = useAppSelector((state) => state.table.sixMaxAnte);
+  const pot = useAppSelector((state) => state.table.sixMaxPot);
+  const stage = useAppSelector((state) => state.table.sixMaxStage);
+  const startingStack = useAppSelector((state) => state.table.sixMaxStartingStack);
+  const bounty = useAppSelector((state) => state.table.sixMaxBounty);
+  const category = useAppSelector((state) => state.table.sixMaxCategory);
+
+  // Вычисляем средний размер стека
+  const averageStackSize: StackSize = users[0]?.stackSize || "medium";
 
   // Вывод всех пользователей в консоль
   console.log("=== 6-Max Users ===");
@@ -53,6 +84,24 @@ export default function SixMaxPage() {
     dispatch(setSixMaxPlayerStrength({ index, strength: newStrength }));
   };
 
+  // Обработчик переключения стиля игры
+  const handleTogglePlayerPlayStyle = (
+    index: number,
+    currentPlayStyle: PlayerPlayStyle
+  ) => {
+    const newPlayStyle = getNextPlayStyle(currentPlayStyle);
+    dispatch(setSixMaxPlayerPlayStyle({ index, playStyle: newPlayStyle }));
+  };
+
+  // Обработчик переключения размера стека игрока
+  const handleTogglePlayerStackSize = (
+    index: number,
+    currentStackSize: StackSize
+  ) => {
+    const newStackSize = getNextStackSize(currentStackSize);
+    dispatch(setSixMaxPlayerStackSize({ index, stackSize: newStackSize }));
+  };
+
   // Обработчик изменения карт игрока
   const handleCardsChange = (
     index: number,
@@ -75,23 +124,109 @@ export default function SixMaxPage() {
     console.log(`Player ${index} action changed:`, action);
   };
 
+  // Обработчик изменения ставки игрока
+  const handleBetChange = (index: number, bet: number) => {
+    dispatch(setSixMaxPlayerBet({ index, bet }));
+    console.log(`Player ${index} bet changed:`, bet);
+  };
+
+  // Обработчики для настроек турнира
+  const handleAverageStackChange = (stack: StackSize) => {
+    // Обновляем размер стека для всех игроков
+    users.forEach((_, index) => {
+      dispatch(setSixMaxPlayerStackSize({ index, stackSize: stack }));
+    });
+  };
+
+  const handleBuyInChange = (newBuyIn: number) => {
+    dispatch(setSixMaxBuyIn(newBuyIn));
+    // Автоматически обновляем категорию турнира при изменении buy-in
+    const getBuyInCategory = (buyIn: number): TournamentCategory => {
+      if (buyIn < 5) return "micro";
+      if (buyIn < 22) return "low";
+      if (buyIn < 109) return "mid";
+      return "high";
+    };
+    dispatch(setSixMaxCategory(getBuyInCategory(newBuyIn)));
+  };
+
+  const handleAnteChange = (newAnte: number) => {
+    dispatch(setSixMaxAnte(newAnte));
+  };
+
+  const handleStageChange = (newStage: TournamentStage) => {
+    dispatch(setSixMaxStage(newStage));
+  };
+
+  const handleStartingStackChange = (newStack: number) => {
+    dispatch(setSixMaxStartingStack(newStack));
+  };
+
+  const handleBountyChange = (newBounty: boolean) => {
+    dispatch(setSixMaxBounty(newBounty));
+  };
+
+  const handleCategoryChange = (newCategory: TournamentCategory) => {
+    dispatch(setSixMaxCategory(newCategory));
+  };
+
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
       <Header showBackButton backUrl="/" title="6-Max Турнир" />
 
       <main className="container mx-auto px-4 py-8">
+        {/* Настройки турнира */}
+        <TournamentSettings
+          averageStack={averageStackSize}
+          onAverageStackChange={handleAverageStackChange}
+          buyIn={buyIn}
+          onBuyInChange={handleBuyInChange}
+          ante={ante}
+          onAnteChange={handleAnteChange}
+          stage={stage}
+          onStageChange={handleStageChange}
+          startingStack={startingStack}
+          onStartingStackChange={handleStartingStackChange}
+          showAnte={true}
+          playersCount={users.length}
+          bounty={bounty}
+          onBountyChange={handleBountyChange}
+        />
+
+        {/* ВРЕМЕННАЯ КНОПКА - Конструктор диапазонов */}
+        <div className="max-w-6xl mx-auto mb-4">
+          <button
+            onClick={() => setIsRangeBuilderOpen(true)}
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <span className="text-xl">🛠️</span>
+            <span>Конструктор диапазонов (ВРЕМЕННАЯ КНОПКА)</span>
+            <span className="text-xl">🛠️</span>
+          </button>
+        </div>
+
+        {/* Попап конструктора диапазонов */}
+        <RangeBuilderPopup
+          isOpen={isRangeBuilderOpen}
+          onClose={() => setIsRangeBuilderOpen(false)}
+        />
+
         {/* Покерный стол */}
-        <section>
+        <section className="relative">
           <PokerTable
             users={users}
             tableType="6-max"
             heroIndex={heroIndex}
+            basePot={pot}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}
+            onTogglePlayerPlayStyle={handleTogglePlayerPlayStyle}
+            onTogglePlayerStackSize={handleTogglePlayerStackSize}
             onCardsChange={handleCardsChange}
             onRangeChange={handleRangeChange}
             onActionChange={handleActionChange}
+            onBetChange={handleBetChange}
           />
         </section>
 

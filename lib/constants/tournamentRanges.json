@@ -1,0 +1,4112 @@
+{
+  "tournament": {
+    "type": "tournament",
+    "seats": 8,
+    "starting_stack_bb": 200,
+    "stage": "early",
+    "bounty": true,
+    "category": "micro"
+  },
+  "ranges": {
+    "user": {
+      "positions": {
+        "UTG": {
+          "fish": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "NEVER",
+                  "push_range": "88, 99, TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AJo, AQo, AKo, KQs, KQo",
+                  "call_vs_shove": "TT, JJ, QQ, KK, AA, AQs, AKs, AQo, AKo",
+                  "defense_vs_open": "88, 99, TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AJo, AQo, AKo, KQs",
+                  "3bet": "NEVER",
+                  "defense_vs_3bet": "TT, JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "4bet": "NEVER",
+                  "defense_vs_4bet": "QQ, KK, AA, AKs, AKo",
+                  "5bet": "NEVER",
+                  "defense_vs_5bet": "KK, AA, AKs"
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "88, 99, TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AJo, AQo, AKo, KQs, KQo",
+                  "push_range": "QQ, KK, AA, AKs, AKo",
+                  "call_vs_shove": "TT, JJ, QQ, KK, AA, AQs, AKs, AQo, AKo",
+                  "defense_vs_open": "88, 99, TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AJo, AQo, AKo, KJs, KQs, KQo",
+                  "3bet": "JJ, QQ, KK, AA, AQs, AKs, AQo, AKo",
+                  "defense_vs_3bet": "TT, JJ, QQ, KK, AA, AQs, AKs, AQo, AKo",
+                  "4bet": "QQ, KK, AA, AKs, AKo",
+                  "defense_vs_4bet": "JJ, QQ, KK, AA, AKs, AKo",
+                  "5bet": "KK, AA, AKs",
+                  "defense_vs_5bet": "QQ, KK, AA, AKs, AKo"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "88, 99, TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AJo, AQo, AKo, KQs, KQo",
+                  "push_range": "AA, KK",
+                  "call_vs_shove": "QQ, KK, AA, AKs, AKo",
+                  "defense_vs_open": "88, 99, TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AJo, AQo, AKo, KJs, KQs",
+                  "3bet": "JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "defense_vs_3bet": "TT, JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "4bet": "QQ, KK, AA, AKs, AKo",
+                  "defense_vs_4bet": "JJ, QQ, KK, AA, AKs, AKo",
+                  "5bet": "KK, AA, AKs",
+                  "defense_vs_5bet": "QQ, KK, AA, AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "88, 99, TT, JJ, QQ, KK, AA, ATs, AJs, AQs, AKs, AJo, AQo, AKo, KJs, KQs, KQo",
+                  "push_range": "AA, KK",
+                  "call_vs_shove": "QQ, KK, AA, AKs, AKo",
+                  "defense_vs_open": "88, 99, TT, JJ, QQ, KK, AA, ATs, AJs, AQs, AKs, AJo, AQo, AKo, KJs, KQs, KQo",
+                  "3bet": "TT, JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "defense_vs_3bet": "TT, JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "4bet": "QQ, KK, AA, AKs, AKo",
+                  "defense_vs_4bet": "JJ, QQ, KK, AA, AKs, AKo",
+                  "5bet": "KK, AA, AKs, AKo",
+                  "defense_vs_5bet": "QQ, KK, AA, AKs, AKo"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "NEVER",
+                  "push_range": "22, 33, 44, 55, 66, 77, 88, 99, TT, JJ, QQ, KK, AA, A2s, A3s, A4s, A5s, A6s, A7s, A8s, A9s, ATs, AJs, AQs, AKs, AJo, AQo, AKo, K9s, KTs, KJs, KQs, Q9s, QTs, QJs, J9s, JTs, T9s, 98s",
+                  "call_vs_shove": "66, 77, 88, 99, TT, JJ, QQ, KK, AA, A8s, A9s, ATs, AJs, AQs, AKs, AJo, AQo, AKo, KQs",
+                  "defense_vs_open": "44, 55, 66, 77, 88, 99, TT, JJ, QQ, KK, AA, A5s, A6s, A7s, A8s, A9s, ATs, AJs, AQs, AKs, AJo, AQo, AKo, KJs, KQs, QJs",
+                  "3bet": "NEVER",
+                  "defense_vs_3bet": "88, 99, TT, JJ, QQ, KK, AA, ATs, AJs, AQs, AKs, AJo, AQo, AKo",
+                  "4bet": "NEVER",
+                  "defense_vs_4bet": "JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "5bet": "NEVER",
+                  "defense_vs_5bet": "QQ, KK, AA, AKs"
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "22, 33, 44, 55, 66, 77, 88, 99, TT, JJ, QQ, KK, AA, A2s, A3s, A4s, A5s, A6s, A7s, A8s, A9s, ATs, AJs, AQs, AKs, ATo, AJo, AQo, AKo, K7s, K8s, K9s, KTs, KJs, KQs, Q9s, QTs, QJs, J8s, J9s, JTs, T8s, T9s, 98s, 87s, 76s",
+                  "push_range": "JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "call_vs_shove": "77, 88, 99, TT, JJ, QQ, KK, AA, A9s, ATs, AJs, AQs, AKs, AJo, AQo, AKo",
+                  "defense_vs_open": "22, 33, 44, 55, 66, 77, 88, 99, TT, JJ, QQ, KK, AA, A4s, A5s, A6s, A7s, A8s, A9s, ATs, AJs, AQs, AKs, ATo, AJo, AQo, AKo, K9s, KTs, KJs, KQs, QJs, JTs",
+                  "3bet": "88, 99, TT, JJ, QQ, KK, AA, ATs, AJs, AQs, AKs, AJo, AQo, AKo",
+                  "defense_vs_3bet": "99, TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AQo, AKo",
+                  "4bet": "QQ, KK, AA, AQs, AKs, AKo",
+                  "defense_vs_4bet": "JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "5bet": "KK, AA, AKs",
+                  "defense_vs_5bet": "QQ, KK, AA, AKs, AKo"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "22, 33, 44, 55, 66, 77, 88, 99, TT, JJ, QQ, KK, AA, A2s, A3s, A4s, A5s, A6s, A7s, A8s, A9s, ATs, AJs, AQs, AKs, A9o, ATo, AJo, AQo, AKo, K5s, K6s, K7s, K8s, K9s, KTs, KJs, KQs, Q8s, Q9s, QTs, QJs, J8s, J9s, JTs, T8s, T9s, 98s, 87s, 76s, 65s",
+                  "push_range": "QQ, KK, AA, AKs",
+                  "call_vs_shove": "88, 99, TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AQo, AKo",
+                  "defense_vs_open": "22, 33, 44, 55, 66, 77, 88, 99, TT, JJ, QQ, KK, AA, A2s, A3s, A4s, A5s, A6s, A7s, A8s, A9s, ATs, AJs, AQs, AKs, ATo, AJo, AQo, AKo, K8s, K9s, KTs, KJs, KQs, Q9s, QTs, QJs, JTs, T9s",
+                  "3bet": "77, 88, 99, TT, JJ, QQ, KK, AA, A9s, ATs, AJs, AQs, AKs, AJo, AQo, AKo",
+                  "defense_vs_3bet": "TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AQo, AKo",
+                  "4bet": "JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "defense_vs_4bet": "TT, JJ, QQ, KK, AA, AQs, AKs, AKo",
+                  "5bet": "KK, AA, AKs, AKo",
+                  "defense_vs_5bet": "QQ, KK, AA, AKs, AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "22, 33, 44, 55, 66, 77, 88, 99, TT, JJ, QQ, KK, AA, A2s, A3s, A4s, A5s, A6s, A7s, A8s, A9s, ATs, AJs, AQs, AKs, A8o, A9o, ATo, AJo, AQo, AKo, K4s, K5s, K6s, K7s, K8s, K9s, KTs, KJs, KQs, Q7s, Q8s, Q9s, QTs, QJs, J7s, J8s, J9s, JTs, T7s, T8s, T9s, 97s, 98s, 87s, 76s, 65s, 54s",
+                  "push_range": "QQ, KK, AA, AKs",
+                  "call_vs_shove": "99, TT, JJ, QQ, KK, AA, ATs, AJs, AQs, AKs, AQo, AKo",
+                  "defense_vs_open": "22, 33, 44, 55, 66, 77, 88, 99, TT, JJ, QQ, KK, AA, A2s, A3s, A4s, A5s, A6s, A7s, A8s, A9s, ATs, AJs, AQs, AKs, A9o, ATo, AJo, AQo, AKo, K7s, K8s, K9s, KTs, KJs, KQs, Q9s, QTs, QJs, J9s, JTs, T9s, 98s",
+                  "3bet": "88, 99, TT, JJ, QQ, KK, AA, A8s, A9s, ATs, AJs, AQs, AKs, AJo, AQo, AKo",
+                  "defense_vs_3bet": "TT, JJ, QQ, KK, AA, ATs, AJs, AQs, AKs, AQo, AKo",
+                  "4bet": "JJ, QQ, KK, AA, AJs, AQs, AKs, AKo",
+                  "defense_vs_4bet": "TT, JJ, QQ, KK, AA, AJs, AQs, AKs, AKo",
+                  "5bet": "QQ, KK, AA, AKs, AKo",
+                  "defense_vs_5bet": "JJ, QQ, KK, AA, AKs, AKo"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,KQs,KQo,KJs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                }
+              }
+            }
+          },
+          "amateur": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "AA,KK",
+                  "defense_vs_3bet": "AA",
+                  "4bet": "AA",
+                  "defense_vs_4bet": "AA",
+                  "5bet": "",
+                  "defense_vs_5bet": "AA"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs",
+                  "3bet": "AA,KK,QQ,AKs",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs",
+                  "3bet": "AA,KK,QQ,AKs",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,AKs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            }
+          },
+          "regular": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "AA,KK",
+                  "defense_vs_3bet": "AA",
+                  "4bet": "AA",
+                  "defense_vs_4bet": "AA",
+                  "5bet": "",
+                  "defense_vs_5bet": "AA"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs",
+                  "3bet": "AA,KK,QQ,AKs",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs",
+                  "3bet": "AA,KK,QQ,AKs",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs,AKo"
+                }
+              }
+            }
+          }
+        },
+        "UTG+1": {
+          "fish": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,AKs",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs,AKo",
+                  "3bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AQo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,AKs",
+                  "4bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,AKs",
+                  "5bet": "AA,KK,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,AKs"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,AKs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,KQs,KQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,KQs,KQo,KJs,KTs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs,KJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "amateur": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "regular": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          }
+        },
+        "MP": {
+          "fish": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,AKs",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs,AKo",
+                  "3bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AQo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,AKs",
+                  "4bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,AKs",
+                  "5bet": "AA,KK,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,AKs"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,AKs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs,66,55,A9s,A8s,KTs,QJs,JTs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,88",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs,66,A9s,KQo",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs,77",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,KQs,KQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,KQs,KQo,KJs,KTs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs,KJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "amateur": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "regular": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          }
+        },
+        "HJ": {
+          "fish": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,AKs",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs,AKo",
+                  "3bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AQo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,AKs",
+                  "4bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,AKs",
+                  "5bet": "AA,KK,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,AKs"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,AKs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,KQs,KQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,KQs,KQo,KJs,KTs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs,KJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "amateur": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "regular": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,A8s,A7s,A5s,KQs,KQo,KJs,KTs,QJs,QTs,JTs,T9s",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs,KJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          }
+        },
+        "CO": {
+          "fish": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,AKs",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs,AKo",
+                  "3bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AQo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,AKs",
+                  "4bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,AKs",
+                  "5bet": "AA,KK,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,AKs"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,AKs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,KQs,KQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,KQs,KQo,KJs,KTs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs,KJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "amateur": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "regular": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,33,22,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQs,KQo,KJs,KJo,KTs,K9s,QJs,QJo,QTs,Q9s,JTs,J9s,T9s,T8s,98s,87s,76s",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AQs,AJs,ATs,KQs,QJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,A5s,KQs,KJs,QJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          }
+        },
+        "BTN": {
+          "fish": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,AKs",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs,AKo",
+                  "3bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AQo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,AKs",
+                  "4bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,AKs",
+                  "5bet": "AA,KK,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,AKs"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,AKs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,KQs,KQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,33,22,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,A9o,A8s,A8o,A7s,A7o,A6s,A6o,A5s,A5o,A4s,A4o,A3s,A3o,A2s,A2o,KQs,KQo,KJs,KJo,KTs,KTo,K9s,K9o,K8s,K7s,K6s,K5s,K4s,K3s,K2s,QJs,QJo,QTs,QTo,Q9s,Q9o,Q8s,Q7s,Q6s,Q5s,JTs,JTo,J9s,J9o,J8s,J7s,T9s,T9o,T8s,T8o,T7s,98s,98o,97s,87s,86s,76s,75s,65s,54s",
+                  "push_range": "AA,KK,QQ,JJ,TT,99",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AQs,AJs,ATs,A9s,A5s,KQs,KJs,QJs,JTs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,33,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,A8s,A7s,KQs,KJs,KTs,QJs,JTs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQs,KJs,KTs,K9s,QJs,QTs,JTs,T9s",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AJs,ATs,A5s",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,A5s,KQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AJs,ATs,A5s",
+                  "5bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AJs,ATs,A5s"
+                }
+              }
+            }
+          },
+          "amateur": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "regular": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,33,22,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,A9o,A8s,A8o,A7s,A7o,A6s,A6o,A5s,A5o,A4s,A4o,A3s,A2s,KQs,KQo,KJs,KJo,KTs,KTo,K9s,K8s,K7s,QJs,QJo,QTs,QTo,Q9s,Q8s,JTs,JTo,J9s,J8s,T9s,T9o,T8s,T7s,98s,97s,87s,86s,76s,65s",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AQs,AJs,ATs,A5s,KQs,QJs,JTs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,A8s,KQs,KJs,KTs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,A8s,A7s,A5s,A4s,KQs,KJs,KTs,QJs,JTs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,A5s",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          }
+        },
+        "SB": {
+          "fish": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,AKs",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs,AKo",
+                  "3bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AQo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,AKs",
+                  "4bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,AKs",
+                  "5bet": "AA,KK,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,AKs"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,AKs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,KQs,KQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,KQs,KQo,KJs,KTs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs,KJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "amateur": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "regular": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,A8s,A7s,A6s,A5s,A4s,KQs,KQo,KJs,KTs,K9s,QJs,QTs,JTs,J9s,T9s,98s,87s",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AQs,AJs,ATs,KQs,QJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs,KTs,QJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,A5s,KQs,KJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          }
+        },
+        "BB": {
+          "fish": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,AKs,AKo",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,AKs",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,AKs,AKo",
+                  "3bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AQo",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,AKs",
+                  "4bet": "AA,KK,QQ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,AKs",
+                  "5bet": "AA,KK,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,AKs"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,AKs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,KQs,KQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,99",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AQs,AJs,ATs,A9s,A8s,A5s,KQs,KJs,QJs,JTs,T9s",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,33,22,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,A9o,A8s,A8o,A7s,A7o,A6s,A6o,A5s,A5o,A4s,A4o,A3s,A3o,A2s,A2o,KQs,KQo,KJs,KJo,KTs,KTo,K9s,K9o,K8s,K7s,K6s,K5s,QJs,QJo,QTs,QTo,Q9s,Q8s,Q7s,JTs,JTo,J9s,J8s,T9s,T9o,T8s,98s,98o,87s,76s,65s,54s",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,A8s,A5s,KQs,KJs,KTs,QJs,JTs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AJs,ATs,A5s",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AJs,ATs,A5s",
+                  "5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AJs,ATs,A5s"
+                }
+              }
+            }
+          },
+          "amateur": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "5bet": "AA,KK,QQ,JJ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,AJo,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          },
+          "regular": {
+            "tight": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,AKs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "AA,KK,QQ",
+                  "defense_vs_3bet": "AA,KK",
+                  "4bet": "AA,KK",
+                  "defense_vs_4bet": "AA,KK",
+                  "5bet": "AA",
+                  "defense_vs_5bet": "AA,KK"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "push_range": "AA",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ",
+                  "4bet": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ"
+                }
+              }
+            },
+            "balanced": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,AKs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "3bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_3bet": "AA,KK,QQ",
+                  "4bet": "AA,KK,QQ",
+                  "defense_vs_4bet": "AA,KK,QQ",
+                  "5bet": "AA,KK",
+                  "defense_vs_5bet": "AA,KK,QQ"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AQo,AJs",
+                  "push_range": "AA,KK",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,77,66,55,AKs,AQs,AJs,ATs,A9s,A5s,KQs,KJs,QJs,JTs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,33,22,AKs,AKo,AQs,AQo,AJs,AJo,ATs,ATo,A9s,A9o,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQs,KQo,KJs,KJo,KTs,KTo,K9s,K8s,K7s,QJs,QJo,QTs,Q9s,JTs,JTo,J9s,T9s,T8s,98s,87s,76s,65s",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,AJo,ATs,A9s,A5s,KQs,KJs,QJs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs"
+                }
+              }
+            },
+            "aggressor": {
+              "ranges_by_stack": {
+                "very_short": {
+                  "stack_bb": "< 20",
+                  "open_raise": "",
+                  "push_range": "AA,KK,QQ,JJ,TT",
+                  "call_vs_shove": "",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT",
+                  "3bet": "",
+                  "defense_vs_3bet": "",
+                  "4bet": "",
+                  "defense_vs_4bet": "",
+                  "5bet": "",
+                  "defense_vs_5bet": ""
+                },
+                "short": {
+                  "stack_bb": "20-80",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AQo",
+                  "push_range": "AA,KK,QQ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,AKs,AQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "3bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,AKs",
+                  "4bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,AKs",
+                  "5bet": "AA,KK,QQ",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,AKs"
+                },
+                "medium": {
+                  "stack_bb": "80-180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AQo,AJs,ATs,KQs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,AKs,AQs,AJs,ATs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,AKs,AKo,AQs,AJs,ATs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "4bet": "AA,KK,QQ,JJ,TT,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,AKs,AKo",
+                  "5bet": "AA,KK,QQ,JJ,AKs,AKo",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,AKs,AKo"
+                },
+                "big": {
+                  "stack_bb": "> 180",
+                  "open_raise": "AA,KK,QQ,JJ,TT,99,88,77,66,AKs,AKo,AQs,AQo,AJs,ATs,A9s,KQs,KJs",
+                  "push_range": "AA,KK,QQ,JJ",
+                  "call_vs_shove": "AA,KK,QQ,JJ,TT,99,88,AKs,AQs,AJs,ATs,KQs",
+                  "defense_vs_open": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs",
+                  "3bet": "AA,KK,QQ,JJ,TT,99,88,77,AKs,AKo,AQs,AJs,ATs,KQs",
+                  "defense_vs_3bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs,AJs",
+                  "defense_vs_4bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs",
+                  "5bet": "AA,KK,QQ,JJ,TT,AKs",
+                  "defense_vs_5bet": "AA,KK,QQ,JJ,TT,99,AKs,AKo,AQs"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

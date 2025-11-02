@@ -2,15 +2,15 @@ import { PlayerStrength } from "@/lib/redux/slices/tableSlice";
 
 /**
  * Циклически переключает силу игрока
- * medium -> weak -> tight -> medium
+ * amateur -> fish -> regular -> amateur
  * @param currentStrength - Текущая сила игрока
  * @returns Новая сила игрока
  */
 export function getNextStrength(currentStrength: PlayerStrength): PlayerStrength {
   const strengthCycle: Record<PlayerStrength, PlayerStrength> = {
-    medium: "weak",
-    weak: "tight",
-    tight: "medium",
+    amateur: "fish",
+    fish: "regular",
+    regular: "amateur",
   };
   return strengthCycle[currentStrength];
 }
@@ -22,18 +22,18 @@ export function getNextStrength(currentStrength: PlayerStrength): PlayerStrength
  */
 export function getStrengthConfig(strength: PlayerStrength) {
   const configs = {
-    weak: {
-      label: "Слабый",
+    fish: {
+      label: "Фиш",
       bgColor: "bg-green-500",
       textColor: "text-white",
     },
-    medium: {
-      label: "Средний",
+    amateur: {
+      label: "Любитель",
       bgColor: "bg-yellow-500",
       textColor: "text-gray-900",
     },
-    tight: {
-      label: "Тайтовый",
+    regular: {
+      label: "Регуляр",
       bgColor: "bg-red-500",
       textColor: "text-white",
     },

@@ -14,16 +14,13 @@ export default function PlayerStrength({
 
   // Индикатор всегда справа от игрока
   const position = {
-    right: "-120px", // Смещение вправо от игрока
+    right: "-90px", // Смещение вправо от игрока
     top: "50%",
     transform: "translateY(-50%)",
   };
 
   return (
-    <div
-      className="absolute z-10 pointer-events-auto"
-      style={position}
-    >
+    <div className="absolute z-10 pointer-events-auto" style={position}>
       <div
         onClick={onToggle}
         className={`${config.bgColor} ${config.textColor} px-3 py-1 rounded-full text-xs font-semibold shadow-lg whitespace-nowrap cursor-pointer hover:scale-105 transition-transform duration-150 active:scale-95`}

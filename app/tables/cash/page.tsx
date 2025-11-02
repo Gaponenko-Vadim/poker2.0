@@ -2,19 +2,32 @@
 
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
+import TournamentSettings from "@/components/TournamentSettings";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import {
   setCashUsersCount,
   rotateCashTable,
   PlayerStrength,
+  PlayerPlayStyle,
+  StackSize,
   setCashPlayerStrength,
+  setCashPlayerPlayStyle,
+  setCashPlayerStackSize,
   setCashPlayerCards,
   setCashPlayerRange,
   setCashPlayerAction,
+  setCashPlayerBet,
+  setCashBuyIn,
+  setCashAnte,
+  setCashStage,
+  setCashStartingStack,
   Card,
   PlayerAction,
+  TournamentStage,
 } from "@/lib/redux/slices/tableSlice";
 import { getNextStrength } from "@/lib/utils/playerStrength";
+import { getNextPlayStyle } from "@/lib/utils/playerPlayStyle";
+import { getNextStackSize } from "@/lib/utils/stackSize";
 
 /**
  * Страница Cash игры
@@ -27,6 +40,14 @@ export default function CashPage() {
   const users = useAppSelector((state) => state.table.cashUsers);
   const usersCount = useAppSelector((state) => state.table.cashUsersCount);
   const heroIndex = useAppSelector((state) => state.table.cashHeroIndex);
+  const buyIn = useAppSelector((state) => state.table.cashBuyIn);
+  const ante = useAppSelector((state) => state.table.cashAnte);
+  const pot = useAppSelector((state) => state.table.cashPot);
+  const stage = useAppSelector((state) => state.table.cashStage);
+  const startingStack = useAppSelector((state) => state.table.cashStartingStack);
+
+  // Вычисляем средний размер стека
+  const averageStackSize: StackSize = users[0]?.stackSize || "medium";
 
   // Обработчик изменения количества игроков
   const handleUsersCountChange = (count: number) => {
@@ -44,6 +65,22 @@ export default function CashPage() {
   ) => {
     const newStrength = getNextStrength(currentStrength);
     dispatch(setCashPlayerStrength({ index, strength: newStrength }));
+  };
+
+  const handleTogglePlayerPlayStyle = (
+    index: number,
+    currentPlayStyle: PlayerPlayStyle
+  ) => {
+    const newPlayStyle = getNextPlayStyle(currentPlayStyle);
+    dispatch(setCashPlayerPlayStyle({ index, playStyle: newPlayStyle }));
+  };
+
+  const handleTogglePlayerStackSize = (
+    index: number,
+    currentStackSize: StackSize
+  ) => {
+    const newStackSize = getNextStackSize(currentStackSize);
+    dispatch(setCashPlayerStackSize({ index, stackSize: newStackSize }));
   };
 
   // Обработчик изменения карт игрока
@@ -66,6 +103,36 @@ export default function CashPage() {
   const handleActionChange = (index: number, action: PlayerAction | null) => {
     dispatch(setCashPlayerAction({ index, action }));
     console.log(`Player ${index} action changed:`, action);
+  };
+
+  // Обработчик изменения ставки игрока
+  const handleBetChange = (index: number, bet: number) => {
+    dispatch(setCashPlayerBet({ index, bet }));
+    console.log(`Player ${index} bet changed:`, bet);
+  };
+
+  // Обработчики для настроек турнира
+  const handleAverageStackChange = (stack: StackSize) => {
+    // Обновляем размер стека для всех игроков
+    users.forEach((_, index) => {
+      dispatch(setCashPlayerStackSize({ index, stackSize: stack }));
+    });
+  };
+
+  const handleBuyInChange = (newBuyIn: number) => {
+    dispatch(setCashBuyIn(newBuyIn));
+  };
+
+  const handleAnteChange = (newAnte: number) => {
+    dispatch(setCashAnte(newAnte));
+  };
+
+  const handleStageChange = (newStage: TournamentStage) => {
+    dispatch(setCashStage(newStage));
+  };
+
+  const handleStartingStackChange = (newStack: number) => {
+    dispatch(setCashStartingStack(newStack));
   };
 
   return (
@@ -154,17 +221,37 @@ export default function CashPage() {
           </div>
         </section>
 
+        {/* Настройки игры */}
+        <TournamentSettings
+          averageStack={averageStackSize}
+          onAverageStackChange={handleAverageStackChange}
+          buyIn={buyIn}
+          onBuyInChange={handleBuyInChange}
+          ante={ante}
+          onAnteChange={handleAnteChange}
+          stage={stage}
+          onStageChange={handleStageChange}
+          startingStack={startingStack}
+          onStartingStackChange={handleStartingStackChange}
+          showAnte={false}
+          playersCount={users.length}
+        />
+
         {/* Покерный стол */}
-        <section>
+        <section className="relative">
           <PokerTable
             users={users}
             tableType="cash"
             heroIndex={heroIndex}
+            basePot={pot}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}
+            onTogglePlayerPlayStyle={handleTogglePlayerPlayStyle}
+            onTogglePlayerStackSize={handleTogglePlayerStackSize}
             onCardsChange={handleCardsChange}
             onRangeChange={handleRangeChange}
             onActionChange={handleActionChange}
+            onBetChange={handleBetChange}
           />
         </section>
 

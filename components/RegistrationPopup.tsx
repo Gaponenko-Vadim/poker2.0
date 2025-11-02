@@ -201,7 +201,11 @@ export default function RegistrationPopup({
             disabled={loading || success}
             className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           >
-            {loading ? "Регистрация..." : success ? "✓ Готово!" : "Создать аккаунт"}
+            {loading
+              ? "Регистрация..."
+              : success
+              ? "✓ Готово!"
+              : "Создать аккаунт"}
           </button>
         </form>
 

@@ -2,18 +2,34 @@
 
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
+import TournamentSettings from "@/components/TournamentSettings";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import {
   rotateEightMaxTable,
   setEightMaxPlayerStrength,
+  setEightMaxPlayerPlayStyle,
+  setEightMaxPlayerStackSize,
   setEightMaxPlayerCards,
   setEightMaxPlayerRange,
   setEightMaxPlayerAction,
+  setEightMaxPlayerBet,
+  setEightMaxBuyIn,
+  setEightMaxAnte,
+  setEightMaxStage,
+  setEightMaxStartingStack,
+  setEightMaxBounty,
+  setEightMaxCategory,
   PlayerStrength,
+  PlayerPlayStyle,
+  StackSize,
   Card,
   PlayerAction,
+  TournamentStage,
+  TournamentCategory,
 } from "@/lib/redux/slices/tableSlice";
 import { getNextStrength } from "@/lib/utils/playerStrength";
+import { getNextPlayStyle } from "@/lib/utils/playerPlayStyle";
+import { getNextStackSize } from "@/lib/utils/stackSize";
 
 /**
  * Страница турнира 8-Max
@@ -25,6 +41,16 @@ export default function EightMaxPage() {
   // Получаем данные из Redux store
   const users = useAppSelector((state) => state.table.eightMaxUsers);
   const heroIndex = useAppSelector((state) => state.table.eightMaxHeroIndex);
+  const buyIn = useAppSelector((state) => state.table.eightMaxBuyIn);
+  const ante = useAppSelector((state) => state.table.eightMaxAnte);
+  const pot = useAppSelector((state) => state.table.eightMaxPot);
+  const stage = useAppSelector((state) => state.table.eightMaxStage);
+  const startingStack = useAppSelector((state) => state.table.eightMaxStartingStack);
+  const bounty = useAppSelector((state) => state.table.eightMaxBounty);
+  const category = useAppSelector((state) => state.table.eightMaxCategory);
+
+  // Вычисляем средний размер стека
+  const averageStackSize: StackSize = users[0]?.stackSize || "medium";
 
   // Обработчик вращения стола
   const handleRotateTable = () => {
@@ -37,6 +63,22 @@ export default function EightMaxPage() {
   ) => {
     const newStrength = getNextStrength(currentStrength);
     dispatch(setEightMaxPlayerStrength({ index, strength: newStrength }));
+  };
+
+  const handleTogglePlayerPlayStyle = (
+    index: number,
+    currentPlayStyle: PlayerPlayStyle
+  ) => {
+    const newPlayStyle = getNextPlayStyle(currentPlayStyle);
+    dispatch(setEightMaxPlayerPlayStyle({ index, playStyle: newPlayStyle }));
+  };
+
+  const handleTogglePlayerStackSize = (
+    index: number,
+    currentStackSize: StackSize
+  ) => {
+    const newStackSize = getNextStackSize(currentStackSize);
+    dispatch(setEightMaxPlayerStackSize({ index, stackSize: newStackSize }));
   };
 
   // Обработчик изменения карт игрока
@@ -61,60 +103,91 @@ export default function EightMaxPage() {
     console.log(`Player ${index} action changed:`, action);
   };
 
+  // Обработчик изменения ставки игрока
+  const handleBetChange = (index: number, bet: number) => {
+    dispatch(setEightMaxPlayerBet({ index, bet }));
+    console.log(`Player ${index} bet changed:`, bet);
+  };
+
+  // Обработчики для настроек турнира
+  const handleAverageStackChange = (stack: StackSize) => {
+    // Обновляем размер стека для всех игроков
+    users.forEach((_, index) => {
+      dispatch(setEightMaxPlayerStackSize({ index, stackSize: stack }));
+    });
+  };
+
+  const handleBuyInChange = (newBuyIn: number) => {
+    dispatch(setEightMaxBuyIn(newBuyIn));
+    // Автоматически обновляем категорию турнира при изменении buy-in
+    const getBuyInCategory = (buyIn: number): TournamentCategory => {
+      if (buyIn < 5) return "micro";
+      if (buyIn < 22) return "low";
+      if (buyIn < 109) return "mid";
+      return "high";
+    };
+    dispatch(setEightMaxCategory(getBuyInCategory(newBuyIn)));
+  };
+
+  const handleAnteChange = (newAnte: number) => {
+    dispatch(setEightMaxAnte(newAnte));
+  };
+
+  const handleStageChange = (newStage: TournamentStage) => {
+    dispatch(setEightMaxStage(newStage));
+  };
+
+  const handleStartingStackChange = (newStack: number) => {
+    dispatch(setEightMaxStartingStack(newStack));
+  };
+
+  const handleBountyChange = (newBounty: boolean) => {
+    dispatch(setEightMaxBounty(newBounty));
+  };
+
+  const handleCategoryChange = (newCategory: TournamentCategory) => {
+    dispatch(setEightMaxCategory(newCategory));
+  };
+
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
       <Header showBackButton backUrl="/" title="8-Max Турнир" />
 
       <main className="container mx-auto px-4 py-8">
-        {/* Информационный блок */}
-        <section className="max-w-4xl mx-auto mb-8">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-100 mb-2">
-              Турнирный стол 8-Max
-            </h2>
-            <p className="text-gray-400">
-              Анализ игры за полным столом на 8 игроков. Все позиции заняты и
-              готовы к игре.
-            </p>
-            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gray-800/50 rounded-lg p-3">
-                <p className="text-xs text-gray-500 mb-1">Игроков за столом</p>
-                <p className="text-2xl font-bold text-emerald-400">
-                  {users.length}
-                </p>
-              </div>
-              <div className="bg-gray-800/50 rounded-lg p-3">
-                <p className="text-xs text-gray-500 mb-1">Тип игры</p>
-                <p className="text-lg font-semibold text-gray-100">Турнир</p>
-              </div>
-              <div className="bg-gray-800/50 rounded-lg p-3">
-                <p className="text-xs text-gray-500 mb-1">Формат</p>
-                <p className="text-lg font-semibold text-gray-100">8-Max</p>
-              </div>
-              <div className="bg-gray-800/50 rounded-lg p-3">
-                <p className="text-xs text-gray-500 mb-1">Средний стек</p>
-                <p className="text-lg font-semibold text-emerald-400">
-                  {Math.round(
-                    users.reduce((acc, u) => acc + u.stack, 0) / users.length
-                  ).toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Настройки турнира */}
+        <TournamentSettings
+          averageStack={averageStackSize}
+          onAverageStackChange={handleAverageStackChange}
+          buyIn={buyIn}
+          onBuyInChange={handleBuyInChange}
+          ante={ante}
+          onAnteChange={handleAnteChange}
+          stage={stage}
+          onStageChange={handleStageChange}
+          startingStack={startingStack}
+          onStartingStackChange={handleStartingStackChange}
+          showAnte={true}
+          playersCount={users.length}
+          bounty={bounty}
+          onBountyChange={handleBountyChange}
+        />
 
         {/* Покерный стол */}
-        <section>
+        <section className="relative">
           <PokerTable
             users={users}
             tableType="8-max"
             heroIndex={heroIndex}
+            basePot={pot}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}
+            onTogglePlayerPlayStyle={handleTogglePlayerPlayStyle}
+            onTogglePlayerStackSize={handleTogglePlayerStackSize}
             onCardsChange={handleCardsChange}
             onRangeChange={handleRangeChange}
             onActionChange={handleActionChange}
+            onBetChange={handleBetChange}
           />
         </section>
 

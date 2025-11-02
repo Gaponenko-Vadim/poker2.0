@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { User, Card, PlayerAction } from "@/lib/redux/slices/tableSlice";
 import PlayerStrength from "./PlayerStrength";
+import PlayerPlayStyle from "./PlayerPlayStyle";
+import PlayerStackSize from "./PlayerStackSize";
 import CardSelector from "./CardSelector";
 import RangeSelector from "./RangeSelector";
 import PlayerActionDropdown from "./PlayerActionDropdown";
@@ -11,10 +13,14 @@ interface PlayerSeatProps {
   isHero?: boolean;
   onHeroClick?: () => void;
   onToggleStrength: () => void; // Функция для переключения силы игрока
+  onTogglePlayStyle: () => void; // Функция для переключения стиля игры
+  onToggleStackSize: () => void; // Функция для переключения размера стека
   onCardsChange?: (cards: [Card | null, Card | null]) => void; // Функция для изменения карт (опциональная)
   onRangeChange?: (range: string[]) => void; // Функция для изменения диапазона (опциональная)
   onActionChange?: (action: PlayerAction | null) => void; // Функция для изменения действия (опциональная)
+  onBetChange?: (bet: number) => void; // Функция для изменения ставки (опциональная)
   allPlayersActions: (PlayerAction | null)[]; // Действия всех игроков за столом
+  allPlayersBets: number[]; // Ставки всех игроков за столом
 }
 
 export default function PlayerSeat({
@@ -23,10 +29,14 @@ export default function PlayerSeat({
   isHero = false,
   onHeroClick,
   onToggleStrength,
+  onTogglePlayStyle,
+  onToggleStackSize,
   onCardsChange,
   onRangeChange,
   onActionChange,
+  onBetChange,
   allPlayersActions,
+  allPlayersBets,
 }: PlayerSeatProps) {
   const [isRangeSelectorOpen, setIsRangeSelectorOpen] = useState(false);
 
@@ -48,6 +58,12 @@ export default function PlayerSeat({
   const handleActionChange = (action: PlayerAction | null) => {
     if (onActionChange) {
       onActionChange(action);
+    }
+  };
+
+  const handleBetChange = (bet: number) => {
+    if (onBetChange) {
+      onBetChange(bet);
     }
   };
   // Функция для получения стиля и текста фишки позиции
@@ -108,7 +124,9 @@ export default function PlayerSeat({
             <span className="text-xs font-bold text-white">
               {user.position}
             </span>
-            <span className="text-[10px] text-gray-400">{user.stack}</span>
+            <span className="text-yellow-400 text-xs">
+              {user.bet == 0 ? "" : `${user.bet} BB`}
+            </span>
             {isHero && (
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
                 <span className="text-[10px] font-bold text-gray-900">H</span>
@@ -134,18 +152,34 @@ export default function PlayerSeat({
             strength={user.strength}
             onToggle={onToggleStrength}
           />
+
+          {/* Индикатор стиля игры */}
+          <PlayerPlayStyle
+            playStyle={user.playStyle}
+            onToggle={onTogglePlayStyle}
+          />
         </div>
 
-        {/* Dropdown для выбора действия игрока */}
-        {onActionChange && (
-          <div className="mt-1">
+        {/* Контейнер для действия и размера стека */}
+        <div className="mt-2 flex gap-2 items-center justify-center">
+          {/* Индикатор размера стека */}
+          <PlayerStackSize
+            stackSize={user.stackSize}
+            onToggle={onToggleStackSize}
+          />
+
+          {/* Dropdown для выбора действия игрока */}
+          {onActionChange && (
             <PlayerActionDropdown
               currentAction={user.action}
               onActionChange={handleActionChange}
+              onBetChange={handleBetChange}
+              currentBet={user.bet}
               allPlayersActions={allPlayersActions}
+              allPlayersBets={allPlayersBets}
             />
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Попап выбора диапазона для не-Hero игроков */}
@@ -156,6 +190,11 @@ export default function PlayerSeat({
           playerName={user.name}
           currentRange={user.range}
           onRangeChange={handleRangeChange}
+          position={user.position}
+          strength={user.strength}
+          playStyle={user.playStyle}
+          stackSize={user.stackSize}
+          currentAction={user.action}
         />
       )}
     </div>

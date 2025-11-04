@@ -16,6 +16,8 @@ interface HeaderProps {
   backUrl?: string;
   // Заголовок страницы (опционально)
   title?: string;
+  // Callback при клике на профиль пользователя
+  onProfileClick?: () => void;
 }
 
 /**
@@ -26,6 +28,7 @@ export default function Header({
   showBackButton = false,
   backUrl = '/',
   title,
+  onProfileClick,
 }: HeaderProps) {
   const dispatch = useAppDispatch();
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
@@ -114,10 +117,14 @@ export default function Header({
           {/* Правая часть: информация о пользователе и кнопка входа */}
           <div className="flex items-center gap-4">
             {isAuthenticated && user && (
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-emerald-500/30">
+              <button
+                onClick={onProfileClick}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-emerald-500/30 hover:border-emerald-400 hover:bg-gray-700/50 transition-all cursor-pointer"
+                title="Настройки профиля"
+              >
                 <UserCircleIcon className="w-6 h-6 text-emerald-400" />
                 <span className="text-sm font-medium text-gray-300">{user.email}</span>
-              </div>
+              </button>
             )}
             {!isAuthenticated && (
               <button

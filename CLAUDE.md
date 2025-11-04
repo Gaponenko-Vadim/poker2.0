@@ -56,13 +56,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Управляет тремя типами столов: `sixMaxUsers`, `eightMaxUsers`, `cashUsers`
 - Каждый игрок (`User`) содержит:
-  - `name`, `stack`, `strength` (fish/amateur/regular), `playStyle` (tight/balanced/aggressor), `stackSize` (very-small/small/medium/big)
+  - `name`, `stack`, `bet` (текущая ставка), `strength` (fish/amateur/regular), `playStyle` (tight/balanced/aggressor), `stackSize` (very-small/small/medium/big)
   - `position` (BTN/SB/BB/UTG/UTG+1/MP/HJ/CO)
   - `cards` (только для Hero - массив из двух карт или null)
   - `range` (массив строк типа ["AA", "AKs", "JTo"])
   - `action` (fold/call/check/bet-open/raise-3bet/raise-4bet/raise-5bet/all-in)
-- Редьюсеры для ротации позиций, изменения карт, диапазонов, силы, размера стека и действий игроков
-- `getAvailableActions()` - определяет доступные действия в зависимости от состояния стола (raise возможен только после bet-open)
+- Настройки стола (для каждого типа: sixMax, eightMax, cash):
+  - `stage` (early/middle/pre-bubble/late/pre-final/final) - стадия турнира
+  - `category` (micro/low/mid/high) - категория по buy-in
+  - `startingStack` (100 или 200 BB) - начальный стек турнира
+  - `bounty` (boolean) - турнир с баунти
+  - `autoAllIn` (boolean) - глобальная настройка: всегда ставить весь стек для всех игроков
+- Редьюсеры для ротации позиций, изменения карт, диапазонов, силы, размера стека, действий и настроек игроков
+- `getAvailableActions()` - определяет доступные действия в зависимости от состояния стола (raise возможен только после bet-open, учитывает размер стека)
 
 **Auth Slice** (`lib/redux/slices/authSlice.ts`):
 
@@ -121,11 +127,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Диапазоны автоматически подгружаются при изменении параметров игрока (сила, стиль, стек, действие)
 - Утилита `rangeExpander.ts` - разворачивает нотацию диапазонов в полный список рук
 
+**Конвертация действий** (`convertPlayerActionToPokerAction()` в `tableSlice.ts`):
+
+- UI использует `PlayerAction`: bet-open, raise-3bet, raise-4bet, raise-5bet, all-in
+- JSON диапазоны используют `PokerAction`: open, threeBet, fourBet, fiveBet, allIn
+- Функция автоматически конвертирует между форматами при загрузке диапазонов
+- Действия fold/call/check по умолчанию конвертируются в "open"
+
+**Автоматическая загрузка диапазонов**:
+
+- При изменении любого параметра игрока (сила, стиль, размер стека, действие) диапазон автоматически обновляется
+- Функция `getRangeWithTournamentSettings()` учитывает все турнирные параметры стола
+- Если диапазон не найден в JSON, возвращается пустой массив
+- Для cash-игр используется упрощенная логика без турнирных параметров
+
 **Устаревшие файлы** (сохранены для совместимости):
 - `lib/constants/defaultRanges.ts` - старая TypeScript структура (больше не используется)
 - `lib/constants/tournamentRanges.ts` - TypeScript типы (используется только для генерации JSON)
 
 ### Component Architecture
+
+**Header** (`components/Header.tsx`):
+
+- Верхний компонент навигации и авторизации
+- При аутентификации отображает email пользователя с иконкой профиля
+- **Клик по email пользователя** (`onProfileClick`) открывает глобальные настройки игры (PlayerSettingsPopup)
+- Управляет входом/выходом и регистрацией
 
 **PokerTable** (`components/PokerTable.tsx`):
 
@@ -136,6 +163,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Отдельный игрок за столом
 - Отображает позицию, стек, силу, карты (для Hero), действия
+- Визуальные фишки позиций:
+  - BTN (D) - белая фишка с тенью
+  - SB - зеленая фишка
+  - BB - красная фишка
+- При клике на Hero открывается CardSelector, на других игроков - RangeSelector
 
 **CardSelector** / **CardPickerPopup**:
 
@@ -152,6 +184,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Дропдаун для выбора действия игрока
 - Показывает доступные действия в зависимости от ситуации
 - Использует `getAvailableActions()` для фильтрации опций
+- Принимает `allPlayersActions` и `allPlayersBets` для анализа состояния стола
+- Поддерживает изменение ставки (`onBetChange`) при выборе действия
+- Если `autoAllIn === true`, all-in выполняется сразу без попапа подтверждения
+- Если `autoAllIn === false`, при выборе all-in показывается попап с выбором: "Поставить весь стек" / "Указать свой размер"
 
 **PlayerStackSize**:
 
@@ -164,10 +200,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Опции: tight (тайт), balanced (баланс), aggressor (агрессор)
 - Расположен слева от игрока
 
+**PlayerSettingsPopup**:
+
+- Popup-окно для глобальных настроек игры
+- Управляет глобальным флагом `autoAllIn` - "всегда ставить весь стек"
+- **Важно**: Настройка применяется ко ВСЕМ действиям у ВСЕХ игроков за столом
+- Открывается через клик по email пользователя в Header (onProfileClick)
+
 **TournamentSettings**:
 
 - Компонент настроек турнирных параметров
-- Управляет стадией турнира и другими глобальными настройками
+- Управляет:
+  - `stage` - стадия турнира (early/middle/pre-bubble/late/pre-final/final)
+  - `category` - категория по buy-in (micro/low/mid/high)
+  - `startingStack` - начальный стек (100 или 200 BB)
+  - `bounty` - флаг турнира с баунти
+  - `averageStack` - средний стек стола (связан со стадией)
+  - `ante` - размер анте (для турниров)
 
 **PotDisplay**:
 
@@ -182,6 +231,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `/tables/cash` - кеш игра (2-9 игроков)
 
 Каждая страница использует свой набор Redux actions и отображает PokerTable с соответствующими данными из store.
+
+**Temporary Files**:
+
+- `temp_6max_backup.tsx` - резервная копия страницы 6-max (не используется в production)
 
 ## TypeScript Configuration
 
@@ -204,6 +257,33 @@ JWT_SECRET=your-secret-key
 
 ## Key Patterns
 
+### Global Auto All-In Setting
+
+**Назначение**: Глобальная настройка "всегда ставить весь стек" для всех игроков за столом
+
+**Логика работы**:
+- Настройка применяется ко ВСЕМ действиям (actions) у ВСЕХ игроков за столом
+- Доступ: Header → клик по email пользователя → открывается PlayerSettingsPopup
+- Единая глобальная настройка на уровне стола, а не индивидуальная для каждого игрока
+
+**Реализация**:
+- Глобальные поля в `tableSlice.ts`: `sixMaxAutoAllIn`, `eightMaxAutoAllIn`, `cashAutoAllIn`
+- Actions: `setSixMaxAutoAllIn(boolean)`, `setEightMaxAutoAllIn(boolean)`, `setCashAutoAllIn(boolean)`
+- Передается через props: Page → PokerTable → PlayerSeat → PlayerActionDropdown
+- В `PlayerActionDropdown`: если `autoAllIn === true`, all-in выполняется сразу без попапа подтверждения
+
+### Betting Logic
+
+**Логика доступных действий** (`getAvailableActions()` в `tableSlice.ts`):
+
+- Базовые действия всегда доступны: fold, call, check, bet-open, all-in
+- Raise-действия (raise-3bet, raise-4bet, raise-5bet) доступны только если:
+  1. Есть соответствующее предыдущее действие на столе
+  2. У игрока достаточно фишек (>80% стека для raise)
+  3. Размер raise >= 2.5x от текущей максимальной ставки
+- Последовательность raise: bet-open → raise-3bet → raise-4bet → raise-5bet
+- Каждый игрок имеет поле `bet` для отслеживания текущей ставки
+
 ### Redux Usage
 
 - Используйте типизированные хуки `useAppDispatch` и `useAppSelector` из `lib/redux/hooks.ts`
@@ -224,6 +304,10 @@ JWT_SECRET=your-secret-key
 - Размер стека: very-small, small, medium, big (lowercase с дефисом)
 - Действия игрока: fold, call, check, bet-open, raise-3bet, raise-4bet, raise-5bet, all-in
 - Действия для диапазонов: open, threeBet, fourBet, fiveBet, allIn (camelCase)
+- Стадии турнира: early, middle, pre-bubble, late, pre-final, final (lowercase с дефисом)
+- Категории турнира: micro, low, mid, high (lowercase)
+
+**Важно**: В `lib/types/actions.ts` определены устаревшие типы действий (bet, raise, 3-bet и т.д.). Основное приложение использует другую номенклатуру, определенную в `tableSlice.ts` (bet-open, raise-3bet и т.д.). При работе с действиями игрока всегда используйте типы из `tableSlice.ts`.
 
 ## Utilities
 
@@ -247,6 +331,12 @@ JWT_SECRET=your-secret-key
 
 - `getStackSizeCategory()` - определяет категорию стека по количеству BB
 - Пороги: ≤10 (very-small), 10-20 (small), 20-40 (medium), >40 (big)
+
+### Tournament Range Loader (`lib/utils/tournamentRangeLoader.ts`)
+
+- `getRangeForTournament()` - загружает диапазон из JSON с учетом всех турнирных параметров
+- Принимает: позицию, силу, стиль, размер стека, действие, начальный стек, стадию, категорию, bounty
+- `shouldUseTournamentRanges()` - определяет, нужно ли использовать турнирные диапазоны
 
 ## Database Setup
 

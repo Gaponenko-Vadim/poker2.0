@@ -44,19 +44,122 @@ function getRangeWithTournamentSettings(
 
 // Вспомогательная функция для получения доступных действий игрока
 // Правило: raise-3bet, raise-4bet, raise-5bet доступны только если кто-то сделал bet-open
+// И только если у игрока достаточно фишек для этого действия
 export function getAvailableActions(users: User[], currentPlayerIndex: number): PlayerAction[] {
   // Базовые действия всегда доступны
   const baseActions: PlayerAction[] = ["fold", "call", "check", "bet-open", "all-in"];
 
-  // Проверяем, есть ли хотя бы один игрок с действием bet-open
-  const hasBetOpen = users.some(user => user.action === "bet-open");
+  const currentPlayer = users[currentPlayerIndex];
+  if (!currentPlayer) return baseActions;
 
-  // Если есть bet-open, добавляем raise действия
-  if (hasBetOpen) {
-    return [...baseActions, "raise-3bet", "raise-4bet", "raise-5bet"];
+  const playerStack = currentPlayer.stack;
+
+  // Если у игрока уже стоит all-in, то fold недоступен (игрок уже поставил все фишки)
+  const availableActions = currentPlayer.action === "all-in"
+    ? baseActions.filter(action => action !== "fold")
+    : [...baseActions];
+
+  // Функция для получения ставки игрока с определенным действием
+  const getBetForAction = (targetAction: PlayerAction): number => {
+    const user = users.find(u => u.action === targetAction && u.bet > 0);
+    return user ? user.bet : 0;
+  };
+
+  // Находим ставки для каждого действия
+  const openBet = getBetForAction("bet-open");
+  const threeBet = getBetForAction("raise-3bet");
+  const fourBet = getBetForAction("raise-4bet");
+  const fiveBet = getBetForAction("raise-5bet");
+
+  const hasBetOpen = openBet > 0;
+  const hasThreeBet = threeBet > 0;
+  const hasFourBet = fourBet > 0;
+  const hasFiveBet = fiveBet > 0;
+
+  // Получаем all-in ставки для расчета следующих действий
+  const allInBets = users
+    .filter(u => u.action === "all-in" && u.bet > 0)
+    .map(u => u.bet)
+    .sort((a, b) => b - a); // Сортируем по убыванию
+
+  // Функция для определения, от какой ставки считать следующее действие
+  const getEffectiveBetForNextAction = (): { level: string; bet: number; previousBet: number } => {
+    // Сначала проверяем обычные действия
+    if (hasFiveBet) {
+      return { level: "5bet", bet: fiveBet, previousBet: fourBet };
+    }
+    if (hasFourBet) {
+      // Проверяем, есть ли all-in больше fourBet, который может считаться 5bet
+      const raiseSize = fourBet - threeBet;
+      const minFiveBet = fourBet + raiseSize;
+      for (const allinBet of allInBets) {
+        if (allinBet >= minFiveBet && allinBet > fourBet) {
+          // All-in считается как 5bet для расчета следующей ставки
+          return { level: "5bet", bet: allinBet, previousBet: fourBet };
+        }
+      }
+      return { level: "4bet", bet: fourBet, previousBet: threeBet };
+    }
+    if (hasThreeBet) {
+      // Проверяем, есть ли all-in больше threeBet, который может считаться 4bet
+      const raiseSize = threeBet - openBet;
+      const minFourBet = threeBet + raiseSize;
+      for (const allinBet of allInBets) {
+        if (allinBet >= minFourBet && allinBet > threeBet) {
+          // All-in считается как 4bet для расчета следующей ставки
+          return { level: "4bet", bet: allinBet, previousBet: threeBet };
+        }
+      }
+      return { level: "3bet", bet: threeBet, previousBet: openBet };
+    }
+    if (hasBetOpen) {
+      // Проверяем, есть ли all-in больше openBet, который может считаться 3bet
+      const raiseSize = openBet - 1;
+      const minThreeBet = openBet + raiseSize;
+      for (const allinBet of allInBets) {
+        if (allinBet >= minThreeBet && allinBet > openBet) {
+          // All-in считается как 3bet для расчета следующей ставки
+          return { level: "3bet", bet: allinBet, previousBet: openBet };
+        }
+      }
+      return { level: "open", bet: openBet, previousBet: 1 };
+    }
+    return { level: "none", bet: 0, previousBet: 0 };
+  };
+
+  const effectiveBet = getEffectiveBetForNextAction();
+
+  // Рассчитываем минимальные размеры следующих ставок на основе эффективной ставки
+  // Формула: минимальная следующая ставка = текущая ставка + (текущая ставка - предыдущая ставка)
+
+  if (effectiveBet.level === "none") {
+    // Нет ставок на столе - доступен только bet-open
+    // bet-open уже в baseActions
+  } else if (effectiveBet.level === "open") {
+    // Есть open - доступен 3bet
+    const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
+    const minThreeBetSize = effectiveBet.bet + raiseSize;
+    if (playerStack > minThreeBetSize && minThreeBetSize / playerStack < 0.8) {
+      availableActions.push("raise-3bet");
+    }
+  } else if (effectiveBet.level === "3bet") {
+    // Есть 3bet (или all-in, равный 3bet) - доступен 4bet
+    const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
+    const minFourBetSize = effectiveBet.bet + raiseSize;
+    if (playerStack > minFourBetSize && minFourBetSize / playerStack < 0.8) {
+      availableActions.push("raise-4bet");
+    }
+  } else if (effectiveBet.level === "4bet") {
+    // Есть 4bet (или all-in, равный 4bet) - доступен 5bet
+    const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
+    const minFiveBetSize = effectiveBet.bet + raiseSize;
+    if (playerStack > minFiveBetSize && minFiveBetSize / playerStack < 0.8) {
+      availableActions.push("raise-5bet");
+    }
   }
+  // Если level === "5bet", то больше нет доступных raise действий
 
-  return baseActions;
+  return availableActions;
 }
 
 // Тип силы игрока
@@ -142,6 +245,7 @@ export interface User {
   range: string[]; // Диапазон рук игрока - формат: ["AA", "AKs", "AKo", "22"]
   action: PlayerAction | null; // Выбранное действие игрока (null если не выбрано)
   bet: number; // Текущая ставка игрока в BB (блайнды/беты, анте не учитывается)
+  // autoAllIn убран - теперь это глобальная настройка на уровне стола
 }
 
 // Интерфейс состояния стола
@@ -156,6 +260,7 @@ interface TableState {
   sixMaxStartingStack: number; // Начальный стек в BB (100 или 200)
   sixMaxBounty: boolean; // Турнир с баунти или нет
   sixMaxCategory: TournamentCategory; // Категория турнира по buy-in
+  sixMaxAutoAllIn: boolean; // Глобальная настройка: всегда ставить весь стек для всех игроков
 
   // 8-Max турнир
   eightMaxUsers: User[]; // Массив из 8 игроков
@@ -167,6 +272,7 @@ interface TableState {
   eightMaxStartingStack: number; // Начальный стек в BB (100 или 200)
   eightMaxBounty: boolean; // Турнир с баунти или нет
   eightMaxCategory: TournamentCategory; // Категория турнира по buy-in
+  eightMaxAutoAllIn: boolean; // Глобальная настройка: всегда ставить весь стек для всех игроков
 
   // Cash игра
   cashUsersCount: number; // Количество игроков (от 2 до 9)
@@ -177,6 +283,7 @@ interface TableState {
   cashPot: number; // Общий банк
   cashStage: TournamentStage; // Стадия игры
   cashStartingStack: number; // Начальный стек в BB (100 или 200)
+  cashAutoAllIn: boolean; // Глобальная настройка: всегда ставить весь стек для всех игроков
 }
 
 // Функция для получения значения стека в BB по размеру
@@ -249,6 +356,7 @@ const initialState: TableState = {
   sixMaxStartingStack: 100, // Начальный стек 100 BB
   sixMaxBounty: false, // Турнир без баунти по умолчанию
   sixMaxCategory: "micro", // Категория турнира по умолчанию
+  sixMaxAutoAllIn: false, // По умолчанию автоматический all-in выключен
 
   // 8-Max
   eightMaxUsers: generateUsers(8),
@@ -260,6 +368,7 @@ const initialState: TableState = {
   eightMaxStartingStack: 200, // Начальный стек 200 BB (как в tournamentRanges.json)
   eightMaxBounty: true, // Турнир с баунти (как в tournamentRanges.json)
   eightMaxCategory: "micro", // Категория турнира (как в tournamentRanges.json)
+  eightMaxAutoAllIn: false, // По умолчанию автоматический all-in выключен
 
   // Cash
   cashUsersCount: 9,
@@ -270,6 +379,7 @@ const initialState: TableState = {
   cashPot: 0, // Начальный базовый банк = 0, блайнды в bet игроков
   cashStage: "early", // Начальная стадия игры
   cashStartingStack: 100, // Начальный стек 100 BB
+  cashAutoAllIn: false, // По умолчанию автоматический all-in выключен
 };
 
 // Функция для ротации позиций
@@ -672,6 +782,21 @@ const tableSlice = createSlice({
       }
     },
 
+    // 6-Max: Установить глобальный автоматический all-in для всех игроков
+    setSixMaxAutoAllIn: (state, action: PayloadAction<boolean>) => {
+      state.sixMaxAutoAllIn = action.payload;
+    },
+
+    // 8-Max: Установить глобальный автоматический all-in для всех игроков
+    setEightMaxAutoAllIn: (state, action: PayloadAction<boolean>) => {
+      state.eightMaxAutoAllIn = action.payload;
+    },
+
+    // Cash: Установить глобальный автоматический all-in для всех игроков
+    setCashAutoAllIn: (state, action: PayloadAction<boolean>) => {
+      state.cashAutoAllIn = action.payload;
+    },
+
     // 6-Max: Изменить размер стека игрока
     setSixMaxPlayerStackSize: (
       state,
@@ -1026,6 +1151,114 @@ const tableSlice = createSlice({
         }
       });
     },
+
+    // 6-Max: Новая раздача (очистка и ротация)
+    newSixMaxDeal: (state) => {
+      // Ротация позиций
+      const positions: TablePosition[] = ["BTN", "SB", "BB", "UTG", "MP", "CO"];
+      state.sixMaxUsers = state.sixMaxUsers.map((user) => ({
+        ...user,
+        position: rotatePosition(user.position, positions),
+      }));
+
+      // Очистка карт, диапазонов, действий и ставок
+      state.sixMaxUsers.forEach((user, index) => {
+        // Очистить карты Hero
+        if (index === state.sixMaxHeroIndex && user.cards) {
+          user.cards = [null, null];
+        }
+        // Очистить диапазоны всех игроков
+        user.range = [];
+        // Очистить действия
+        user.action = null;
+        // Сбросить ставки: SB=0.5, BB=1, остальные=0
+        if (user.position === "SB") {
+          user.bet = 0.5;
+        } else if (user.position === "BB") {
+          user.bet = 1;
+        } else {
+          user.bet = 0;
+        }
+      });
+    },
+
+    // 8-Max: Новая раздача (очистка и ротация)
+    newEightMaxDeal: (state) => {
+      // Ротация позиций
+      const positions: TablePosition[] = [
+        "BTN",
+        "SB",
+        "BB",
+        "UTG",
+        "UTG+1",
+        "MP",
+        "HJ",
+        "CO",
+      ];
+      state.eightMaxUsers = state.eightMaxUsers.map((user) => ({
+        ...user,
+        position: rotatePosition(user.position, positions),
+      }));
+
+      // Очистка карт, диапазонов, действий и ставок
+      state.eightMaxUsers.forEach((user, index) => {
+        // Очистить карты Hero
+        if (index === state.eightMaxHeroIndex && user.cards) {
+          user.cards = [null, null];
+        }
+        // Очистить диапазоны всех игроков
+        user.range = [];
+        // Очистить действия
+        user.action = null;
+        // Сбросить ставки: SB=0.5, BB=1, остальные=0
+        if (user.position === "SB") {
+          user.bet = 0.5;
+        } else if (user.position === "BB") {
+          user.bet = 1;
+        } else {
+          user.bet = 0;
+        }
+      });
+    },
+
+    // Cash: Новая раздача (очистка и ротация)
+    newCashDeal: (state) => {
+      // Ротация позиций
+      const positions: TablePosition[] = [
+        "BTN",
+        "SB",
+        "BB",
+        "UTG",
+        "UTG+1",
+        "MP",
+        "HJ",
+        "CO",
+      ];
+      state.cashUsers = state.cashUsers.map((user) => ({
+        ...user,
+        position: rotatePosition(user.position, positions),
+      }));
+
+      // Очистка карт, диапазонов, действий и ставок
+      state.cashUsers.forEach((user, index) => {
+        // Очистить карты Hero
+        if (index === state.cashHeroIndex && user.cards) {
+          user.cards = [null, null];
+        }
+        // Очистить диапазоны всех игроков
+        user.range = [];
+        // Очистить действия
+        user.action = null;
+        // Сбросить ставки: SB=0.5, BB=1, остальные=0
+        if (user.position === "SB") {
+          user.bet = 0.5;
+        } else if (user.position === "BB") {
+          user.bet = 1;
+        } else {
+          user.bet = 0;
+        }
+      });
+    },
   },
 });
 
@@ -1049,6 +1282,9 @@ export const {
   setSixMaxPlayerAction,
   setEightMaxPlayerAction,
   setCashPlayerAction,
+  setSixMaxAutoAllIn,
+  setEightMaxAutoAllIn,
+  setCashAutoAllIn,
   setSixMaxPlayerStackSize,
   setEightMaxPlayerStackSize,
   setCashPlayerStackSize,
@@ -1074,5 +1310,8 @@ export const {
   setEightMaxBounty,
   setSixMaxCategory,
   setEightMaxCategory,
+  newSixMaxDeal,
+  newEightMaxDeal,
+  newCashDeal,
 } = tableSlice.actions;
 export default tableSlice.reducer;

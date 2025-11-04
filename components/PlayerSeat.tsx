@@ -12,6 +12,8 @@ interface PlayerSeatProps {
   position: { left: string; top: string; transform: string };
   isHero?: boolean;
   onHeroClick?: () => void;
+  autoAllIn?: boolean; // Глобальная настройка автоматического all-in для всех игроков
+  onToggleAutoAllIn?: (value: boolean) => void; // Функция для включения глобальной настройки autoAllIn
   onToggleStrength: () => void; // Функция для переключения силы игрока
   onTogglePlayStyle: () => void; // Функция для переключения стиля игры
   onToggleStackSize: () => void; // Функция для переключения размера стека
@@ -28,6 +30,8 @@ export default function PlayerSeat({
   position,
   isHero = false,
   onHeroClick,
+  autoAllIn = false,
+  onToggleAutoAllIn,
   onToggleStrength,
   onTogglePlayStyle,
   onToggleStackSize,
@@ -175,10 +179,23 @@ export default function PlayerSeat({
               onActionChange={handleActionChange}
               onBetChange={handleBetChange}
               currentBet={user.bet}
+              playerStack={user.stack}
+              autoAllIn={autoAllIn}
+              onToggleAutoAllIn={onToggleAutoAllIn}
               allPlayersActions={allPlayersActions}
               allPlayersBets={allPlayersBets}
             />
           )}
+        </div>
+
+        {/* Имя игрока */}
+        <div className="mt-2">
+          <div
+            className="text-[10px] text-gray-400 truncate max-w-[120px] px-2 py-1"
+            title={user.name}
+          >
+            {user.name}
+          </div>
         </div>
       </div>
 

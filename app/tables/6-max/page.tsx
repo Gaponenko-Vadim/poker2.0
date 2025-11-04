@@ -5,12 +5,14 @@ import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
 import TournamentSettings from "@/components/TournamentSettings";
 import RangeBuilderPopup from "@/components/RangeBuilderPopup";
+import PlayerSettingsPopup from "@/components/PlayerSettingsPopup";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import {
   rotateSixMaxTable,
   setSixMaxPlayerStrength,
   setSixMaxPlayerPlayStyle,
   setSixMaxPlayerStackSize,
+  setSixMaxAutoAllIn,
   setSixMaxPlayerCards,
   setSixMaxPlayerRange,
   setSixMaxPlayerAction,
@@ -21,6 +23,7 @@ import {
   setSixMaxStartingStack,
   setSixMaxBounty,
   setSixMaxCategory,
+  newSixMaxDeal,
   PlayerStrength,
   PlayerPlayStyle,
   StackSize,
@@ -42,6 +45,8 @@ export default function SixMaxPage() {
 
   // Стейт для управления попапом конструктора диапазонов
   const [isRangeBuilderOpen, setIsRangeBuilderOpen] = useState(false);
+  // Стейт для управления попапом настроек Hero
+  const [isHeroSettingsOpen, setIsHeroSettingsOpen] = useState(false);
 
   // Получаем данные из Redux store
   const users = useAppSelector((state) => state.table.sixMaxUsers);
@@ -50,9 +55,12 @@ export default function SixMaxPage() {
   const ante = useAppSelector((state) => state.table.sixMaxAnte);
   const pot = useAppSelector((state) => state.table.sixMaxPot);
   const stage = useAppSelector((state) => state.table.sixMaxStage);
-  const startingStack = useAppSelector((state) => state.table.sixMaxStartingStack);
+  const startingStack = useAppSelector(
+    (state) => state.table.sixMaxStartingStack
+  );
   const bounty = useAppSelector((state) => state.table.sixMaxBounty);
   const category = useAppSelector((state) => state.table.sixMaxCategory);
+  const autoAllIn = useAppSelector((state) => state.table.sixMaxAutoAllIn);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
@@ -73,6 +81,11 @@ export default function SixMaxPage() {
   // Обработчик вращения стола
   const handleRotateTable = () => {
     dispatch(rotateSixMaxTable());
+  };
+
+  // Обработчик новой раздачи
+  const handleNewDeal = () => {
+    dispatch(newSixMaxDeal());
   };
 
   // Обработчик переключения силы игрока
@@ -100,6 +113,11 @@ export default function SixMaxPage() {
   ) => {
     const newStackSize = getNextStackSize(currentStackSize);
     dispatch(setSixMaxPlayerStackSize({ index, stackSize: newStackSize }));
+  };
+
+  // Обработчик переключения глобального автоматического all-in
+  const handleToggleAutoAllIn = (value: boolean) => {
+    dispatch(setSixMaxAutoAllIn(value));
   };
 
   // Обработчик изменения карт игрока
@@ -173,7 +191,12 @@ export default function SixMaxPage() {
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
-      <Header showBackButton backUrl="/" title="6-Max Турнир" />
+      <Header
+        showBackButton
+        backUrl="/"
+        title="6-Max Турнир"
+        onProfileClick={() => setIsHeroSettingsOpen(true)}
+      />
 
       <main className="container mx-auto px-4 py-8">
         {/* Настройки турнира */}
@@ -194,15 +217,15 @@ export default function SixMaxPage() {
           onBountyChange={handleBountyChange}
         />
 
-        {/* ВРЕМЕННАЯ КНОПКА - Конструктор диапазонов */}
-        <div className="max-w-6xl mx-auto mb-4">
+        {/* Кнопки управления */}
+        <div className="max-w-6xl mx-auto mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* ВРЕМЕННАЯ КНОПКА - Конструктор диапазонов */}
           <button
             onClick={() => setIsRangeBuilderOpen(true)}
             className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
           >
             <span className="text-xl">🛠️</span>
-            <span>Конструктор диапазонов (ВРЕМЕННАЯ КНОПКА)</span>
-            <span className="text-xl">🛠️</span>
+            <span>Конструктор диапазонов</span>
           </button>
         </div>
 
@@ -212,6 +235,15 @@ export default function SixMaxPage() {
           onClose={() => setIsRangeBuilderOpen(false)}
         />
 
+        {/* Попап глобальных настроек игры */}
+        <PlayerSettingsPopup
+          isOpen={isHeroSettingsOpen}
+          onClose={() => setIsHeroSettingsOpen(false)}
+          playerName="Глобальные настройки"
+          autoAllIn={autoAllIn}
+          onToggleAutoAllIn={handleToggleAutoAllIn}
+        />
+
         {/* Покерный стол */}
         <section className="relative">
           <PokerTable
@@ -219,6 +251,8 @@ export default function SixMaxPage() {
             tableType="6-max"
             heroIndex={heroIndex}
             basePot={pot}
+            autoAllIn={autoAllIn}
+            onToggleAutoAllIn={handleToggleAutoAllIn}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}
             onTogglePlayerPlayStyle={handleTogglePlayerPlayStyle}
@@ -229,6 +263,16 @@ export default function SixMaxPage() {
             onBetChange={handleBetChange}
           />
         </section>
+        {/* Кнопка новой раздачи */}
+        <div className="max-w-6xl mx-auto mb-4 mt-20">
+          <button
+            onClick={handleNewDeal}
+            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+          >
+            <span className="text-xl">🃏</span>
+            <span>Новая раздача</span>
+          </button>
+        </div>
 
         {/* Панель отладки - отображение всех игроков */}
         <section className="max-w-6xl mx-auto mt-8">

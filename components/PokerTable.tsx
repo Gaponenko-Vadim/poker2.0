@@ -9,6 +9,8 @@ interface PokerTableProps {
   tableType: "6-max" | "8-max" | "cash";
   heroIndex: number; // Индекс Hero в массиве users
   basePot?: number; // Базовый банк (блайнды + анте), по умолчанию 0
+  autoAllIn?: boolean; // Глобальная настройка: всегда ставить весь стек для всех игроков
+  onToggleAutoAllIn?: (value: boolean) => void; // Функция для включения глобальной настройки autoAllIn
   onRotateTable?: () => void; // Вращение стола (изменение heroIndex)
   onTogglePlayerStrength: (
     index: number,
@@ -33,6 +35,8 @@ export default function PokerTable({
   tableType,
   heroIndex,
   basePot = 0,
+  autoAllIn = false,
+  onToggleAutoAllIn,
   onRotateTable,
   onTogglePlayerStrength,
   onTogglePlayerPlayStyle,
@@ -302,6 +306,8 @@ export default function PokerTable({
                       position={coords}
                       isHero={isHero}
                       onHeroClick={handleHeroClick}
+                      autoAllIn={autoAllIn}
+                      onToggleAutoAllIn={onToggleAutoAllIn}
                       onToggleStrength={() =>
                         onTogglePlayerStrength(index, user.strength)
                       }

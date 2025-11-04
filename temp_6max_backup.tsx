@@ -4,25 +4,24 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
 import TournamentSettings from "@/components/TournamentSettings";
-import PlayerSettingsPopup from "@/components/PlayerSettingsPopup";
+import RangeBuilderPopup from "@/components/RangeBuilderPopup";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import {
-  rotateEightMaxTable,
-  setEightMaxPlayerStrength,
-  setEightMaxPlayerPlayStyle,
-  setEightMaxPlayerStackSize,
-  setEightMaxAutoAllIn,
-  setEightMaxPlayerCards,
-  setEightMaxPlayerRange,
-  setEightMaxPlayerAction,
-  setEightMaxPlayerBet,
-  setEightMaxBuyIn,
-  setEightMaxAnte,
-  setEightMaxStage,
-  setEightMaxStartingStack,
-  setEightMaxBounty,
-  setEightMaxCategory,
-  newEightMaxDeal,
+  rotateSixMaxTable,
+  setSixMaxPlayerStrength,
+  setSixMaxPlayerPlayStyle,
+  setSixMaxPlayerStackSize,
+  setSixMaxPlayerAutoAllIn,
+  setSixMaxPlayerCards,
+  setSixMaxPlayerRange,
+  setSixMaxPlayerAction,
+  setSixMaxPlayerBet,
+  setSixMaxBuyIn,
+  setSixMaxAnte,
+  setSixMaxStage,
+  setSixMaxStartingStack,
+  setSixMaxBounty,
+  setSixMaxCategory,
   PlayerStrength,
   PlayerPlayStyle,
   StackSize,
@@ -36,69 +35,77 @@ import { getNextPlayStyle } from "@/lib/utils/playerPlayStyle";
 import { getNextStackSize } from "@/lib/utils/stackSize";
 
 /**
- * Страница турнира 8-Max
- * Отображает стол на 8 игроков с данными из Redux store
+ * Страница турнира 6-Max
+ * Отображает стол на 6 игроков с данными из Redux store
  */
-export default function EightMaxPage() {
+export default function SixMaxPage() {
   const dispatch = useAppDispatch();
 
-  // Стейт для управления попапом настроек Hero
-  const [isHeroSettingsOpen, setIsHeroSettingsOpen] = useState(false);
+  // Стейт для управления попапом конструктора диапазонов
+  const [isRangeBuilderOpen, setIsRangeBuilderOpen] = useState(false);
 
   // Получаем данные из Redux store
-  const users = useAppSelector((state) => state.table.eightMaxUsers);
-  const heroIndex = useAppSelector((state) => state.table.eightMaxHeroIndex);
-  const buyIn = useAppSelector((state) => state.table.eightMaxBuyIn);
-  const ante = useAppSelector((state) => state.table.eightMaxAnte);
-  const pot = useAppSelector((state) => state.table.eightMaxPot);
-  const stage = useAppSelector((state) => state.table.eightMaxStage);
-  const startingStack = useAppSelector(
-    (state) => state.table.eightMaxStartingStack
-  );
-  const bounty = useAppSelector((state) => state.table.eightMaxBounty);
-  const category = useAppSelector((state) => state.table.eightMaxCategory);
-  const autoAllIn = useAppSelector((state) => state.table.eightMaxAutoAllIn);
+  const users = useAppSelector((state) => state.table.sixMaxUsers);
+  const heroIndex = useAppSelector((state) => state.table.sixMaxHeroIndex);
+  const buyIn = useAppSelector((state) => state.table.sixMaxBuyIn);
+  const ante = useAppSelector((state) => state.table.sixMaxAnte);
+  const pot = useAppSelector((state) => state.table.sixMaxPot);
+  const stage = useAppSelector((state) => state.table.sixMaxStage);
+  const startingStack = useAppSelector((state) => state.table.sixMaxStartingStack);
+  const bounty = useAppSelector((state) => state.table.sixMaxBounty);
+  const category = useAppSelector((state) => state.table.sixMaxCategory);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
 
+  // Вывод всех пользователей в консоль
+  console.log("=== 6-Max Users ===");
+  console.log("All users:", users);
+  users.forEach((user, index) => {
+    console.log(`User ${index}:`, {
+      name: user.name,
+      stack: user.stack,
+      strength: user.strength,
+      position: user.position,
+    });
+  });
+  console.log("==================");
+
   // Обработчик вращения стола
   const handleRotateTable = () => {
-    dispatch(rotateEightMaxTable());
+    dispatch(rotateSixMaxTable());
   };
 
-  // Обработчик новой раздачи
-  const handleNewDeal = () => {
-    dispatch(newEightMaxDeal());
-  };
-
+  // Обработчик переключения силы игрока
   const handleTogglePlayerStrength = (
     index: number,
     currentStrength: PlayerStrength
   ) => {
     const newStrength = getNextStrength(currentStrength);
-    dispatch(setEightMaxPlayerStrength({ index, strength: newStrength }));
+    dispatch(setSixMaxPlayerStrength({ index, strength: newStrength }));
   };
 
+  // Обработчик переключения стиля игры
   const handleTogglePlayerPlayStyle = (
     index: number,
     currentPlayStyle: PlayerPlayStyle
   ) => {
     const newPlayStyle = getNextPlayStyle(currentPlayStyle);
-    dispatch(setEightMaxPlayerPlayStyle({ index, playStyle: newPlayStyle }));
+    dispatch(setSixMaxPlayerPlayStyle({ index, playStyle: newPlayStyle }));
   };
 
+  // Обработчик переключения размера стека игрока
   const handleTogglePlayerStackSize = (
     index: number,
     currentStackSize: StackSize
   ) => {
     const newStackSize = getNextStackSize(currentStackSize);
-    dispatch(setEightMaxPlayerStackSize({ index, stackSize: newStackSize }));
+    dispatch(setSixMaxPlayerStackSize({ index, stackSize: newStackSize }));
   };
 
-  // Обработчик переключения глобального автоматического all-in
-  const handleToggleAutoAllIn = (value: boolean) => {
-    dispatch(setEightMaxAutoAllIn(value));
+  // Обработчик переключения автоматического all-in
+  const handleTogglePlayerAutoAllIn = (index: number, value: boolean) => {
+    dispatch(setSixMaxPlayerAutoAllIn({ index, autoAllIn: value }));
   };
 
   // Обработчик изменения карт игрока
@@ -106,26 +113,26 @@ export default function EightMaxPage() {
     index: number,
     cards: [Card | null, Card | null]
   ) => {
-    dispatch(setEightMaxPlayerCards({ index, cards }));
+    dispatch(setSixMaxPlayerCards({ index, cards }));
     console.log(`Player ${index} cards changed:`, cards);
     console.log("Hero cards in Redux:", users[heroIndex].cards);
   };
 
   // Обработчик изменения диапазона игрока
   const handleRangeChange = (index: number, range: string[]) => {
-    dispatch(setEightMaxPlayerRange({ index, range }));
+    dispatch(setSixMaxPlayerRange({ index, range }));
     console.log(`Player ${index} range changed:`, range);
   };
 
   // Обработчик изменения действия игрока
   const handleActionChange = (index: number, action: PlayerAction | null) => {
-    dispatch(setEightMaxPlayerAction({ index, action }));
+    dispatch(setSixMaxPlayerAction({ index, action }));
     console.log(`Player ${index} action changed:`, action);
   };
 
   // Обработчик изменения ставки игрока
   const handleBetChange = (index: number, bet: number) => {
-    dispatch(setEightMaxPlayerBet({ index, bet }));
+    dispatch(setSixMaxPlayerBet({ index, bet }));
     console.log(`Player ${index} bet changed:`, bet);
   };
 
@@ -133,12 +140,12 @@ export default function EightMaxPage() {
   const handleAverageStackChange = (stack: StackSize) => {
     // Обновляем размер стека для всех игроков
     users.forEach((_, index) => {
-      dispatch(setEightMaxPlayerStackSize({ index, stackSize: stack }));
+      dispatch(setSixMaxPlayerStackSize({ index, stackSize: stack }));
     });
   };
 
   const handleBuyInChange = (newBuyIn: number) => {
-    dispatch(setEightMaxBuyIn(newBuyIn));
+    dispatch(setSixMaxBuyIn(newBuyIn));
     // Автоматически обновляем категорию турнира при изменении buy-in
     const getBuyInCategory = (buyIn: number): TournamentCategory => {
       if (buyIn < 5) return "micro";
@@ -146,38 +153,33 @@ export default function EightMaxPage() {
       if (buyIn < 109) return "mid";
       return "high";
     };
-    dispatch(setEightMaxCategory(getBuyInCategory(newBuyIn)));
+    dispatch(setSixMaxCategory(getBuyInCategory(newBuyIn)));
   };
 
   const handleAnteChange = (newAnte: number) => {
-    dispatch(setEightMaxAnte(newAnte));
+    dispatch(setSixMaxAnte(newAnte));
   };
 
   const handleStageChange = (newStage: TournamentStage) => {
-    dispatch(setEightMaxStage(newStage));
+    dispatch(setSixMaxStage(newStage));
   };
 
   const handleStartingStackChange = (newStack: number) => {
-    dispatch(setEightMaxStartingStack(newStack));
+    dispatch(setSixMaxStartingStack(newStack));
   };
 
   const handleBountyChange = (newBounty: boolean) => {
-    dispatch(setEightMaxBounty(newBounty));
+    dispatch(setSixMaxBounty(newBounty));
   };
 
   const handleCategoryChange = (newCategory: TournamentCategory) => {
-    dispatch(setEightMaxCategory(newCategory));
+    dispatch(setSixMaxCategory(newCategory));
   };
 
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
-      <Header
-        showBackButton
-        backUrl="/"
-        title="8-Max Турнир"
-        onProfileClick={() => setIsHeroSettingsOpen(true)}
-      />
+      <Header showBackButton backUrl="/" title="6-Max Турнир" />
 
       <main className="container mx-auto px-4 py-8">
         {/* Настройки турнира */}
@@ -198,45 +200,42 @@ export default function EightMaxPage() {
           onBountyChange={handleBountyChange}
         />
 
-        {/* Попап глобальных настроек игры */}
-        <PlayerSettingsPopup
-          isOpen={isHeroSettingsOpen}
-          onClose={() => setIsHeroSettingsOpen(false)}
-          playerName="Глобальные настройки"
-          autoAllIn={autoAllIn}
-          onToggleAutoAllIn={handleToggleAutoAllIn}
+        {/* ВРЕМЕННАЯ КНОПКА - Конструктор диапазонов */}
+        <div className="max-w-6xl mx-auto mb-4">
+          <button
+            onClick={() => setIsRangeBuilderOpen(true)}
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <span className="text-xl">🛠️</span>
+            <span>Конструктор диапазонов (ВРЕМЕННАЯ КНОПКА)</span>
+            <span className="text-xl">🛠️</span>
+          </button>
+        </div>
+
+        {/* Попап конструктора диапазонов */}
+        <RangeBuilderPopup
+          isOpen={isRangeBuilderOpen}
+          onClose={() => setIsRangeBuilderOpen(false)}
         />
 
         {/* Покерный стол */}
         <section className="relative">
           <PokerTable
             users={users}
-            tableType="8-max"
+            tableType="6-max"
             heroIndex={heroIndex}
             basePot={pot}
-            autoAllIn={autoAllIn}
-            onToggleAutoAllIn={handleToggleAutoAllIn}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}
             onTogglePlayerPlayStyle={handleTogglePlayerPlayStyle}
             onTogglePlayerStackSize={handleTogglePlayerStackSize}
+            onTogglePlayerAutoAllIn={handleTogglePlayerAutoAllIn}
             onCardsChange={handleCardsChange}
             onRangeChange={handleRangeChange}
             onActionChange={handleActionChange}
             onBetChange={handleBetChange}
           />
         </section>
-
-        {/* Кнопка новой раздачи */}
-        <div className="max-w-6xl mx-auto mb-4 mt-20">
-          <button
-            onClick={handleNewDeal}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
-          >
-            <span className="text-xl">🃏</span>
-            <span>Новая раздача</span>
-          </button>
-        </div>
 
         {/* Панель отладки - отображение всех игроков */}
         <section className="max-w-6xl mx-auto mt-8">
@@ -255,7 +254,7 @@ export default function EightMaxPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-bold text-green-400">
+                    <h4 className="font-bold text-emerald-400">
                       {user.name} ({user.position})
                     </h4>
                     {index === heroIndex && (

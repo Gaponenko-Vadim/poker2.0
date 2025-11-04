@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
 import TournamentSettings from "@/components/TournamentSettings";
+import PlayerSettingsPopup from "@/components/PlayerSettingsPopup";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import {
   setCashUsersCount,
@@ -13,6 +15,7 @@ import {
   setCashPlayerStrength,
   setCashPlayerPlayStyle,
   setCashPlayerStackSize,
+  setCashAutoAllIn,
   setCashPlayerCards,
   setCashPlayerRange,
   setCashPlayerAction,
@@ -21,6 +24,7 @@ import {
   setCashAnte,
   setCashStage,
   setCashStartingStack,
+  newCashDeal,
   Card,
   PlayerAction,
   TournamentStage,
@@ -36,6 +40,9 @@ import { getNextStackSize } from "@/lib/utils/stackSize";
 export default function CashPage() {
   const dispatch = useAppDispatch();
 
+  // Стейт для управления попапом настроек Hero
+  const [isHeroSettingsOpen, setIsHeroSettingsOpen] = useState(false);
+
   // Получаем данные из Redux store
   const users = useAppSelector((state) => state.table.cashUsers);
   const usersCount = useAppSelector((state) => state.table.cashUsersCount);
@@ -44,7 +51,10 @@ export default function CashPage() {
   const ante = useAppSelector((state) => state.table.cashAnte);
   const pot = useAppSelector((state) => state.table.cashPot);
   const stage = useAppSelector((state) => state.table.cashStage);
-  const startingStack = useAppSelector((state) => state.table.cashStartingStack);
+  const startingStack = useAppSelector(
+    (state) => state.table.cashStartingStack
+  );
+  const autoAllIn = useAppSelector((state) => state.table.cashAutoAllIn);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
@@ -57,6 +67,11 @@ export default function CashPage() {
   // Обработчик вращения стола
   const handleRotateTable = () => {
     dispatch(rotateCashTable());
+  };
+
+  // Обработчик новой раздачи
+  const handleNewDeal = () => {
+    dispatch(newCashDeal());
   };
 
   const handleTogglePlayerStrength = (
@@ -81,6 +96,11 @@ export default function CashPage() {
   ) => {
     const newStackSize = getNextStackSize(currentStackSize);
     dispatch(setCashPlayerStackSize({ index, stackSize: newStackSize }));
+  };
+
+  // Обработчик переключения глобального автоматического all-in
+  const handleToggleAutoAllIn = (value: boolean) => {
+    dispatch(setCashAutoAllIn(value));
   };
 
   // Обработчик изменения карт игрока
@@ -138,7 +158,12 @@ export default function CashPage() {
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
-      <Header showBackButton backUrl="/" title="Cash Игра" />
+      <Header
+        showBackButton
+        backUrl="/"
+        title="Cash Игра"
+        onProfileClick={() => setIsHeroSettingsOpen(true)}
+      />
 
       <main className="container mx-auto px-4 py-8">
         {/* Информационный блок с селектором */}
@@ -237,6 +262,15 @@ export default function CashPage() {
           playersCount={users.length}
         />
 
+        {/* Попап глобальных настроек игры */}
+        <PlayerSettingsPopup
+          isOpen={isHeroSettingsOpen}
+          onClose={() => setIsHeroSettingsOpen(false)}
+          playerName="Глобальные настройки"
+          autoAllIn={autoAllIn}
+          onToggleAutoAllIn={handleToggleAutoAllIn}
+        />
+
         {/* Покерный стол */}
         <section className="relative">
           <PokerTable
@@ -244,6 +278,8 @@ export default function CashPage() {
             tableType="cash"
             heroIndex={heroIndex}
             basePot={pot}
+            autoAllIn={autoAllIn}
+            onToggleAutoAllIn={handleToggleAutoAllIn}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}
             onTogglePlayerPlayStyle={handleTogglePlayerPlayStyle}
@@ -254,6 +290,17 @@ export default function CashPage() {
             onBetChange={handleBetChange}
           />
         </section>
+
+        {/* Кнопка новой раздачи */}
+        <div className="max-w-6xl mx-auto mb-4 mt-20">
+          <button
+            onClick={handleNewDeal}
+            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+          >
+            <span className="text-xl">🃏</span>
+            <span>Новая раздача</span>
+          </button>
+        </div>
 
         {/* Панель отладки - отображение всех игроков */}
         <section className="max-w-6xl mx-auto mt-8">

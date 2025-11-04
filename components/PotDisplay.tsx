@@ -20,8 +20,8 @@ export default function PotDisplay({ pot }: PotDisplayProps) {
         const parentRect = parent.getBoundingClientRect();
         const potRect = potRef.current.getBoundingClientRect();
         setPosition({
-          x: parentRect.width - potRect.width - 16, // 16px от правого края
-          y: parentRect.height - potRect.height - 16, // 16px от нижнего края
+          x: parentRect.width - potRect.width - 100, // 16px от правого края
+          y: parentRect.height - potRect.height - 100, // 16px от нижнего края
         });
       }
     }

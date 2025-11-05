@@ -25,7 +25,7 @@ export default function PotDisplay({ pot }: PotDisplayProps) {
         });
       }
     }
-  }, []);
+  }, [position.x, position.y]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);

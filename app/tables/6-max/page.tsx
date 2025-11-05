@@ -4,7 +4,6 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
 import TournamentSettings from "@/components/TournamentSettings";
-import RangeBuilderPopup from "@/components/RangeBuilderPopup";
 import PlayerSettingsPopup from "@/components/PlayerSettingsPopup";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
 import {
@@ -43,8 +42,6 @@ import { getNextStackSize } from "@/lib/utils/stackSize";
 export default function SixMaxPage() {
   const dispatch = useAppDispatch();
 
-  // Стейт для управления попапом конструктора диапазонов
-  const [isRangeBuilderOpen, setIsRangeBuilderOpen] = useState(false);
   // Стейт для управления попапом настроек Hero
   const [isHeroSettingsOpen, setIsHeroSettingsOpen] = useState(false);
 
@@ -215,24 +212,6 @@ export default function SixMaxPage() {
           playersCount={users.length}
           bounty={bounty}
           onBountyChange={handleBountyChange}
-        />
-
-        {/* Кнопки управления */}
-        <div className="max-w-6xl mx-auto mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* ВРЕМЕННАЯ КНОПКА - Конструктор диапазонов */}
-          <button
-            onClick={() => setIsRangeBuilderOpen(true)}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
-          >
-            <span className="text-xl">🛠️</span>
-            <span>Конструктор диапазонов</span>
-          </button>
-        </div>
-
-        {/* Попап конструктора диапазонов */}
-        <RangeBuilderPopup
-          isOpen={isRangeBuilderOpen}
-          onClose={() => setIsRangeBuilderOpen(false)}
         />
 
         {/* Попап глобальных настроек игры */}

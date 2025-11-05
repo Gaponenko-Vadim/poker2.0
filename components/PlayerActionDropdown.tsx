@@ -383,7 +383,7 @@ export default function PlayerActionDropdown({
     }
 
     return available;
-  }, [allPlayersActions, allPlayersBets, currentAction, playerStack]);
+  }, [allPlayersActions, allPlayersBets, currentAction, playerStack, currentBet]);
 
   // Функция для определения правильного действия из цепочки ставок
   const determineAppropriateAction = (): PlayerAction | null => {
@@ -637,7 +637,7 @@ export default function PlayerActionDropdown({
               className="mt-0.5 w-4 h-4 text-pink-600 bg-gray-700 border-gray-600 rounded focus:ring-pink-500 focus:ring-2 cursor-pointer"
             />
             <label htmlFor="enable-auto-allin" className="text-xs text-gray-200 cursor-pointer select-none">
-              Всегда выбирать "поставить весь стек" для всех игроков (глобальная настройка)
+              Всегда выбирать &ldquo;поставить весь стек&rdquo; для всех игроков (глобальная настройка)
             </label>
           </div>
         )}

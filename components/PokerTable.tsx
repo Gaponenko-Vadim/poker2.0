@@ -28,6 +28,12 @@ interface PokerTableProps {
   onRangeChange: (index: number, range: string[]) => void; // Изменение диапазона игрока
   onActionChange: (index: number, action: PlayerAction | null) => void; // Изменение действия игрока
   onBetChange: (index: number, bet: number) => void; // Изменение ставки игрока
+  openRaiseSize?: number; // Размер open raise в BB
+  threeBetMultiplier?: number; // Множитель для 3-bet
+  fourBetMultiplier?: number; // Множитель для 4-bet
+  fiveBetMultiplier?: number; // Множитель для 5-bet
+  enabledPlayStyles?: { tight: boolean; balanced: boolean; aggressor: boolean }; // Включенные стили игры
+  enabledStrengths?: { fish: boolean; amateur: boolean; regular: boolean }; // Включенные силы игроков
 }
 
 export default function PokerTable({
@@ -45,6 +51,12 @@ export default function PokerTable({
   onRangeChange,
   onActionChange,
   onBetChange,
+  openRaiseSize,
+  threeBetMultiplier,
+  fourBetMultiplier,
+  fiveBetMultiplier,
+  enabledPlayStyles = { tight: false, balanced: true, aggressor: false },
+  enabledStrengths = { fish: false, amateur: true, regular: false },
 }: PokerTableProps) {
   const tableColors = {
     "6-max": {
@@ -331,6 +343,12 @@ export default function PokerTable({
                       onBetChange={(bet) => onBetChange(index, bet)}
                       allPlayersActions={allPlayersActions}
                       allPlayersBets={allPlayersBets}
+                      openRaiseSize={openRaiseSize}
+                      threeBetMultiplier={threeBetMultiplier}
+                      fourBetMultiplier={fourBetMultiplier}
+                      fiveBetMultiplier={fiveBetMultiplier}
+                      enabledPlayStyles={enabledPlayStyles}
+                      enabledStrengths={enabledStrengths}
                     />
                   );
                 })}

@@ -11,7 +11,7 @@ import {
   setSixMaxPlayerStrength,
   setSixMaxPlayerPlayStyle,
   setSixMaxPlayerStackSize,
-  setSixMaxPlayerAutoAllIn,
+  setSixMaxAutoAllIn,
   setSixMaxPlayerCards,
   setSixMaxPlayerRange,
   setSixMaxPlayerAction,
@@ -53,7 +53,7 @@ export default function SixMaxPage() {
   const stage = useAppSelector((state) => state.table.sixMaxStage);
   const startingStack = useAppSelector((state) => state.table.sixMaxStartingStack);
   const bounty = useAppSelector((state) => state.table.sixMaxBounty);
-  const category = useAppSelector((state) => state.table.sixMaxCategory);
+  const autoAllIn = useAppSelector((state) => state.table.sixMaxAutoAllIn);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
@@ -103,9 +103,9 @@ export default function SixMaxPage() {
     dispatch(setSixMaxPlayerStackSize({ index, stackSize: newStackSize }));
   };
 
-  // Обработчик переключения автоматического all-in
-  const handleTogglePlayerAutoAllIn = (index: number, value: boolean) => {
-    dispatch(setSixMaxPlayerAutoAllIn({ index, autoAllIn: value }));
+  // Обработчик переключения автоматического all-in (глобальная настройка)
+  const handleToggleAutoAllIn = (value: boolean) => {
+    dispatch(setSixMaxAutoAllIn(value));
   };
 
   // Обработчик изменения карт игрока
@@ -172,10 +172,6 @@ export default function SixMaxPage() {
     dispatch(setSixMaxBounty(newBounty));
   };
 
-  const handleCategoryChange = (newCategory: TournamentCategory) => {
-    dispatch(setSixMaxCategory(newCategory));
-  };
-
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
@@ -225,11 +221,12 @@ export default function SixMaxPage() {
             tableType="6-max"
             heroIndex={heroIndex}
             basePot={pot}
+            autoAllIn={autoAllIn}
+            onToggleAutoAllIn={handleToggleAutoAllIn}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}
             onTogglePlayerPlayStyle={handleTogglePlayerPlayStyle}
             onTogglePlayerStackSize={handleTogglePlayerStackSize}
-            onTogglePlayerAutoAllIn={handleTogglePlayerAutoAllIn}
             onCardsChange={handleCardsChange}
             onRangeChange={handleRangeChange}
             onActionChange={handleActionChange}

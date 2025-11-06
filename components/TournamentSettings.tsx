@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { StackSize, TournamentStage, TournamentCategory, PlayerStrength } from "@/lib/redux/slices/tableSlice";
 import { shouldUseTournamentRanges } from "@/lib/utils/tournamentRangeLoader";
 
@@ -121,12 +122,18 @@ export default function TournamentSettings({
   );
 
   // Проверяем, доступны ли диапазоны для текущих настроек
-  const rangesAvailable = shouldUseTournamentRanges(
-    startingStack,
-    stage,
-    getBuyInCategory(buyIn),
-    bounty
-  );
+  // Используем useState + useEffect для избежания ошибок гидратации
+  const [rangesAvailable, setRangesAvailable] = useState(false);
+
+  useEffect(() => {
+    const available = shouldUseTournamentRanges(
+      startingStack,
+      stage,
+      getBuyInCategory(buyIn),
+      bounty
+    );
+    setRangesAvailable(available);
+  }, [startingStack, stage, buyIn, bounty]);
 
   return (
     <section className="max-w-4xl mx-auto mb-8">

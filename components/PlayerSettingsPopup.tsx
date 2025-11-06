@@ -19,12 +19,47 @@ interface RangeConfig {
   range: string[];
 }
 
+// Интерфейс для экспортируемой структуры JSON
+interface ExportedJSON {
+  ranges: {
+    user: {
+      positions: {
+        [position: string]: {
+          [strength: string]: {
+            [playStyle: string]: {
+              ranges_by_stack: {
+                [stackSize: string]: {
+                  [action: string]: string;
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}
+
 interface PlayerSettingsPopupProps {
   isOpen: boolean;
   onClose: () => void;
   playerName: string;
   autoAllIn: boolean;
   onToggleAutoAllIn: (value: boolean) => void;
+  // Размер опена и множители для рейзов
+  openRaiseSize?: number;
+  onOpenRaiseSizeChange?: (value: number) => void;
+  threeBetMultiplier?: number;
+  fourBetMultiplier?: number;
+  fiveBetMultiplier?: number;
+  onThreeBetMultiplierChange?: (value: number) => void;
+  onFourBetMultiplierChange?: (value: number) => void;
+  onFiveBetMultiplierChange?: (value: number) => void;
+  // Включенные стили игры и силы игроков
+  enabledPlayStyles?: { tight: boolean; balanced: boolean; aggressor: boolean };
+  enabledStrengths?: { fish: boolean; amateur: boolean; regular: boolean };
+  onEnabledPlayStylesChange?: (styles: { tight: boolean; balanced: boolean; aggressor: boolean }) => void;
+  onEnabledStrengthsChange?: (strengths: { fish: boolean; amateur: boolean; regular: boolean }) => void;
 }
 
 export default function PlayerSettingsPopup({
@@ -33,8 +68,20 @@ export default function PlayerSettingsPopup({
   playerName,
   autoAllIn,
   onToggleAutoAllIn,
+  openRaiseSize = 2.5,
+  onOpenRaiseSizeChange,
+  threeBetMultiplier = 3,
+  fourBetMultiplier = 2.7,
+  fiveBetMultiplier = 2.2,
+  onThreeBetMultiplierChange,
+  onFourBetMultiplierChange,
+  onFiveBetMultiplierChange,
+  enabledPlayStyles = { tight: false, balanced: true, aggressor: false },
+  enabledStrengths = { fish: false, amateur: true, regular: false },
+  onEnabledPlayStylesChange,
+  onEnabledStrengthsChange,
 }: PlayerSettingsPopupProps) {
-  const [mounted, setMounted] = useState(false);
+  const [showWarning, setShowWarning] = useState<string | null>(null);
 
   // Вкладки: "settings" или "rangeBuilder"
   const [activeTab, setActiveTab] = useState<"settings" | "rangeBuilder">("settings");
@@ -49,9 +96,32 @@ export default function PlayerSettingsPopup({
   const [savedRanges, setSavedRanges] = useState<RangeConfig[]>([]);
   const [copyStatus, setCopyStatus] = useState<string>("");
 
+  // Загружаем сохраненные диапазоны из localStorage при монтировании
   useEffect(() => {
-    setMounted(true);
+    const loadSavedRanges = () => {
+      try {
+        const saved = localStorage.getItem('rangeBuilderRanges');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setSavedRanges(parsed);
+        }
+      } catch (error) {
+        console.error('Failed to load saved ranges:', error);
+      }
+    };
+    loadSavedRanges();
   }, []);
+
+  // Автоматически сохраняем диапазоны в localStorage при их изменении
+  useEffect(() => {
+    if (typeof window !== 'undefined' && savedRanges.length >= 0) {
+      try {
+        localStorage.setItem('rangeBuilderRanges', JSON.stringify(savedRanges));
+      } catch (error) {
+        console.error('Failed to save ranges to localStorage:', error);
+      }
+    }
+  }, [savedRanges]);
 
   // Функции для конструктора диапазонов
   const ranks = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
@@ -148,7 +218,7 @@ export default function PlayerSettingsPopup({
   };
 
   const exportToJSON = () => {
-    const exported: any = {
+    const exported: ExportedJSON = {
       ranges: {
         user: {
           positions: {},
@@ -218,9 +288,84 @@ export default function PlayerSettingsPopup({
     };
   }, [isOpen, onClose]);
 
-  if (!mounted || !isOpen) {
+  // Обработчики переключения стилей игры
+  const handlePlayStyleToggle = (style: 'tight' | 'balanced' | 'aggressor') => {
+    const newValue = !enabledPlayStyles[style];
+
+    // Показываем предупреждение при включении tight или aggressor
+    if ((style === 'tight' || style === 'aggressor') && newValue) {
+      const label = style === 'tight' ? 'тайтовых' : 'агрессивных';
+      setShowWarning(`На данный момент диапазоны для ${label} игроков пустые, они в разработке, но вы самостоятельно можете настроить их в конструкторе диапазонов`);
+    }
+
+    // Включаем стиль даже при предупреждении
+    if (onEnabledPlayStylesChange) {
+      onEnabledPlayStylesChange({
+        ...enabledPlayStyles,
+        [style]: newValue,
+      });
+    }
+  };
+
+  // Обработчики переключения силы игроков
+  const handleStrengthToggle = (strength: 'fish' | 'regular') => {
+    const newValue = !enabledStrengths[strength];
+
+    // Показываем предупреждение при включении fish или regular
+    if ((strength === 'fish' || strength === 'regular') && newValue) {
+      const label = strength === 'fish' ? 'фиш' : 'регуляр';
+      setShowWarning(`На данный момент диапазоны для ${label} игроков пустые, они в разработке, но вы самостоятельно можете настроить их в конструкторе диапазонов`);
+    }
+
+    // Включаем силу даже при предупреждении
+    if (onEnabledStrengthsChange) {
+      onEnabledStrengthsChange({
+        ...enabledStrengths,
+        [strength]: newValue,
+      });
+    }
+  };
+
+  if (!isOpen) {
     return null;
   }
+
+  // Модальное окно с предупреждением
+  const warningModal = showWarning && (
+    <div
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[10002]"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="bg-gradient-to-br from-yellow-900 to-yellow-800 border-4 border-yellow-500 rounded-2xl shadow-2xl p-8 max-w-md mx-4">
+        <div className="flex flex-col items-center gap-4">
+          {/* Иконка предупреждения */}
+          <div className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center">
+            <svg className="w-12 h-12 text-yellow-900" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+
+          {/* Заголовок */}
+          <h3 className="text-2xl font-bold text-yellow-100 text-center">
+            Внимание!
+          </h3>
+
+          {/* Текст предупреждения */}
+          <p className="text-base text-yellow-50 text-center leading-relaxed">
+            {showWarning}
+          </p>
+
+          {/* Кнопка ОК */}
+          <button
+            onClick={() => setShowWarning(null)}
+            className="mt-4 w-full bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-bold text-lg px-8 py-4 rounded-xl shadow-lg transition-all duration-200 hover:scale-105 active:scale-95"
+          >
+            ОК, понятно
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   const modalContent = (
     <div
@@ -229,7 +374,7 @@ export default function PlayerSettingsPopup({
     >
       <div
         className={`bg-gradient-to-br from-slate-800 to-slate-900 border-2 border-slate-700 rounded-xl shadow-2xl p-4 relative ${
-          activeTab === "rangeBuilder" ? "max-w-7xl w-full max-h-[95vh] overflow-y-auto" : "min-w-[350px] max-w-[450px]"
+          activeTab === "rangeBuilder" ? "max-w-7xl w-full max-h-[95vh] overflow-y-auto" : "min-w-[800px] max-w-[900px]"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -285,9 +430,11 @@ export default function PlayerSettingsPopup({
 
         {/* Контент вкладок */}
         {activeTab === "settings" && (
-          <div>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Левая колонка */}
+            <div className="space-y-4">
             {/* Настройка автоматического All-In */}
-            <div className="bg-gray-700 rounded-lg p-4 mb-4">
+            <div className="bg-gray-700 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h4 className="text-sm font-semibold text-white mb-1">
@@ -312,7 +459,243 @@ export default function PlayerSettingsPopup({
               </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
+            {/* Настройка размера опена */}
+            {onOpenRaiseSizeChange && (
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-white mb-3">
+                  Размер открытия (Open Raise)
+                </h4>
+                <p className="text-xs text-gray-400 mb-3">
+                  Настройте размер опен-рейза в BB
+                </p>
+
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm text-gray-300 font-medium">Open</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onOpenRaiseSizeChange(Math.max(2, openRaiseSize - 0.1))}
+                      className="w-8 h-8 flex items-center justify-center bg-gray-600 hover:bg-gray-500 rounded transition-colors"
+                    >
+                      <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M15 19l-7-7 7-7"></path>
+                      </svg>
+                    </button>
+                    <span className="text-sm font-bold text-white min-w-[48px] text-center bg-gray-800 rounded px-2 py-1">
+                      {openRaiseSize.toFixed(1)} BB
+                    </span>
+                    <button
+                      onClick={() => onOpenRaiseSizeChange(Math.min(4, openRaiseSize + 0.1))}
+                      className="w-8 h-8 flex items-center justify-center bg-gray-600 hover:bg-gray-500 rounded transition-colors"
+                    >
+                      <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Настройки множителей для рейзов */}
+            {onThreeBetMultiplierChange && onFourBetMultiplierChange && onFiveBetMultiplierChange && (
+              <div className="bg-gray-700 rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-white mb-3">
+                  Множители для рейзов
+                </h4>
+                <p className="text-xs text-gray-400 mb-3">
+                  Настройте на сколько умножается последняя ставка при рейзе
+                </p>
+
+                <div className="space-y-2">
+                  {/* 3-bet множитель */}
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm text-gray-300 font-medium">3-bet</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onThreeBetMultiplierChange(Math.max(2, threeBetMultiplier - 0.1))}
+                        className="w-8 h-8 flex items-center justify-center bg-gray-600 hover:bg-gray-500 rounded transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                      </button>
+                      <span className="text-sm font-bold text-white min-w-[48px] text-center bg-gray-800 rounded px-2 py-1">
+                        {threeBetMultiplier.toFixed(1)}x
+                      </span>
+                      <button
+                        onClick={() => onThreeBetMultiplierChange(Math.min(5, threeBetMultiplier + 0.1))}
+                        className="w-8 h-8 flex items-center justify-center bg-gray-600 hover:bg-gray-500 rounded transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M9 5l7 7-7 7"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 4-bet множитель */}
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm text-gray-300 font-medium">4-bet</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onFourBetMultiplierChange(Math.max(2, fourBetMultiplier - 0.1))}
+                        className="w-8 h-8 flex items-center justify-center bg-gray-600 hover:bg-gray-500 rounded transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                      </button>
+                      <span className="text-sm font-bold text-white min-w-[48px] text-center bg-gray-800 rounded px-2 py-1">
+                        {fourBetMultiplier.toFixed(1)}x
+                      </span>
+                      <button
+                        onClick={() => onFourBetMultiplierChange(Math.min(4, fourBetMultiplier + 0.1))}
+                        className="w-8 h-8 flex items-center justify-center bg-gray-600 hover:bg-gray-500 rounded transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M9 5l7 7-7 7"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 5-bet множитель */}
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm text-gray-300 font-medium">5-bet</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onFiveBetMultiplierChange(Math.max(1.5, fiveBetMultiplier - 0.1))}
+                        className="w-8 h-8 flex items-center justify-center bg-gray-600 hover:bg-gray-500 rounded transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                      </button>
+                      <span className="text-sm font-bold text-white min-w-[48px] text-center bg-gray-800 rounded px-2 py-1">
+                        {fiveBetMultiplier.toFixed(1)}x
+                      </span>
+                      <button
+                        onClick={() => onFiveBetMultiplierChange(Math.min(3.5, fiveBetMultiplier + 0.1))}
+                        className="w-8 h-8 flex items-center justify-center bg-gray-600 hover:bg-gray-500 rounded transition-colors"
+                      >
+                        <svg className="w-4 h-4 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M9 5l7 7-7 7"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Включенные стили игры */}
+            <div className="bg-slate-900/50 rounded-lg p-4">
+              <h3 className="text-base font-semibold text-white mb-3">Стили игры</h3>
+              <p className="text-xs text-gray-400 mb-3">Balanced (Баланс) - базовый стиль, всегда включен</p>
+              <div className="space-y-2">
+                <label className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={true}
+                    disabled={true}
+                    className="w-4 h-4 rounded border-gray-600 text-blue-600 opacity-50 cursor-not-allowed"
+                  />
+                  <span className="text-sm text-white font-semibold">Balanced (Баланс) - базовый</span>
+                </label>
+                <div className="border-t border-gray-600 my-2 pt-2">
+                  <p className="text-xs text-gray-500 mb-2">Дополнительные стили:</p>
+                </div>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={enabledPlayStyles.tight}
+                    onChange={() => handlePlayStyleToggle('tight')}
+                    className="w-4 h-4 rounded border-gray-600 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-300">Tight (Тайт)</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={enabledPlayStyles.aggressor}
+                    onChange={() => handlePlayStyleToggle('aggressor')}
+                    className="w-4 h-4 rounded border-gray-600 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-300">Aggressor (Агрессор)</span>
+                </label>
+              </div>
+            </div>
+            </div>
+
+            {/* Правая колонка */}
+            <div className="space-y-4">
+            {/* Включенные силы игроков */}
+            <div className="bg-slate-900/50 rounded-lg p-4">
+              <h3 className="text-base font-semibold text-white mb-3">Силы игроков</h3>
+              <p className="text-xs text-gray-400 mb-3">Amateur (Любитель) - базовая сила, всегда включена</p>
+              <div className="space-y-2">
+                <label className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={true}
+                    disabled={true}
+                    className="w-4 h-4 rounded border-gray-600 text-blue-600 opacity-50 cursor-not-allowed"
+                  />
+                  <span className="text-sm text-white font-semibold">Amateur (Любитель) - базовая</span>
+                </label>
+                <div className="border-t border-gray-600 my-2 pt-2">
+                  <p className="text-xs text-gray-500 mb-2">Дополнительные силы:</p>
+                </div>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={enabledStrengths.fish}
+                    onChange={() => handleStrengthToggle('fish')}
+                    className="w-4 h-4 rounded border-gray-600 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-300">Fish (Фиш)</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={enabledStrengths.regular}
+                    onChange={() => handleStrengthToggle('regular')}
+                    className="w-4 h-4 rounded border-gray-600 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-300">Regular (Регуляр)</span>
+                </label>
+              </div>
+            </div>
+
+
+            {/* Кнопка сброса настроек */}
+            <div className="bg-red-900/20 border border-red-600/30 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h4 className="text-sm font-semibold text-white mb-1">
+                    Сброс настроек
+                  </h4>
+                  <p className="text-xs text-gray-400">
+                    Сбросить все настройки к значениям по умолчанию
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    if (confirm('Вы уверены? Все настройки будут сброшены, и страница перезагрузится.')) {
+                      localStorage.removeItem('pokerTableSettings');
+                      window.location.reload();
+                    }
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-sm"
+                >
+                  Сбросить
+                </button>
+              </div>
+            </div>
+            </div>
+
+            {/* Кнопка закрытия на всю ширину */}
+            <div className="col-span-2 flex gap-3 mt-6">
               <button
                 onClick={onClose}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
@@ -604,5 +987,10 @@ export default function PlayerSettingsPopup({
     </div>
   );
 
-  return createPortal(modalContent, document.body);
+  return (
+    <>
+      {createPortal(modalContent, document.body)}
+      {warningModal && createPortal(warningModal, document.body)}
+    </>
+  );
 }

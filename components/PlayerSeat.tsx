@@ -23,6 +23,12 @@ interface PlayerSeatProps {
   onBetChange?: (bet: number) => void; // Функция для изменения ставки (опциональная)
   allPlayersActions: (PlayerAction | null)[]; // Действия всех игроков за столом
   allPlayersBets: number[]; // Ставки всех игроков за столом
+  openRaiseSize?: number; // Размер open raise в BB
+  threeBetMultiplier?: number; // Множитель для 3-bet
+  fourBetMultiplier?: number; // Множитель для 4-bet
+  fiveBetMultiplier?: number; // Множитель для 5-bet
+  enabledPlayStyles?: { tight: boolean; balanced: boolean; aggressor: boolean }; // Включенные стили игры
+  enabledStrengths?: { fish: boolean; amateur: boolean; regular: boolean }; // Включенные силы игроков
 }
 
 export default function PlayerSeat({
@@ -41,8 +47,20 @@ export default function PlayerSeat({
   onBetChange,
   allPlayersActions,
   allPlayersBets,
+  openRaiseSize,
+  threeBetMultiplier,
+  fourBetMultiplier,
+  fiveBetMultiplier,
+  enabledPlayStyles = { tight: false, balanced: true, aggressor: false },
+  enabledStrengths = { fish: false, amateur: true, regular: false },
 }: PlayerSeatProps) {
   const [isRangeSelectorOpen, setIsRangeSelectorOpen] = useState(false);
+
+  // Проверяем, нужно ли показывать меню выбора стиля (показываем только если включены дополнительные стили)
+  const shouldShowPlayStyleSelector = enabledPlayStyles.tight || enabledPlayStyles.aggressor;
+
+  // Проверяем, нужно ли показывать меню выбора силы (показываем только если включены дополнительные силы)
+  const shouldShowStrengthSelector = enabledStrengths.fish || enabledStrengths.regular;
 
   const handlePlayerClick = () => {
     if (isHero && onHeroClick) {
@@ -151,17 +169,21 @@ export default function PlayerSeat({
             </div>
           )}
 
-          {/* Индикатор силы игрока */}
-          <PlayerStrength
-            strength={user.strength}
-            onToggle={onToggleStrength}
-          />
+          {/* Индикатор силы игрока (показываем только если включены дополнительные силы) */}
+          {shouldShowStrengthSelector && (
+            <PlayerStrength
+              strength={user.strength}
+              onToggle={onToggleStrength}
+            />
+          )}
 
-          {/* Индикатор стиля игры */}
-          <PlayerPlayStyle
-            playStyle={user.playStyle}
-            onToggle={onTogglePlayStyle}
-          />
+          {/* Индикатор стиля игры (показываем только если включены дополнительные стили) */}
+          {shouldShowPlayStyleSelector && (
+            <PlayerPlayStyle
+              playStyle={user.playStyle}
+              onToggle={onTogglePlayStyle}
+            />
+          )}
         </div>
 
         {/* Контейнер для действия и размера стека */}
@@ -184,6 +206,10 @@ export default function PlayerSeat({
               onToggleAutoAllIn={onToggleAutoAllIn}
               allPlayersActions={allPlayersActions}
               allPlayersBets={allPlayersBets}
+              openRaiseSize={openRaiseSize}
+              threeBetMultiplier={threeBetMultiplier}
+              fourBetMultiplier={fourBetMultiplier}
+              fiveBetMultiplier={fiveBetMultiplier}
             />
           )}
         </div>

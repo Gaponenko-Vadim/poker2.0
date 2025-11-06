@@ -16,6 +16,10 @@ import {
   setCashPlayerPlayStyle,
   setCashPlayerStackSize,
   setCashAutoAllIn,
+  setCashOpenRaiseSize,
+  setCashThreeBetMultiplier,
+  setCashFourBetMultiplier,
+  setCashFiveBetMultiplier,
   setCashPlayerCards,
   setCashPlayerRange,
   setCashPlayerAction,
@@ -24,6 +28,8 @@ import {
   setCashAnte,
   setCashStage,
   setCashStartingStack,
+  setCashEnabledPlayStyles,
+  setCashEnabledStrengths,
   newCashDeal,
   Card,
   PlayerAction,
@@ -55,6 +61,12 @@ export default function CashPage() {
     (state) => state.table.cashStartingStack
   );
   const autoAllIn = useAppSelector((state) => state.table.cashAutoAllIn);
+  const openRaiseSize = useAppSelector((state) => state.table.cashOpenRaiseSize);
+  const threeBetMultiplier = useAppSelector((state) => state.table.cashThreeBetMultiplier);
+  const fourBetMultiplier = useAppSelector((state) => state.table.cashFourBetMultiplier);
+  const fiveBetMultiplier = useAppSelector((state) => state.table.cashFiveBetMultiplier);
+  const enabledPlayStyles = useAppSelector((state) => state.table.cashEnabledPlayStyles);
+  const enabledStrengths = useAppSelector((state) => state.table.cashEnabledStrengths);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
@@ -101,6 +113,31 @@ export default function CashPage() {
   // Обработчик переключения глобального автоматического all-in
   const handleToggleAutoAllIn = (value: boolean) => {
     dispatch(setCashAutoAllIn(value));
+  };
+
+  // Обработчики изменения размера опена и множителей
+  const handleOpenRaiseSizeChange = (value: number) => {
+    dispatch(setCashOpenRaiseSize(value));
+  };
+
+  const handleThreeBetMultiplierChange = (value: number) => {
+    dispatch(setCashThreeBetMultiplier(value));
+  };
+
+  const handleFourBetMultiplierChange = (value: number) => {
+    dispatch(setCashFourBetMultiplier(value));
+  };
+
+  const handleFiveBetMultiplierChange = (value: number) => {
+    dispatch(setCashFiveBetMultiplier(value));
+  };
+
+  const handleEnabledPlayStylesChange = (styles: { tight: boolean; balanced: boolean; aggressor: boolean }) => {
+    dispatch(setCashEnabledPlayStyles(styles));
+  };
+
+  const handleEnabledStrengthsChange = (strengths: { fish: boolean; amateur: boolean; regular: boolean }) => {
+    dispatch(setCashEnabledStrengths(strengths));
   };
 
   // Обработчик изменения карт игрока
@@ -269,6 +306,18 @@ export default function CashPage() {
           playerName="Глобальные настройки"
           autoAllIn={autoAllIn}
           onToggleAutoAllIn={handleToggleAutoAllIn}
+          openRaiseSize={openRaiseSize}
+          onOpenRaiseSizeChange={handleOpenRaiseSizeChange}
+          threeBetMultiplier={threeBetMultiplier}
+          fourBetMultiplier={fourBetMultiplier}
+          fiveBetMultiplier={fiveBetMultiplier}
+          onThreeBetMultiplierChange={handleThreeBetMultiplierChange}
+          onFourBetMultiplierChange={handleFourBetMultiplierChange}
+          onFiveBetMultiplierChange={handleFiveBetMultiplierChange}
+          enabledPlayStyles={enabledPlayStyles}
+          enabledStrengths={enabledStrengths}
+          onEnabledPlayStylesChange={handleEnabledPlayStylesChange}
+          onEnabledStrengthsChange={handleEnabledStrengthsChange}
         />
 
         {/* Покерный стол */}
@@ -288,6 +337,12 @@ export default function CashPage() {
             onRangeChange={handleRangeChange}
             onActionChange={handleActionChange}
             onBetChange={handleBetChange}
+            openRaiseSize={openRaiseSize}
+            threeBetMultiplier={threeBetMultiplier}
+            fourBetMultiplier={fourBetMultiplier}
+            fiveBetMultiplier={fiveBetMultiplier}
+            enabledPlayStyles={enabledPlayStyles}
+            enabledStrengths={enabledStrengths}
           />
         </section>
 

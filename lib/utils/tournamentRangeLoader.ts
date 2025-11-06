@@ -150,7 +150,7 @@ export function getTournamentRangeFromJSON(
     if (!stackData) return [];
 
     // Получаем строку диапазона по типу действия
-    const rangeString = stackData[action] || "";
+    const rangeString = (stackData as Record<string, string>)[action] || "";
 
     return parseRangeString(rangeString);
   } catch (error) {
@@ -196,11 +196,4 @@ export function getRangeForTournament(
 
   // Получаем диапазон напрямую из JSON
   return getTournamentRangeFromJSON(position, strength, playStyle, stackSize, tournamentAction);
-}
-
-/**
- * Получить настройки турнира из JSON
- */
-export function getTournamentSettings() {
-  return tournamentRangesData.tournament;
 }

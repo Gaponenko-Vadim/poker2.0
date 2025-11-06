@@ -12,6 +12,10 @@ import {
   setEightMaxPlayerPlayStyle,
   setEightMaxPlayerStackSize,
   setEightMaxAutoAllIn,
+  setEightMaxOpenRaiseSize,
+  setEightMaxThreeBetMultiplier,
+  setEightMaxFourBetMultiplier,
+  setEightMaxFiveBetMultiplier,
   setEightMaxPlayerCards,
   setEightMaxPlayerRange,
   setEightMaxPlayerAction,
@@ -22,6 +26,8 @@ import {
   setEightMaxStartingStack,
   setEightMaxBounty,
   setEightMaxCategory,
+  setEightMaxEnabledPlayStyles,
+  setEightMaxEnabledStrengths,
   newEightMaxDeal,
   PlayerStrength,
   PlayerPlayStyle,
@@ -56,8 +62,13 @@ export default function EightMaxPage() {
     (state) => state.table.eightMaxStartingStack
   );
   const bounty = useAppSelector((state) => state.table.eightMaxBounty);
-  const category = useAppSelector((state) => state.table.eightMaxCategory);
   const autoAllIn = useAppSelector((state) => state.table.eightMaxAutoAllIn);
+  const openRaiseSize = useAppSelector((state) => state.table.eightMaxOpenRaiseSize);
+  const threeBetMultiplier = useAppSelector((state) => state.table.eightMaxThreeBetMultiplier);
+  const fourBetMultiplier = useAppSelector((state) => state.table.eightMaxFourBetMultiplier);
+  const fiveBetMultiplier = useAppSelector((state) => state.table.eightMaxFiveBetMultiplier);
+  const enabledPlayStyles = useAppSelector((state) => state.table.eightMaxEnabledPlayStyles);
+  const enabledStrengths = useAppSelector((state) => state.table.eightMaxEnabledStrengths);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
@@ -76,7 +87,7 @@ export default function EightMaxPage() {
     index: number,
     currentStrength: PlayerStrength
   ) => {
-    const newStrength = getNextStrength(currentStrength);
+    const newStrength = getNextStrength(currentStrength, enabledStrengths);
     dispatch(setEightMaxPlayerStrength({ index, strength: newStrength }));
   };
 
@@ -84,7 +95,7 @@ export default function EightMaxPage() {
     index: number,
     currentPlayStyle: PlayerPlayStyle
   ) => {
-    const newPlayStyle = getNextPlayStyle(currentPlayStyle);
+    const newPlayStyle = getNextPlayStyle(currentPlayStyle, enabledPlayStyles);
     dispatch(setEightMaxPlayerPlayStyle({ index, playStyle: newPlayStyle }));
   };
 
@@ -99,6 +110,31 @@ export default function EightMaxPage() {
   // Обработчик переключения глобального автоматического all-in
   const handleToggleAutoAllIn = (value: boolean) => {
     dispatch(setEightMaxAutoAllIn(value));
+  };
+
+  // Обработчики изменения размера опена и множителей
+  const handleOpenRaiseSizeChange = (value: number) => {
+    dispatch(setEightMaxOpenRaiseSize(value));
+  };
+
+  const handleThreeBetMultiplierChange = (value: number) => {
+    dispatch(setEightMaxThreeBetMultiplier(value));
+  };
+
+  const handleFourBetMultiplierChange = (value: number) => {
+    dispatch(setEightMaxFourBetMultiplier(value));
+  };
+
+  const handleFiveBetMultiplierChange = (value: number) => {
+    dispatch(setEightMaxFiveBetMultiplier(value));
+  };
+
+  const handleEnabledPlayStylesChange = (styles: { tight: boolean; balanced: boolean; aggressor: boolean }) => {
+    dispatch(setEightMaxEnabledPlayStyles(styles));
+  };
+
+  const handleEnabledStrengthsChange = (strengths: { fish: boolean; amateur: boolean; regular: boolean }) => {
+    dispatch(setEightMaxEnabledStrengths(strengths));
   };
 
   // Обработчик изменения карт игрока
@@ -165,10 +201,6 @@ export default function EightMaxPage() {
     dispatch(setEightMaxBounty(newBounty));
   };
 
-  const handleCategoryChange = (newCategory: TournamentCategory) => {
-    dispatch(setEightMaxCategory(newCategory));
-  };
-
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
@@ -205,6 +237,18 @@ export default function EightMaxPage() {
           playerName="Глобальные настройки"
           autoAllIn={autoAllIn}
           onToggleAutoAllIn={handleToggleAutoAllIn}
+          openRaiseSize={openRaiseSize}
+          onOpenRaiseSizeChange={handleOpenRaiseSizeChange}
+          threeBetMultiplier={threeBetMultiplier}
+          fourBetMultiplier={fourBetMultiplier}
+          fiveBetMultiplier={fiveBetMultiplier}
+          onThreeBetMultiplierChange={handleThreeBetMultiplierChange}
+          onFourBetMultiplierChange={handleFourBetMultiplierChange}
+          onFiveBetMultiplierChange={handleFiveBetMultiplierChange}
+          enabledPlayStyles={enabledPlayStyles}
+          enabledStrengths={enabledStrengths}
+          onEnabledPlayStylesChange={handleEnabledPlayStylesChange}
+          onEnabledStrengthsChange={handleEnabledStrengthsChange}
         />
 
         {/* Покерный стол */}
@@ -224,6 +268,12 @@ export default function EightMaxPage() {
             onRangeChange={handleRangeChange}
             onActionChange={handleActionChange}
             onBetChange={handleBetChange}
+            openRaiseSize={openRaiseSize}
+            threeBetMultiplier={threeBetMultiplier}
+            fourBetMultiplier={fourBetMultiplier}
+            fiveBetMultiplier={fiveBetMultiplier}
+            enabledPlayStyles={enabledPlayStyles}
+            enabledStrengths={enabledStrengths}
           />
         </section>
 

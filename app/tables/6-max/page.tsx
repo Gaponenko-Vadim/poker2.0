@@ -12,6 +12,10 @@ import {
   setSixMaxPlayerPlayStyle,
   setSixMaxPlayerStackSize,
   setSixMaxAutoAllIn,
+  setSixMaxOpenRaiseSize,
+  setSixMaxThreeBetMultiplier,
+  setSixMaxFourBetMultiplier,
+  setSixMaxFiveBetMultiplier,
   setSixMaxPlayerCards,
   setSixMaxPlayerRange,
   setSixMaxPlayerAction,
@@ -22,6 +26,8 @@ import {
   setSixMaxStartingStack,
   setSixMaxBounty,
   setSixMaxCategory,
+  setSixMaxEnabledPlayStyles,
+  setSixMaxEnabledStrengths,
   newSixMaxDeal,
   PlayerStrength,
   PlayerPlayStyle,
@@ -56,8 +62,13 @@ export default function SixMaxPage() {
     (state) => state.table.sixMaxStartingStack
   );
   const bounty = useAppSelector((state) => state.table.sixMaxBounty);
-  const category = useAppSelector((state) => state.table.sixMaxCategory);
   const autoAllIn = useAppSelector((state) => state.table.sixMaxAutoAllIn);
+  const openRaiseSize = useAppSelector((state) => state.table.sixMaxOpenRaiseSize);
+  const threeBetMultiplier = useAppSelector((state) => state.table.sixMaxThreeBetMultiplier);
+  const fourBetMultiplier = useAppSelector((state) => state.table.sixMaxFourBetMultiplier);
+  const fiveBetMultiplier = useAppSelector((state) => state.table.sixMaxFiveBetMultiplier);
+  const enabledPlayStyles = useAppSelector((state) => state.table.sixMaxEnabledPlayStyles);
+  const enabledStrengths = useAppSelector((state) => state.table.sixMaxEnabledStrengths);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
@@ -90,7 +101,7 @@ export default function SixMaxPage() {
     index: number,
     currentStrength: PlayerStrength
   ) => {
-    const newStrength = getNextStrength(currentStrength);
+    const newStrength = getNextStrength(currentStrength, enabledStrengths);
     dispatch(setSixMaxPlayerStrength({ index, strength: newStrength }));
   };
 
@@ -99,7 +110,7 @@ export default function SixMaxPage() {
     index: number,
     currentPlayStyle: PlayerPlayStyle
   ) => {
-    const newPlayStyle = getNextPlayStyle(currentPlayStyle);
+    const newPlayStyle = getNextPlayStyle(currentPlayStyle, enabledPlayStyles);
     dispatch(setSixMaxPlayerPlayStyle({ index, playStyle: newPlayStyle }));
   };
 
@@ -115,6 +126,31 @@ export default function SixMaxPage() {
   // Обработчик переключения глобального автоматического all-in
   const handleToggleAutoAllIn = (value: boolean) => {
     dispatch(setSixMaxAutoAllIn(value));
+  };
+
+  // Обработчики изменения размера опена и множителей
+  const handleOpenRaiseSizeChange = (value: number) => {
+    dispatch(setSixMaxOpenRaiseSize(value));
+  };
+
+  const handleThreeBetMultiplierChange = (value: number) => {
+    dispatch(setSixMaxThreeBetMultiplier(value));
+  };
+
+  const handleFourBetMultiplierChange = (value: number) => {
+    dispatch(setSixMaxFourBetMultiplier(value));
+  };
+
+  const handleFiveBetMultiplierChange = (value: number) => {
+    dispatch(setSixMaxFiveBetMultiplier(value));
+  };
+
+  const handleEnabledPlayStylesChange = (styles: { tight: boolean; balanced: boolean; aggressor: boolean }) => {
+    dispatch(setSixMaxEnabledPlayStyles(styles));
+  };
+
+  const handleEnabledStrengthsChange = (strengths: { fish: boolean; amateur: boolean; regular: boolean }) => {
+    dispatch(setSixMaxEnabledStrengths(strengths));
   };
 
   // Обработчик изменения карт игрока
@@ -181,10 +217,6 @@ export default function SixMaxPage() {
     dispatch(setSixMaxBounty(newBounty));
   };
 
-  const handleCategoryChange = (newCategory: TournamentCategory) => {
-    dispatch(setSixMaxCategory(newCategory));
-  };
-
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
@@ -221,6 +253,18 @@ export default function SixMaxPage() {
           playerName="Глобальные настройки"
           autoAllIn={autoAllIn}
           onToggleAutoAllIn={handleToggleAutoAllIn}
+          openRaiseSize={openRaiseSize}
+          onOpenRaiseSizeChange={handleOpenRaiseSizeChange}
+          threeBetMultiplier={threeBetMultiplier}
+          fourBetMultiplier={fourBetMultiplier}
+          fiveBetMultiplier={fiveBetMultiplier}
+          onThreeBetMultiplierChange={handleThreeBetMultiplierChange}
+          onFourBetMultiplierChange={handleFourBetMultiplierChange}
+          onFiveBetMultiplierChange={handleFiveBetMultiplierChange}
+          enabledPlayStyles={enabledPlayStyles}
+          enabledStrengths={enabledStrengths}
+          onEnabledPlayStylesChange={handleEnabledPlayStylesChange}
+          onEnabledStrengthsChange={handleEnabledStrengthsChange}
         />
 
         {/* Покерный стол */}
@@ -240,6 +284,12 @@ export default function SixMaxPage() {
             onRangeChange={handleRangeChange}
             onActionChange={handleActionChange}
             onBetChange={handleBetChange}
+            openRaiseSize={openRaiseSize}
+            threeBetMultiplier={threeBetMultiplier}
+            fourBetMultiplier={fourBetMultiplier}
+            fiveBetMultiplier={fiveBetMultiplier}
+            enabledPlayStyles={enabledPlayStyles}
+            enabledStrengths={enabledStrengths}
           />
         </section>
         {/* Кнопка новой раздачи */}

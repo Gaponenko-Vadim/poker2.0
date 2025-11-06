@@ -14,6 +14,10 @@ interface PlayerActionDropdownProps {
   onToggleAutoAllIn?: (value: boolean) => void; // Callback для включения глобальной настройки autoAllIn
   allPlayersActions: (PlayerAction | null)[]; // Действия всех игроков за столом
   allPlayersBets: number[]; // Ставки всех игроков за столом
+  openRaiseSize?: number; // Размер open raise в BB (по умолчанию 2.5)
+  threeBetMultiplier?: number; // Множитель для 3-bet (по умолчанию 3)
+  fourBetMultiplier?: number; // Множитель для 4-bet (по умолчанию 2.7)
+  fiveBetMultiplier?: number; // Множитель для 5-bet (по умолчанию 2.2)
 }
 
 const actionLabels: Record<PlayerAction, string> = {
@@ -102,6 +106,10 @@ export default function PlayerActionDropdown({
   onToggleAutoAllIn,
   allPlayersActions,
   allPlayersBets,
+  openRaiseSize = 2.5,
+  threeBetMultiplier = 3,
+  fourBetMultiplier = 2.7,
+  fiveBetMultiplier = 2.2,
 }: PlayerActionDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCustomBetOpen, setIsCustomBetOpen] = useState(false);
@@ -117,10 +125,10 @@ export default function PlayerActionDropdown({
     return Math.round(value * 10) / 10;
   };
 
-  // Функция для расчета размера ставки в зависимости от действия
-  const calculateBetSize = (action: PlayerAction): number => {
+  // Функция для расчета минимального размера рейза (используется для валидации)
+  const calculateMinimumRaise = (action: PlayerAction): number => {
     if (action === "bet-open") {
-      return 2.5; // Open raise всегда 2.5 BB
+      return openRaiseSize; // Open raise из настроек
     }
 
     // Находим ставки игроков с соответствующими действиями
@@ -226,6 +234,115 @@ export default function PlayerActionDropdown({
       if (effectiveBet.level !== "4bet") return 0;
       const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
       const calculated = effectiveBet.bet + raiseSize;
+      return roundToOneDecimal(calculated);
+    }
+
+    return 0;
+  };
+
+  // Функция для расчета фактического размера ставки (простое умножение на множители)
+  const calculateBetSize = (action: PlayerAction): number => {
+    if (action === "bet-open") {
+      return openRaiseSize; // Open raise из настроек
+    }
+
+    // Находим ставки игроков с соответствующими действиями
+    const getBetForAction = (targetAction: PlayerAction): number => {
+      for (let i = 0; i < allPlayersActions.length; i++) {
+        if (allPlayersActions[i] === targetAction && allPlayersBets[i] > 0) {
+          return allPlayersBets[i];
+        }
+      }
+      return 0;
+    };
+
+    // Получаем all-in ставки для расчета
+    const allInBets = allPlayersActions
+      .map((act, index) => ({ action: act, bet: allPlayersBets[index] }))
+      .filter(({ action: act, bet }) => act === "all-in" && bet > 0)
+      .map(({ bet }) => bet)
+      .sort((a, b) => b - a);
+
+    // Находим ставки для каждого действия
+    const openBet = getBetForAction("bet-open");
+    const threeBet = getBetForAction("raise-3bet");
+    const fourBet = getBetForAction("raise-4bet");
+    const fiveBet = getBetForAction("raise-5bet");
+
+    // Функция для определения эффективной ставки (учитывает all-in как raise)
+    const getEffectiveBet = (): { level: string; bet: number } => {
+      if (fiveBet > 0) {
+        return { level: "5bet", bet: fiveBet };
+      }
+      if (fourBet > 0) {
+        // Проверяем, есть ли all-in больше fourBet, который может считаться 5bet
+        const raiseSize = fourBet - threeBet;
+        const minFiveBet = fourBet + raiseSize;
+        for (const allinBet of allInBets) {
+          if (allinBet >= minFiveBet && allinBet > fourBet) {
+            return { level: "5bet", bet: allinBet };
+          }
+        }
+        return { level: "4bet", bet: fourBet };
+      }
+      if (threeBet > 0) {
+        // Проверяем, есть ли all-in больше threeBet, который может считаться 4bet
+        const raiseSize = threeBet - openBet;
+        const minFourBet = threeBet + raiseSize;
+        for (const allinBet of allInBets) {
+          if (allinBet >= minFourBet && allinBet > threeBet) {
+            return { level: "4bet", bet: allinBet };
+          }
+        }
+        return { level: "3bet", bet: threeBet };
+      }
+      if (openBet > 0) {
+        // Проверяем, есть ли all-in больше openBet, который может считаться 3bet
+        const raiseSize = openBet - 1;
+        const minThreeBet = openBet + raiseSize;
+        for (const allinBet of allInBets) {
+          if (allinBet >= minThreeBet && allinBet > openBet) {
+            return { level: "3bet", bet: allinBet };
+          }
+        }
+        return { level: "open", bet: openBet };
+      }
+      // Если нет обычных действий, но есть all-in - определяем его уровень по размеру
+      if (allInBets.length > 0) {
+        const maxAllIn = allInBets[0]; // Берем максимальный all-in
+
+        // Определяем уровень all-in по размеру
+        if (maxAllIn < 5) {
+          return { level: "open", bet: maxAllIn };
+        } else if (maxAllIn < 12) {
+          return { level: "3bet", bet: maxAllIn };
+        } else if (maxAllIn < 20) {
+          return { level: "4bet", bet: maxAllIn };
+        } else {
+          return { level: "5bet", bet: maxAllIn };
+        }
+      }
+      return { level: "none", bet: 0 };
+    };
+
+    const effectiveBet = getEffectiveBet();
+
+    // Простое умножение на множители
+    if (action === "raise-3bet") {
+      if (effectiveBet.level !== "open") return 0;
+      const calculated = effectiveBet.bet * threeBetMultiplier;
+      return roundToOneDecimal(calculated);
+    }
+
+    if (action === "raise-4bet") {
+      if (effectiveBet.level !== "3bet") return 0;
+      const calculated = effectiveBet.bet * fourBetMultiplier;
+      return roundToOneDecimal(calculated);
+    }
+
+    if (action === "raise-5bet") {
+      if (effectiveBet.level !== "4bet") return 0;
+      const calculated = effectiveBet.bet * fiveBetMultiplier;
       return roundToOneDecimal(calculated);
     }
 
@@ -352,23 +469,20 @@ export default function PlayerActionDropdown({
     if (!isCurrentPlayerLastAggressor) {
       if (effectiveBet.level === "open") {
         // Есть open - доступен 3bet
-        const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
-        const minThreeBetSize = effectiveBet.bet + raiseSize;
-        if (playerStack > minThreeBetSize && minThreeBetSize / playerStack < 0.8) {
+        const minThreeBetSize = calculateMinimumRaise("raise-3bet");
+        if (minThreeBetSize > 0 && playerStack > minThreeBetSize && minThreeBetSize / playerStack < 0.8) {
           available.push("raise-3bet");
         }
       } else if (effectiveBet.level === "3bet") {
         // Есть 3bet (или all-in, равный 3bet) - доступен 4bet
-        const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
-        const minFourBetSize = effectiveBet.bet + raiseSize;
-        if (playerStack > minFourBetSize && minFourBetSize / playerStack < 0.8) {
+        const minFourBetSize = calculateMinimumRaise("raise-4bet");
+        if (minFourBetSize > 0 && playerStack > minFourBetSize && minFourBetSize / playerStack < 0.8) {
           available.push("raise-4bet");
         }
       } else if (effectiveBet.level === "4bet") {
         // Есть 4bet (или all-in, равный 4bet) - доступен 5bet
-        const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
-        const minFiveBetSize = effectiveBet.bet + raiseSize;
-        if (playerStack > minFiveBetSize && minFiveBetSize / playerStack < 0.8) {
+        const minFiveBetSize = calculateMinimumRaise("raise-5bet");
+        if (minFiveBetSize > 0 && playerStack > minFiveBetSize && minFiveBetSize / playerStack < 0.8) {
           available.push("raise-5bet");
         }
       }

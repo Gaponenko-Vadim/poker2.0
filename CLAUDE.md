@@ -21,9 +21,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 - `npm run dev` - Запуск dev-сервера на http://localhost:3000
-- `npm run build` - Production сборка
+- `npm run build` - Production сборка (включает проверку TypeScript)
 - `npm start` - Запуск production сервера
 - `npm run lint` - Проверка кода через ESLint
+- `npx tsc --noEmit` - Проверка типов TypeScript без генерации файлов
 - `npm run db:init` - Инициализация базы данных PostgreSQL (создание таблиц)
 
 ## Project Structure
@@ -249,9 +250,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## TypeScript Configuration
 
-- Path alias `@/*` для импорта из корня проекта
-- Strict mode включен
-- Target: ES2017 с JSX: react-jsx
+- **Path alias**: `@/*` для импорта из корня проекта
+- **Strict mode**: Включен для максимальной типобезопасности
+- **Target**: ES2017 с JSX: react-jsx
+- **Важные правила**:
+  - Избегайте использования типа `any` - создавайте типизированные интерфейсы
+  - Все неиспользуемые переменные и импорты должны быть удалены
+  - Используйте type assertions с осторожностью (только когда TypeScript не может вывести тип автоматически)
+  - Категория турнира (`category`) автоматически рассчитывается из `buyIn` - не требует отдельного state
 
 ## Environment Variables
 
@@ -297,9 +303,11 @@ JWT_SECRET=your-secret-key
 
 ### Redux Usage
 
-- Используйте типизированные хуки `useAppDispatch` и `useAppSelector` из `lib/redux/hooks.ts`
-- Всегда импортируйте actions из slices явно
-- Store создается через factory функцию `makeStore()` для поддержки SSR
+- **Типизированные хуки**: Всегда используйте `useAppDispatch` и `useAppSelector` из `lib/redux/hooks.ts` вместо обычных Redux хуков
+- **Импорт actions**: Импортируйте actions из slices явно, не используйте `import *`
+- **Store creation**: Store создается через factory функцию `makeStore()` для поддержки SSR
+- **Naming pattern**: Actions для разных столов имеют префиксы `sixMax`, `eightMax`, `cash` (например: `setSixMaxAutoAllIn`, `setEightMaxPlayerStrength`)
+- **Category handling**: Используйте `setSixMaxCategory` / `setEightMaxCategory` только внутри обработчика `handleBuyInChange` - категория автоматически обновляется при изменении buy-in
 
 ### Page Structure
 
@@ -392,3 +400,44 @@ JWT_SECRET=your-secret-key
    - JSON структура: `ranges.user.positions.{position}.{strength}.{playStyle}.ranges_by_stack.{stackSize}.{action}`
 
 **Важно**: Конструктор диапазонов предназначен для создания новых диапазонов, которые затем можно импортировать в `tournamentRanges.json`. Для изменения диапазонов конкретных игроков за столом используйте RangeSelector (клик по игроку).
+
+## Common Development Patterns
+
+### Adding New Redux Actions
+
+При добавлении новых action в tableSlice:
+
+1. **Для настроек стола**: Создайте три версии (sixMax, eightMax, cash)
+   ```typescript
+   setSixMaxNewSetting: (state, action: PayloadAction<Type>) => {
+     state.sixMaxNewSetting = action.payload;
+   }
+   ```
+
+2. **Для действий игрока**: Принимайте `{ index, value }`
+   ```typescript
+   setSixMaxPlayerProperty: (state, action: PayloadAction<{ index: number; property: Type }>) => {
+     state.sixMaxUsers[action.payload.index].property = action.payload.property;
+   }
+   ```
+
+3. **Экспорт**: Добавьте в `export const { ... } = tableSlice.actions;`
+
+### Type Safety Best Practices
+
+- При работе с динамическими структурами JSON используйте `Record<string, T>` вместо `any`
+- Для индексации объектов с динамическими ключами применяйте type assertion: `(obj as Record<string, string>)[key]`
+- Создавайте отдельные интерфейсы для сложных структур данных (пример: `ExportedJSON` в PlayerSettingsPopup)
+
+### Component Props Pattern
+
+Все игровые компоненты следуют единому паттерну передачи данных:
+
+```
+Page (получает из Redux)
+  → PokerTable (передает данные и обработчики)
+    → PlayerSeat (обрабатывает конкретного игрока)
+      → PlayerActionDropdown / RangeSelector / CardSelector
+```
+
+Обработчики всегда диспатчат Redux actions, а не изменяют локальный state.

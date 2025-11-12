@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getRangeForTournament } from "@/lib/utils/tournamentRangeLoader";
+import { getRangeForTournament, getRangeFromData } from "@/lib/utils/tournamentRangeLoader";
 
 // Тип PokerAction для конвертации
 type PokerAction = "open" | "threeBet" | "fourBet" | "fiveBet" | "allIn";
@@ -25,11 +25,33 @@ function getRangeWithTournamentSettings(
   startingStack: number,
   stage: TournamentStage,
   category: TournamentCategory,
-  bounty: boolean
+  bounty: boolean,
+  customRangeData?: any // Опциональные данные диапазонов из БД
 ): string[] {
-  // Получаем диапазон из tournamentRanges.json
-  // Если пустой или не найден - возвращаем пустой массив
-  return getRangeForTournament(
+  // Если переданы пользовательские данные диапазонов из БД, используем их
+  if (customRangeData) {
+    const tournamentAction = convertPokerActionToTournamentAction(pokerAction);
+    console.log(`📥 getRangeWithTournamentSettings: Используются данные из БД`);
+    console.log(`   - Позиция: ${position}, Сила: ${strength}, Стиль: ${playStyle}`);
+    console.log(`   - Размер стека: ${stackSize}, Действие: ${tournamentAction}, Стадия: ${stage}`);
+    const range = getRangeFromData(
+      stage,
+      position,
+      strength,
+      playStyle,
+      stackSize,
+      tournamentAction,
+      customRangeData
+    );
+    console.log(`   ✅ Получен диапазон: ${range.length} комбинаций`);
+    return range;
+  }
+
+  // Иначе получаем диапазон из дефолтных JSON файлов
+  console.log(`📂 getRangeWithTournamentSettings: Используются дефолтные JSON файлы`);
+  console.log(`   - Позиция: ${position}, Сила: ${strength}, Стиль: ${playStyle}`);
+  console.log(`   - Размер стека: ${stackSize}, Действие: ${pokerAction}, Стадия: ${stage}`);
+  const range = getRangeForTournament(
     position,
     strength,
     playStyle,
@@ -40,6 +62,22 @@ function getRangeWithTournamentSettings(
     category,
     bounty
   );
+  console.log(`   ✅ Получен диапазон: ${range.length} комбинаций`);
+  return range;
+}
+
+// Вспомогательная функция для конвертации PokerAction в TournamentActionType
+function convertPokerActionToTournamentAction(
+  action: PokerAction
+): "open_raise" | "push_range" | "call_vs_shove" | "defense_vs_open" | "3bet" | "defense_vs_3bet" | "4bet" | "defense_vs_4bet" | "5bet" | "defense_vs_5bet" {
+  const actionMap: Record<PokerAction, "open_raise" | "push_range" | "call_vs_shove" | "defense_vs_open" | "3bet" | "defense_vs_3bet" | "4bet" | "defense_vs_4bet" | "5bet" | "defense_vs_5bet"> = {
+    "open": "open_raise",
+    "threeBet": "3bet",
+    "fourBet": "4bet",
+    "fiveBet": "5bet",
+    "allIn": "push_range",
+  };
+  return actionMap[action];
 }
 
 // Вспомогательная функция для получения доступных действий игрока
@@ -233,6 +271,20 @@ export type PlayerAction =
   | "raise-5bet"
   | "all-in";
 
+// Интерфейс для временных изменений диапазонов (не сохраненных в БД)
+export interface TemporaryRangeOverride {
+  position: TablePosition;
+  strength: PlayerStrength;
+  playStyle: PlayerPlayStyle;
+  stackSize: StackSize;
+  action: PlayerAction | null;
+  stage: TournamentStage;
+  category: TournamentCategory;
+  startingStack: number;
+  bounty: boolean;
+  range: string[]; // Измененный диапазон
+}
+
 // Интерфейс игрока (User)
 export interface User {
   name: string; // Имя игрока
@@ -267,6 +319,11 @@ interface TableState {
   sixMaxFiveBetMultiplier: number; // Множитель для 5-bet (по умолчанию 2.2)
   sixMaxEnabledPlayStyles: { tight: boolean; balanced: boolean; aggressor: boolean }; // Включенные стили игры
   sixMaxEnabledStrengths: { fish: boolean; amateur: boolean; regular: boolean }; // Включенные силы игроков
+  // Пользовательские наборы диапазонов
+  sixMaxActiveRangeSetId: number | null; // ID активного набора диапазонов из БД
+  sixMaxActiveRangeSetName: string | null; // Название активного набора
+  sixMaxActiveRangeSetData: any | null; // Загруженные данные диапазонов из БД (JSON)
+  sixMaxTemporaryRanges: Record<number, TemporaryRangeOverride>; // Временные изменения диапазонов (ключ - индекс игрока)
 
   // 8-Max турнир
   eightMaxUsers: User[]; // Массив из 8 игроков
@@ -285,6 +342,11 @@ interface TableState {
   eightMaxFiveBetMultiplier: number; // Множитель для 5-bet (по умолчанию 2.2)
   eightMaxEnabledPlayStyles: { tight: boolean; balanced: boolean; aggressor: boolean }; // Включенные стили игры
   eightMaxEnabledStrengths: { fish: boolean; amateur: boolean; regular: boolean }; // Включенные силы игроков
+  // Пользовательские наборы диапазонов
+  eightMaxActiveRangeSetId: number | null; // ID активного набора диапазонов из БД
+  eightMaxActiveRangeSetName: string | null; // Название активного набора
+  eightMaxActiveRangeSetData: any | null; // Загруженные данные диапазонов из БД (JSON)
+  eightMaxTemporaryRanges: Record<number, TemporaryRangeOverride>; // Временные изменения диапазонов (ключ - индекс игрока)
 
   // Cash игра
   cashUsersCount: number; // Количество игроков (от 2 до 9)
@@ -302,6 +364,11 @@ interface TableState {
   cashFiveBetMultiplier: number; // Множитель для 5-bet (по умолчанию 2.2)
   cashEnabledPlayStyles: { tight: boolean; balanced: boolean; aggressor: boolean }; // Включенные стили игры
   cashEnabledStrengths: { fish: boolean; amateur: boolean; regular: boolean }; // Включенные силы игроков
+  // Пользовательские наборы диапазонов
+  cashActiveRangeSetId: number | null; // ID активного набора диапазонов из БД
+  cashActiveRangeSetName: string | null; // Название активного набора
+  cashActiveRangeSetData: any | null; // Загруженные данные диапазонов из БД (JSON)
+  cashTemporaryRanges: Record<number, TemporaryRangeOverride>; // Временные изменения диапазонов (ключ - индекс игрока)
 }
 
 // Функция для получения значения стека в BB по размеру
@@ -360,21 +427,6 @@ const generateUsers = (count: number): User[] => {
       bet: initialBet, // Ставка: SB=0.5, BB=1, остальные=0
     };
   });
-};
-
-// Функция для загрузки настроек из localStorage
-const loadSettingsFromLocalStorage = () => {
-  if (typeof window === 'undefined') return null;
-
-  try {
-    const saved = localStorage.getItem('pokerTableSettings');
-    if (saved) {
-      return JSON.parse(saved);
-    }
-  } catch (error) {
-    console.error('Failed to load settings from localStorage:', error);
-  }
-  return null;
 };
 
 // Функция для сохранения настроек в localStorage
@@ -443,63 +495,72 @@ const saveSettingsToLocalStorage = (state: TableState) => {
   }
 };
 
-// Загружаем сохраненные настройки
-const savedSettings = loadSettingsFromLocalStorage();
-
-// Начальное состояние
+// Начальное состояние (без загрузки из localStorage для предотвращения ошибок гидратации)
 const initialState: TableState = {
   // 6-Max
-  sixMaxUsers: savedSettings?.sixMaxUsers ?? generateUsers(6),
-  sixMaxHeroIndex: savedSettings?.sixMaxHeroIndex ?? 0,
-  sixMaxBuyIn: savedSettings?.sixMaxBuyIn ?? 100,
-  sixMaxAnte: savedSettings?.sixMaxAnte ?? 1.6,
-  sixMaxPot: savedSettings?.sixMaxPot ?? 1.6,
-  sixMaxStage: savedSettings?.sixMaxStage ?? "early",
-  sixMaxStartingStack: savedSettings?.sixMaxStartingStack ?? 100,
-  sixMaxBounty: savedSettings?.sixMaxBounty ?? false,
-  sixMaxCategory: savedSettings?.sixMaxCategory ?? "micro",
-  sixMaxAutoAllIn: savedSettings?.sixMaxAutoAllIn ?? false,
-  sixMaxOpenRaiseSize: savedSettings?.sixMaxOpenRaiseSize ?? 2.5,
-  sixMaxThreeBetMultiplier: savedSettings?.sixMaxThreeBetMultiplier ?? 3,
-  sixMaxFourBetMultiplier: savedSettings?.sixMaxFourBetMultiplier ?? 2.7,
-  sixMaxFiveBetMultiplier: savedSettings?.sixMaxFiveBetMultiplier ?? 2.2,
-  sixMaxEnabledPlayStyles: savedSettings?.sixMaxEnabledPlayStyles ?? { tight: false, balanced: true, aggressor: false },
-  sixMaxEnabledStrengths: savedSettings?.sixMaxEnabledStrengths ?? { fish: false, amateur: true, regular: false },
+  sixMaxUsers: generateUsers(6),
+  sixMaxHeroIndex: 0,
+  sixMaxBuyIn: 100,
+  sixMaxAnte: 1.6,
+  sixMaxPot: 1.6,
+  sixMaxStage: "early",
+  sixMaxStartingStack: 100,
+  sixMaxBounty: true,
+  sixMaxCategory: "micro",
+  sixMaxAutoAllIn: false,
+  sixMaxOpenRaiseSize: 2.5,
+  sixMaxThreeBetMultiplier: 3,
+  sixMaxFourBetMultiplier: 2.7,
+  sixMaxFiveBetMultiplier: 2.2,
+  sixMaxEnabledPlayStyles: { tight: false, balanced: true, aggressor: false },
+  sixMaxEnabledStrengths: { fish: false, amateur: true, regular: false },
+  sixMaxActiveRangeSetId: null,
+  sixMaxActiveRangeSetName: null,
+  sixMaxActiveRangeSetData: null,
+  sixMaxTemporaryRanges: {},
 
   // 8-Max
-  eightMaxUsers: savedSettings?.eightMaxUsers ?? generateUsers(8),
-  eightMaxHeroIndex: savedSettings?.eightMaxHeroIndex ?? 0,
-  eightMaxBuyIn: savedSettings?.eightMaxBuyIn ?? 100,
-  eightMaxAnte: savedSettings?.eightMaxAnte ?? 1.6,
-  eightMaxPot: savedSettings?.eightMaxPot ?? 1.6,
-  eightMaxStage: savedSettings?.eightMaxStage ?? "early",
-  eightMaxStartingStack: savedSettings?.eightMaxStartingStack ?? 200,
-  eightMaxBounty: savedSettings?.eightMaxBounty ?? true,
-  eightMaxCategory: savedSettings?.eightMaxCategory ?? "micro",
-  eightMaxAutoAllIn: savedSettings?.eightMaxAutoAllIn ?? false,
-  eightMaxOpenRaiseSize: savedSettings?.eightMaxOpenRaiseSize ?? 2.5,
-  eightMaxThreeBetMultiplier: savedSettings?.eightMaxThreeBetMultiplier ?? 3,
-  eightMaxFourBetMultiplier: savedSettings?.eightMaxFourBetMultiplier ?? 2.7,
-  eightMaxFiveBetMultiplier: savedSettings?.eightMaxFiveBetMultiplier ?? 2.2,
-  eightMaxEnabledPlayStyles: savedSettings?.eightMaxEnabledPlayStyles ?? { tight: false, balanced: true, aggressor: false },
-  eightMaxEnabledStrengths: savedSettings?.eightMaxEnabledStrengths ?? { fish: false, amateur: true, regular: false },
+  eightMaxUsers: generateUsers(8),
+  eightMaxHeroIndex: 0,
+  eightMaxBuyIn: 100,
+  eightMaxAnte: 1.6,
+  eightMaxPot: 1.6,
+  eightMaxStage: "early",
+  eightMaxStartingStack: 100,
+  eightMaxBounty: true,
+  eightMaxCategory: "micro",
+  eightMaxAutoAllIn: false,
+  eightMaxOpenRaiseSize: 2.5,
+  eightMaxThreeBetMultiplier: 3,
+  eightMaxFourBetMultiplier: 2.7,
+  eightMaxFiveBetMultiplier: 2.2,
+  eightMaxEnabledPlayStyles: { tight: false, balanced: true, aggressor: false },
+  eightMaxEnabledStrengths: { fish: false, amateur: true, regular: false },
+  eightMaxActiveRangeSetId: null,
+  eightMaxActiveRangeSetName: null,
+  eightMaxActiveRangeSetData: null,
+  eightMaxTemporaryRanges: {},
 
   // Cash
-  cashUsersCount: savedSettings?.cashUsersCount ?? 9,
-  cashUsers: savedSettings?.cashUsers ?? generateUsers(9),
-  cashHeroIndex: savedSettings?.cashHeroIndex ?? 0,
-  cashBuyIn: savedSettings?.cashBuyIn ?? 100,
-  cashAnte: savedSettings?.cashAnte ?? 0,
-  cashPot: savedSettings?.cashPot ?? 0,
-  cashStage: savedSettings?.cashStage ?? "early",
-  cashStartingStack: savedSettings?.cashStartingStack ?? 100,
-  cashAutoAllIn: savedSettings?.cashAutoAllIn ?? false,
-  cashOpenRaiseSize: savedSettings?.cashOpenRaiseSize ?? 2.5,
-  cashThreeBetMultiplier: savedSettings?.cashThreeBetMultiplier ?? 3,
-  cashFourBetMultiplier: savedSettings?.cashFourBetMultiplier ?? 2.7,
-  cashFiveBetMultiplier: savedSettings?.cashFiveBetMultiplier ?? 2.2,
-  cashEnabledPlayStyles: savedSettings?.cashEnabledPlayStyles ?? { tight: false, balanced: true, aggressor: false },
-  cashEnabledStrengths: savedSettings?.cashEnabledStrengths ?? { fish: false, amateur: true, regular: false },
+  cashUsersCount: 9,
+  cashUsers: generateUsers(9),
+  cashHeroIndex: 0,
+  cashBuyIn: 100,
+  cashAnte: 0,
+  cashPot: 0,
+  cashStage: "early",
+  cashStartingStack: 100,
+  cashAutoAllIn: false,
+  cashOpenRaiseSize: 2.5,
+  cashThreeBetMultiplier: 3,
+  cashFourBetMultiplier: 2.7,
+  cashFiveBetMultiplier: 2.2,
+  cashEnabledPlayStyles: { tight: false, balanced: true, aggressor: false },
+  cashEnabledStrengths: { fish: false, amateur: true, regular: false },
+  cashActiveRangeSetId: null,
+  cashActiveRangeSetName: null,
+  cashActiveRangeSetData: null,
+  cashTemporaryRanges: {},
 };
 
 // Функция для ротации позиций
@@ -579,24 +640,36 @@ const tableSlice = createSlice({
     ) => {
       const { index, strength } = action.payload;
       if (state.sixMaxUsers[index]) {
+        console.log(`\n🔄 [6-Max] Изменение СИЛЫ игрока ${index}: ${state.sixMaxUsers[index].strength} → ${strength}`);
+        console.log(`   Источник данных: ${state.sixMaxActiveRangeSetData ? 'БД (' + state.sixMaxActiveRangeSetName + ')' : 'Дефолтные JSON файлы'}`);
         state.sixMaxUsers[index].strength = strength;
-        // Автоматически обновляем диапазон на основе позиции, новой силы, текущего стека и текущего действия
-        const position = state.sixMaxUsers[index].position;
-        const playStyle = state.sixMaxUsers[index].playStyle;
-        const stackSize = state.sixMaxUsers[index].stackSize;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.sixMaxUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        state.sixMaxUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          state.sixMaxStartingStack,
-          state.sixMaxStage,
-          state.sixMaxCategory,
-          state.sixMaxBounty
-        );
+
+        if (currentAction === null) {
+          state.sixMaxUsers[index].range = [];
+          console.log(`   ⚠️ Действие не выбрано - диапазон пустой (Нет действия)`);
+        } else {
+          const position = state.sixMaxUsers[index].position;
+          const playStyle = state.sixMaxUsers[index].playStyle;
+          const stackSize = state.sixMaxUsers[index].stackSize;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          console.log(`🔄 Обновляю диапазон для игрока ${index} (действие: ${currentAction})...`);
+          state.sixMaxUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            state.sixMaxStartingStack,
+            state.sixMaxStage,
+            state.sixMaxCategory,
+            state.sixMaxBounty,
+            state.sixMaxActiveRangeSetData // Передаем данные из БД если они есть
+          );
+          console.log(`   ✅ Загружен диапазон: ${state.sixMaxUsers[index].range.length} комбинаций`);
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -609,23 +682,30 @@ const tableSlice = createSlice({
       const { index, strength } = action.payload;
       if (state.eightMaxUsers[index]) {
         state.eightMaxUsers[index].strength = strength;
-        // Автоматически обновляем диапазон на основе позиции, новой силы, текущего стека и текущего действия
-        const position = state.eightMaxUsers[index].position;
-        const playStyle = state.eightMaxUsers[index].playStyle;
-        const stackSize = state.eightMaxUsers[index].stackSize;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.eightMaxUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        state.eightMaxUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          state.eightMaxStartingStack,
-          state.eightMaxStage,
-          state.eightMaxCategory,
-          state.eightMaxBounty
-        );
+
+        if (currentAction === null) {
+          state.eightMaxUsers[index].range = [];
+        } else {
+          const position = state.eightMaxUsers[index].position;
+          const playStyle = state.eightMaxUsers[index].playStyle;
+          const stackSize = state.eightMaxUsers[index].stackSize;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          state.eightMaxUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            state.eightMaxStartingStack,
+            state.eightMaxStage,
+            state.eightMaxCategory,
+            state.eightMaxBounty,
+            state.eightMaxActiveRangeSetData // Передаем данные из БД если они есть
+          );
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -638,24 +718,31 @@ const tableSlice = createSlice({
       const { index, strength } = action.payload;
       if (state.cashUsers[index]) {
         state.cashUsers[index].strength = strength;
-        // Для Cash игр используем только defaultRanges (турнирные настройки не применяются)
-        const position = state.cashUsers[index].position;
-        const playStyle = state.cashUsers[index].playStyle;
-        const stackSize = state.cashUsers[index].stackSize;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.cashUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        // Cash игры не используют турнирные диапазоны, поэтому передаем несовпадающие настройки
-        state.cashUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          0, // Несовпадающее значение для Cash
-          "early",
-          "micro",
-          false
-        );
+
+        if (currentAction === null) {
+          state.cashUsers[index].range = [];
+        } else {
+          const position = state.cashUsers[index].position;
+          const playStyle = state.cashUsers[index].playStyle;
+          const stackSize = state.cashUsers[index].stackSize;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          // Cash игры не используют турнирные диапазоны, поэтому передаем несовпадающие настройки
+          state.cashUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            0, // Несовпадающее значение для Cash
+            "early",
+            "micro",
+            false,
+            state.cashActiveRangeSetData // Передаем данные из БД если они есть
+          );
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -668,23 +755,30 @@ const tableSlice = createSlice({
       const { index, playStyle } = action.payload;
       if (state.sixMaxUsers[index]) {
         state.sixMaxUsers[index].playStyle = playStyle;
-        // Автоматически обновляем диапазон с учетом нового стиля игры
-        const position = state.sixMaxUsers[index].position;
-        const strength = state.sixMaxUsers[index].strength;
-        const stackSize = state.sixMaxUsers[index].stackSize;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.sixMaxUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        state.sixMaxUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          state.sixMaxStartingStack,
-          state.sixMaxStage,
-          state.sixMaxCategory,
-          state.sixMaxBounty
-        );
+
+        if (currentAction === null) {
+          state.sixMaxUsers[index].range = [];
+        } else {
+          const position = state.sixMaxUsers[index].position;
+          const strength = state.sixMaxUsers[index].strength;
+          const stackSize = state.sixMaxUsers[index].stackSize;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          state.sixMaxUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            state.sixMaxStartingStack,
+            state.sixMaxStage,
+            state.sixMaxCategory,
+            state.sixMaxBounty,
+            state.sixMaxActiveRangeSetData // Передаем данные из БД если они есть
+          );
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -697,23 +791,30 @@ const tableSlice = createSlice({
       const { index, playStyle } = action.payload;
       if (state.eightMaxUsers[index]) {
         state.eightMaxUsers[index].playStyle = playStyle;
-        // Автоматически обновляем диапазон с учетом нового стиля игры
-        const position = state.eightMaxUsers[index].position;
-        const strength = state.eightMaxUsers[index].strength;
-        const stackSize = state.eightMaxUsers[index].stackSize;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.eightMaxUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        state.eightMaxUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          state.eightMaxStartingStack,
-          state.eightMaxStage,
-          state.eightMaxCategory,
-          state.eightMaxBounty
-        );
+
+        if (currentAction === null) {
+          state.eightMaxUsers[index].range = [];
+        } else {
+          const position = state.eightMaxUsers[index].position;
+          const strength = state.eightMaxUsers[index].strength;
+          const stackSize = state.eightMaxUsers[index].stackSize;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          state.eightMaxUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            state.eightMaxStartingStack,
+            state.eightMaxStage,
+            state.eightMaxCategory,
+            state.eightMaxBounty,
+            state.eightMaxActiveRangeSetData // Передаем данные из БД если они есть
+          );
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -726,23 +827,30 @@ const tableSlice = createSlice({
       const { index, playStyle } = action.payload;
       if (state.cashUsers[index]) {
         state.cashUsers[index].playStyle = playStyle;
-        // Для Cash игр используем только defaultRanges
-        const position = state.cashUsers[index].position;
-        const strength = state.cashUsers[index].strength;
-        const stackSize = state.cashUsers[index].stackSize;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.cashUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        state.cashUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          0, // Несовпадающее значение для Cash
-          "early",
-          "micro",
-          false
-        );
+
+        if (currentAction === null) {
+          state.cashUsers[index].range = [];
+        } else {
+          const position = state.cashUsers[index].position;
+          const strength = state.cashUsers[index].strength;
+          const stackSize = state.cashUsers[index].stackSize;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          state.cashUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            0, // Несовпадающее значение для Cash
+            "early",
+            "micro",
+            false,
+            state.cashActiveRangeSetData // Передаем данные из БД если они есть
+          );
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -837,7 +945,7 @@ const tableSlice = createSlice({
       if (state.sixMaxUsers[index]) {
         state.sixMaxUsers[index].action = playerAction;
 
-        // Автоматически обновляем диапазон на основе нового действия
+        // Автоматически обновляем диапазон (используя дефолтные JSON или данные из БД)
         const position = state.sixMaxUsers[index].position;
         const strength = state.sixMaxUsers[index].strength;
         const playStyle = state.sixMaxUsers[index].playStyle;
@@ -853,7 +961,8 @@ const tableSlice = createSlice({
           state.sixMaxStartingStack,
           state.sixMaxStage,
           state.sixMaxCategory,
-          state.sixMaxBounty
+          state.sixMaxBounty,
+          state.sixMaxActiveRangeSetData // Передаем данные из БД если они есть
         );
       }
       saveSettingsToLocalStorage(state);
@@ -868,7 +977,7 @@ const tableSlice = createSlice({
       if (state.eightMaxUsers[index]) {
         state.eightMaxUsers[index].action = playerAction;
 
-        // Автоматически обновляем диапазон на основе нового действия
+        // Автоматически обновляем диапазон (используя дефолтные JSON или данные из БД)
         const position = state.eightMaxUsers[index].position;
         const strength = state.eightMaxUsers[index].strength;
         const playStyle = state.eightMaxUsers[index].playStyle;
@@ -884,7 +993,8 @@ const tableSlice = createSlice({
           state.eightMaxStartingStack,
           state.eightMaxStage,
           state.eightMaxCategory,
-          state.eightMaxBounty
+          state.eightMaxBounty,
+          state.eightMaxActiveRangeSetData // Передаем данные из БД если они есть
         );
       }
       saveSettingsToLocalStorage(state);
@@ -1002,23 +1112,30 @@ const tableSlice = createSlice({
       if (state.sixMaxUsers[index]) {
         state.sixMaxUsers[index].stackSize = stackSize;
         state.sixMaxUsers[index].stack = getStackValue(stackSize);
-        // Автоматически обновляем диапазон на основе позиции, текущей силы, нового размера стека и текущего действия
-        const position = state.sixMaxUsers[index].position;
-        const strength = state.sixMaxUsers[index].strength;
-        const playStyle = state.sixMaxUsers[index].playStyle;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.sixMaxUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        state.sixMaxUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          state.sixMaxStartingStack,
-          state.sixMaxStage,
-          state.sixMaxCategory,
-          state.sixMaxBounty
-        );
+
+        if (currentAction === null) {
+          state.sixMaxUsers[index].range = [];
+        } else {
+          const position = state.sixMaxUsers[index].position;
+          const strength = state.sixMaxUsers[index].strength;
+          const playStyle = state.sixMaxUsers[index].playStyle;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          state.sixMaxUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            state.sixMaxStartingStack,
+            state.sixMaxStage,
+            state.sixMaxCategory,
+            state.sixMaxBounty,
+            state.sixMaxActiveRangeSetData // Передаем данные из БД если они есть
+          );
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -1032,23 +1149,30 @@ const tableSlice = createSlice({
       if (state.eightMaxUsers[index]) {
         state.eightMaxUsers[index].stackSize = stackSize;
         state.eightMaxUsers[index].stack = getStackValue(stackSize);
-        // Автоматически обновляем диапазон на основе позиции, текущей силы, нового размера стека и текущего действия
-        const position = state.eightMaxUsers[index].position;
-        const strength = state.eightMaxUsers[index].strength;
-        const playStyle = state.eightMaxUsers[index].playStyle;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.eightMaxUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        state.eightMaxUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          state.eightMaxStartingStack,
-          state.eightMaxStage,
-          state.eightMaxCategory,
-          state.eightMaxBounty
-        );
+
+        if (currentAction === null) {
+          state.eightMaxUsers[index].range = [];
+        } else {
+          const position = state.eightMaxUsers[index].position;
+          const strength = state.eightMaxUsers[index].strength;
+          const playStyle = state.eightMaxUsers[index].playStyle;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          state.eightMaxUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            state.eightMaxStartingStack,
+            state.eightMaxStage,
+            state.eightMaxCategory,
+            state.eightMaxBounty,
+            state.eightMaxActiveRangeSetData // Передаем данные из БД если они есть
+          );
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -1062,23 +1186,30 @@ const tableSlice = createSlice({
       if (state.cashUsers[index]) {
         state.cashUsers[index].stackSize = stackSize;
         state.cashUsers[index].stack = getStackValue(stackSize);
-        // Автоматически обновляем диапазон на основе позиции, текущей силы, нового размера стека и текущего действия
-        const position = state.cashUsers[index].position;
-        const strength = state.cashUsers[index].strength;
-        const playStyle = state.cashUsers[index].playStyle;
+
+        // Автоматически обновляем диапазон ТОЛЬКО если у игрока выбрано действие
         const currentAction = state.cashUsers[index].action;
-        const pokerAction = convertPlayerActionToPokerAction(currentAction);
-        state.cashUsers[index].range = getRangeWithTournamentSettings(
-          position,
-          strength,
-          playStyle,
-          stackSize,
-          pokerAction,
-          0, // Несовпадающее значение для Cash
-          "early",
-          "micro",
-          false
-        );
+
+        if (currentAction === null) {
+          state.cashUsers[index].range = [];
+        } else {
+          const position = state.cashUsers[index].position;
+          const strength = state.cashUsers[index].strength;
+          const playStyle = state.cashUsers[index].playStyle;
+          const pokerAction = convertPlayerActionToPokerAction(currentAction);
+          state.cashUsers[index].range = getRangeWithTournamentSettings(
+            position,
+            strength,
+            playStyle,
+            stackSize,
+            pokerAction,
+            0, // Несовпадающее значение для Cash
+            "early",
+            "micro",
+            false,
+            state.cashActiveRangeSetData // Передаем данные из БД если они есть
+          );
+        }
       }
       saveSettingsToLocalStorage(state);
     },
@@ -1186,21 +1317,26 @@ const tableSlice = createSlice({
     // 6-Max: Установить стадию турнира
     setSixMaxStage: (state, action: PayloadAction<TournamentStage>) => {
       state.sixMaxStage = action.payload;
-      // Обновляем диапазоны всех игроков (кроме Hero)
+      // Обновляем диапазоны всех игроков (кроме Hero), но ТОЛЬКО если у них выбрано действие
       state.sixMaxUsers.forEach((user, index) => {
         if (index !== state.sixMaxHeroIndex) {
-          const pokerAction = convertPlayerActionToPokerAction(user.action);
-          user.range = getRangeWithTournamentSettings(
-            user.position,
-            user.strength,
-            user.playStyle,
-            user.stackSize,
-            pokerAction,
-            state.sixMaxStartingStack,
-            action.payload,
-            state.sixMaxCategory,
-            state.sixMaxBounty
-          );
+          if (user.action === null) {
+            user.range = [];
+          } else {
+            const pokerAction = convertPlayerActionToPokerAction(user.action);
+            user.range = getRangeWithTournamentSettings(
+              user.position,
+              user.strength,
+              user.playStyle,
+              user.stackSize,
+              pokerAction,
+              state.sixMaxStartingStack,
+              action.payload,
+              state.sixMaxCategory,
+              state.sixMaxBounty,
+              state.sixMaxActiveRangeSetData // Передаем данные из БД если они есть
+            );
+          }
         }
       });
       saveSettingsToLocalStorage(state);
@@ -1209,21 +1345,26 @@ const tableSlice = createSlice({
     // 8-Max: Установить стадию турнира
     setEightMaxStage: (state, action: PayloadAction<TournamentStage>) => {
       state.eightMaxStage = action.payload;
-      // Обновляем диапазоны всех игроков (кроме Hero)
+      // Обновляем диапазоны всех игроков (кроме Hero), но ТОЛЬКО если у них выбрано действие
       state.eightMaxUsers.forEach((user, index) => {
         if (index !== state.eightMaxHeroIndex) {
-          const pokerAction = convertPlayerActionToPokerAction(user.action);
-          user.range = getRangeWithTournamentSettings(
-            user.position,
-            user.strength,
-            user.playStyle,
-            user.stackSize,
-            pokerAction,
-            state.eightMaxStartingStack,
-            action.payload,
-            state.eightMaxCategory,
-            state.eightMaxBounty
-          );
+          if (user.action === null) {
+            user.range = [];
+          } else {
+            const pokerAction = convertPlayerActionToPokerAction(user.action);
+            user.range = getRangeWithTournamentSettings(
+              user.position,
+              user.strength,
+              user.playStyle,
+              user.stackSize,
+              pokerAction,
+              state.eightMaxStartingStack,
+              action.payload,
+              state.eightMaxCategory,
+              state.eightMaxBounty,
+              state.eightMaxActiveRangeSetData // Передаем данные из БД если они есть
+            );
+          }
         }
       });
       saveSettingsToLocalStorage(state);
@@ -1232,21 +1373,26 @@ const tableSlice = createSlice({
     // 6-Max: Установить начальный стек
     setSixMaxStartingStack: (state, action: PayloadAction<number>) => {
       state.sixMaxStartingStack = action.payload;
-      // Обновляем диапазоны всех игроков (кроме Hero)
+      // Обновляем диапазоны всех игроков (кроме Hero), но ТОЛЬКО если у них выбрано действие
       state.sixMaxUsers.forEach((user, index) => {
         if (index !== state.sixMaxHeroIndex) {
-          const pokerAction = convertPlayerActionToPokerAction(user.action);
-          user.range = getRangeWithTournamentSettings(
-            user.position,
-            user.strength,
-            user.playStyle,
-            user.stackSize,
-            pokerAction,
-            action.payload,
-            state.sixMaxStage,
-            state.sixMaxCategory,
-            state.sixMaxBounty
-          );
+          if (user.action === null) {
+            user.range = [];
+          } else {
+            const pokerAction = convertPlayerActionToPokerAction(user.action);
+            user.range = getRangeWithTournamentSettings(
+              user.position,
+              user.strength,
+              user.playStyle,
+              user.stackSize,
+              pokerAction,
+              action.payload,
+              state.sixMaxStage,
+              state.sixMaxCategory,
+              state.sixMaxBounty,
+              state.sixMaxActiveRangeSetData // Передаем данные из БД если они есть
+            );
+          }
         }
       });
       saveSettingsToLocalStorage(state);
@@ -1255,21 +1401,26 @@ const tableSlice = createSlice({
     // 8-Max: Установить начальный стек
     setEightMaxStartingStack: (state, action: PayloadAction<number>) => {
       state.eightMaxStartingStack = action.payload;
-      // Обновляем диапазоны всех игроков (кроме Hero)
+      // Обновляем диапазоны всех игроков (кроме Hero), но ТОЛЬКО если у них выбрано действие
       state.eightMaxUsers.forEach((user, index) => {
         if (index !== state.eightMaxHeroIndex) {
-          const pokerAction = convertPlayerActionToPokerAction(user.action);
-          user.range = getRangeWithTournamentSettings(
-            user.position,
-            user.strength,
-            user.playStyle,
-            user.stackSize,
-            pokerAction,
-            action.payload,
-            state.eightMaxStage,
-            state.eightMaxCategory,
-            state.eightMaxBounty
-          );
+          if (user.action === null) {
+            user.range = [];
+          } else {
+            const pokerAction = convertPlayerActionToPokerAction(user.action);
+            user.range = getRangeWithTournamentSettings(
+              user.position,
+              user.strength,
+              user.playStyle,
+              user.stackSize,
+              pokerAction,
+              action.payload,
+              state.eightMaxStage,
+              state.eightMaxCategory,
+              state.eightMaxBounty,
+              state.eightMaxActiveRangeSetData // Передаем данные из БД если они есть
+            );
+          }
         }
       });
       saveSettingsToLocalStorage(state);
@@ -1519,6 +1670,63 @@ const tableSlice = createSlice({
       state.cashEnabledStrengths = action.payload;
       saveSettingsToLocalStorage(state);
     },
+
+    // 6-Max: Установить активный набор диапазонов
+    setSixMaxActiveRangeSet: (state, action: PayloadAction<{ id: number | null; name: string | null }>) => {
+      state.sixMaxActiveRangeSetId = action.payload.id;
+      state.sixMaxActiveRangeSetName = action.payload.name;
+      // Если выбран дефолтный набор (id === null), очищаем данные
+      if (action.payload.id === null) {
+        state.sixMaxActiveRangeSetData = null;
+      }
+      saveSettingsToLocalStorage(state);
+    },
+
+    // 6-Max: Установить данные активного набора диапазонов
+    setSixMaxActiveRangeSetData: (state, action: PayloadAction<any | null>) => {
+      if (action.payload === null) {
+        console.log("🗑️ [Redux] Очистка данных диапазонов из БД (переключение на дефолтные)");
+      } else {
+        console.log("💾 [Redux] Сохранение данных диапазонов из БД");
+        console.log("   Структура данных:", Object.keys(action.payload));
+      }
+      state.sixMaxActiveRangeSetData = action.payload;
+      saveSettingsToLocalStorage(state);
+    },
+
+    // 8-Max: Установить активный набор диапазонов
+    setEightMaxActiveRangeSet: (state, action: PayloadAction<{ id: number | null; name: string | null }>) => {
+      state.eightMaxActiveRangeSetId = action.payload.id;
+      state.eightMaxActiveRangeSetName = action.payload.name;
+      // Если выбран дефолтный набор (id === null), очищаем данные
+      if (action.payload.id === null) {
+        state.eightMaxActiveRangeSetData = null;
+      }
+      saveSettingsToLocalStorage(state);
+    },
+
+    // 8-Max: Установить данные активного набора диапазонов
+    setEightMaxActiveRangeSetData: (state, action: PayloadAction<any | null>) => {
+      state.eightMaxActiveRangeSetData = action.payload;
+      saveSettingsToLocalStorage(state);
+    },
+
+    // Cash: Установить активный набор диапазонов
+    setCashActiveRangeSet: (state, action: PayloadAction<{ id: number | null; name: string | null }>) => {
+      state.cashActiveRangeSetId = action.payload.id;
+      state.cashActiveRangeSetName = action.payload.name;
+      // Если выбран дефолтный набор (id === null), очищаем данные
+      if (action.payload.id === null) {
+        state.cashActiveRangeSetData = null;
+      }
+      saveSettingsToLocalStorage(state);
+    },
+
+    // Cash: Установить данные активного набора диапазонов
+    setCashActiveRangeSetData: (state, action: PayloadAction<any | null>) => {
+      state.cashActiveRangeSetData = action.payload;
+      saveSettingsToLocalStorage(state);
+    },
   },
 });
 
@@ -1591,5 +1799,11 @@ export const {
   setEightMaxEnabledStrengths,
   setCashEnabledPlayStyles,
   setCashEnabledStrengths,
+  setSixMaxActiveRangeSet,
+  setSixMaxActiveRangeSetData,
+  setEightMaxActiveRangeSet,
+  setEightMaxActiveRangeSetData,
+  setCashActiveRangeSet,
+  setCashActiveRangeSetData,
 } = tableSlice.actions;
 export default tableSlice.reducer;

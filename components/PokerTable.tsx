@@ -1,8 +1,9 @@
-import { User, PlayerStrength, PlayerPlayStyle, Card, PlayerAction, StackSize } from "@/lib/redux/slices/tableSlice";
+import { User, PlayerStrength, PlayerPlayStyle, Card, PlayerAction, StackSize, TournamentStage, TournamentCategory } from "@/lib/redux/slices/tableSlice";
 import PlayerSeat from "./PlayerSeat";
 import PotDisplay from "./PotDisplay";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { calculateGameEquity, findBBPlayer } from "@/lib/utils/equityCalculator";
+import { TournamentActionType } from "@/lib/utils/tournamentRangeLoader";
 
 interface PokerTableProps {
   users: User[]; // Массив игроков
@@ -34,6 +35,11 @@ interface PokerTableProps {
   fiveBetMultiplier?: number; // Множитель для 5-bet
   enabledPlayStyles?: { tight: boolean; balanced: boolean; aggressor: boolean }; // Включенные стили игры
   enabledStrengths?: { fish: boolean; amateur: boolean; regular: boolean }; // Включенные силы игроков
+  stage: TournamentStage; // Стадия турнира для загрузки диапазонов
+  category: TournamentCategory; // Категория турнира
+  startingStack: number; // Начальный стек турнира в BB
+  bounty: boolean; // Наличие баунти
+  customRangeData?: any; // Данные диапазонов из БД (если есть)
 }
 
 export default function PokerTable({
@@ -57,6 +63,11 @@ export default function PokerTable({
   fiveBetMultiplier,
   enabledPlayStyles = { tight: false, balanced: true, aggressor: false },
   enabledStrengths = { fish: false, amateur: true, regular: false },
+  stage,
+  category,
+  startingStack,
+  bounty,
+  customRangeData,
 }: PokerTableProps) {
   const tableColors = {
     "6-max": {
@@ -81,6 +92,57 @@ export default function PokerTable({
 
   const colors = tableColors[tableType];
 
+  // Локальный state для временных диапазонов (работают только в текущей раздаче)
+  // Ключ формата: "playerIndex-action" (например, "3-open_raise")
+  const [temporaryRanges, setTemporaryRanges] = useState<Map<string, string[]>>(new Map());
+
+  // Отслеживаем позиции игроков для очистки временных диапазонов при ротации
+  const prevPositionsRef = useRef<string>("");
+
+  // Очищаем временные диапазоны при изменении позиций игроков (ротация стола)
+  useEffect(() => {
+    const currentPositions = users.map(u => u.position).join(",");
+
+    // Если позиции изменились и это не первый рендер
+    if (prevPositionsRef.current !== "" && prevPositionsRef.current !== currentPositions) {
+      setTemporaryRanges(new Map()); // Очищаем все временные диапазоны при ротации стола
+      console.log("Временные диапазоны очищены из-за ротации стола");
+    }
+
+    prevPositionsRef.current = currentPositions;
+  }, [users]);
+
+  // Функция для обновления временного диапазона
+  const handleTemporaryRangeChange = (
+    playerIndex: number,
+    action: TournamentActionType,
+    range: string[]
+  ) => {
+    const key = `${playerIndex}-${action}`;
+    setTemporaryRanges((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(key, range);
+      return newMap;
+    });
+  };
+
+  // Функция для получения эффективного диапазона (временный или из Redux)
+  const getEffectiveRange = (
+    playerIndex: number,
+    action: TournamentActionType | null
+  ): string[] => {
+    if (action === null) {
+      // Для null action всегда возвращаем диапазон из Redux
+      return users[playerIndex].range;
+    }
+
+    const key = `${playerIndex}-${action}`;
+    const tempRange = temporaryRanges.get(key);
+
+    // Если есть временный диапазон, используем его, иначе берем из Redux
+    return tempRange !== undefined ? tempRange : users[playerIndex].range;
+  };
+
   // Вычисляем общий банк (базовый банк + все ставки игроков)
   const totalPot = useMemo(() => {
     const playersBets = users.reduce((sum, user) => sum + user.bet, 0);
@@ -94,14 +156,39 @@ export default function PokerTable({
   const hasSecondCard = heroCards[1] !== null;
   const hasBothCards = hasFirstCard && hasSecondCard;
 
-  // Вычисляем эквити когда выбраны обе карты
+  // Создаем копию users с учетом временных диапазонов для расчета эквити
+  const usersWithTemporaryRanges = useMemo(() => {
+    return users.map((user, index) => {
+      // Конвертируем PlayerAction в TournamentActionType
+      const actionMapping: Record<PlayerAction, TournamentActionType> = {
+        "fold": "defense_vs_open",
+        "call": "defense_vs_open",
+        "check": "defense_vs_open",
+        "bet-open": "open_raise",
+        "raise-3bet": "3bet",
+        "raise-4bet": "4bet",
+        "raise-5bet": "5bet",
+        "all-in": "push_range",
+      };
+
+      const tournamentAction = user.action ? actionMapping[user.action] : null;
+      const effectiveRange = getEffectiveRange(index, tournamentAction);
+
+      return {
+        ...user,
+        range: effectiveRange,
+      };
+    });
+  }, [users, temporaryRanges]);
+
+  // Вычисляем эквити когда выбраны обе карты, используя users с временными диапазонами
   const equity = useMemo(() => {
     if (!hasBothCards) return null;
-    return calculateGameEquity(users, heroIndex);
-  }, [hasBothCards, users, heroIndex]);
+    return calculateGameEquity(usersWithTemporaryRanges, heroIndex);
+  }, [hasBothCards, usersWithTemporaryRanges, heroIndex]);
 
-  // Находим игрока BB для отображения
-  const bbPlayer = useMemo(() => findBBPlayer(users), [users]);
+  // Находим игрока BB для отображения (с временным диапазоном)
+  const bbPlayer = useMemo(() => findBBPlayer(usersWithTemporaryRanges), [usersWithTemporaryRanges]);
 
   // Игроки теперь фиксированы на своих визуальных позициях
 
@@ -320,6 +407,11 @@ export default function PokerTable({
                       onHeroClick={handleHeroClick}
                       autoAllIn={autoAllIn}
                       onToggleAutoAllIn={onToggleAutoAllIn}
+                      tableType={tableType}
+                      stage={stage}
+                      category={category}
+                      startingStack={startingStack}
+                      bounty={bounty}
                       onToggleStrength={() =>
                         onTogglePlayerStrength(index, user.strength)
                       }
@@ -339,6 +431,13 @@ export default function PokerTable({
                           ? (range) => onRangeChange(index, range)
                           : undefined
                       }
+                      onTemporaryRangeChange={
+                        !isHero
+                          ? (action, range) => handleTemporaryRangeChange(index, action, range)
+                          : undefined
+                      }
+                      temporaryRanges={temporaryRanges}
+                      playerIndex={index}
                       onActionChange={(action) => onActionChange(index, action)}
                       onBetChange={(bet) => onBetChange(index, bet)}
                       allPlayersActions={allPlayersActions}
@@ -349,6 +448,7 @@ export default function PokerTable({
                       fiveBetMultiplier={fiveBetMultiplier}
                       enabledPlayStyles={enabledPlayStyles}
                       enabledStrengths={enabledStrengths}
+                      customRangeData={customRangeData}
                     />
                   );
                 })}

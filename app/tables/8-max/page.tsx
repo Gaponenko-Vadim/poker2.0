@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
 import TournamentSettings from "@/components/TournamentSettings";
 import PlayerSettingsPopup from "@/components/PlayerSettingsPopup";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
+import { getAvailableStartingStacks, getRangeFromData, TournamentActionType } from "@/lib/utils/tournamentRangeLoader";
 import {
   rotateEightMaxTable,
   setEightMaxPlayerStrength,
@@ -28,6 +29,8 @@ import {
   setEightMaxCategory,
   setEightMaxEnabledPlayStyles,
   setEightMaxEnabledStrengths,
+  setEightMaxActiveRangeSet,
+  setEightMaxActiveRangeSetData,
   newEightMaxDeal,
   PlayerStrength,
   PlayerPlayStyle,
@@ -62,6 +65,7 @@ export default function EightMaxPage() {
     (state) => state.table.eightMaxStartingStack
   );
   const bounty = useAppSelector((state) => state.table.eightMaxBounty);
+  const category = useAppSelector((state) => state.table.eightMaxCategory);
   const autoAllIn = useAppSelector((state) => state.table.eightMaxAutoAllIn);
   const openRaiseSize = useAppSelector((state) => state.table.eightMaxOpenRaiseSize);
   const threeBetMultiplier = useAppSelector((state) => state.table.eightMaxThreeBetMultiplier);
@@ -69,9 +73,86 @@ export default function EightMaxPage() {
   const fiveBetMultiplier = useAppSelector((state) => state.table.eightMaxFiveBetMultiplier);
   const enabledPlayStyles = useAppSelector((state) => state.table.eightMaxEnabledPlayStyles);
   const enabledStrengths = useAppSelector((state) => state.table.eightMaxEnabledStrengths);
+  const activeRangeSetId = useAppSelector((state) => state.table.eightMaxActiveRangeSetId);
+  const activeRangeSetName = useAppSelector((state) => state.table.eightMaxActiveRangeSetName);
+  const activeRangeSetData = useAppSelector((state) => state.table.eightMaxActiveRangeSetData);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
+
+  // Автоматическая корректировка startingStack при загрузке и смене категории
+  useEffect(() => {
+    const availableStacks = getAvailableStartingStacks(category, bounty);
+
+    // Если текущий startingStack недоступен для категории
+    if (availableStacks.length > 0 && !availableStacks.includes(startingStack)) {
+      // Выбираем первый доступный вариант
+      dispatch(setEightMaxStartingStack(availableStacks[0]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, bounty, dispatch]); // Намеренно не включаем startingStack в зависимости
+
+  // Загрузка и применение диапазонов из БД
+  useEffect(() => {
+    const loadAndApplyRanges = async () => {
+      // Если выбран дефолт - очищаем данные из Redux и принудительно перезагружаем дефолтные диапазоны
+      if (activeRangeSetId === null) {
+        console.log("🔄 [8-max] Switching to default ranges");
+
+        // КРИТИЧНО: Сначала очищаем данные диапазонов из БД
+        dispatch(setEightMaxActiveRangeSetData(null));
+
+        // Принудительно перезагружаем дефолтные диапазоны для всех игроков через reducers
+        console.log("🔄 [8-max] Force reloading default ranges for all players");
+        users.forEach((user, index) => {
+          if (index === heroIndex) return;
+          // Триггерим reducer, который автоматически загрузит дефолтные диапазоны
+          dispatch(setEightMaxPlayerStackSize({ index, stackSize: user.stackSize }));
+        });
+
+        return;
+      }
+
+      console.log("📥 [8-max] Loading range set ID:", activeRangeSetId, "Name:", activeRangeSetName);
+
+      try {
+        const response = await fetch(`/api/user-ranges/${activeRangeSetId}`);
+        const result = await response.json();
+
+        console.log("📦 [8-max] API response:", result);
+
+        if (!result.success || !result.data) {
+          console.error("❌ [8-max] Failed to load range set:", result.error);
+          return;
+        }
+
+        // PostgreSQL JSONB поле уже возвращается как объект, парсинг не нужен
+        const rangeData = result.data.range_data;
+        console.log("📊 [8-max] Range data structure:", Object.keys(rangeData));
+
+        // КРИТИЧНО: Сначала сохраняем данные диапазонов в Redux
+        console.log("💾 [8-max] Saving range data to Redux");
+        dispatch(setEightMaxActiveRangeSetData(rangeData));
+
+        // КРИТИЧНО: Теперь принудительно перезагружаем диапазоны для ВСЕХ игроков через reducers
+        // Это гарантирует, что reducers будут использовать только что сохраненные данные из БД
+        console.log("🔄 [8-max] Force reloading ranges for all players via reducers");
+        users.forEach((user, index) => {
+          if (index === heroIndex) return;
+          // Триггерим reducer, который автоматически загрузит диапазоны из БД (через customRangeData)
+          dispatch(setEightMaxPlayerStackSize({ index, stackSize: user.stackSize }));
+        });
+
+        console.log("✅ [8-max] Loaded and applied ranges from set:", activeRangeSetName);
+        console.log("📋 [8-max] All users:", users.map(u => ({ position: u.position, range: u.range.slice(0, 3) + "..." })));
+      } catch (error) {
+        console.error("❌ [8-max] Error loading range set:", error);
+      }
+    };
+
+    loadAndApplyRanges();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeRangeSetId, stage]);
 
   // Обработчик вращения стола
   const handleRotateTable = () => {
@@ -201,6 +282,10 @@ export default function EightMaxPage() {
     dispatch(setEightMaxBounty(newBounty));
   };
 
+  const handleActiveRangeSetChange = (id: number | null, name: string | null) => {
+    dispatch(setEightMaxActiveRangeSet({ id, name }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
@@ -214,6 +299,7 @@ export default function EightMaxPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Настройки турнира */}
         <TournamentSettings
+          tableType="8-max"
           averageStack={averageStackSize}
           onAverageStackChange={handleAverageStackChange}
           buyIn={buyIn}
@@ -228,6 +314,9 @@ export default function EightMaxPage() {
           playersCount={users.length}
           bounty={bounty}
           onBountyChange={handleBountyChange}
+          activeRangeSetId={activeRangeSetId}
+          activeRangeSetName={activeRangeSetName}
+          onActiveRangeSetChange={handleActiveRangeSetChange}
         />
 
         {/* Попап глобальных настроек игры */}
@@ -259,6 +348,11 @@ export default function EightMaxPage() {
             heroIndex={heroIndex}
             basePot={pot}
             autoAllIn={autoAllIn}
+            stage={stage}
+            category={category}
+            startingStack={startingStack}
+            bounty={bounty}
+            customRangeData={activeRangeSetData}
             onToggleAutoAllIn={handleToggleAutoAllIn}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}

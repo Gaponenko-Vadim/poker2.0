@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { User, Card, PlayerAction } from "@/lib/redux/slices/tableSlice";
+import { User, Card, PlayerAction, TournamentStage, TournamentCategory } from "@/lib/redux/slices/tableSlice";
 import PlayerStrength from "./PlayerStrength";
 import PlayerPlayStyle from "./PlayerPlayStyle";
 import PlayerStackSize from "./PlayerStackSize";
 import CardSelector from "./CardSelector";
 import RangeSelector from "./RangeSelector";
 import PlayerActionDropdown from "./PlayerActionDropdown";
+import { TournamentActionType } from "@/lib/utils/tournamentRangeLoader";
+import { TableType } from "@/lib/types/userRanges";
 
 interface PlayerSeatProps {
   user: User;
@@ -19,6 +21,9 @@ interface PlayerSeatProps {
   onToggleStackSize: () => void; // Функция для переключения размера стека
   onCardsChange?: (cards: [Card | null, Card | null]) => void; // Функция для изменения карт (опциональная)
   onRangeChange?: (range: string[]) => void; // Функция для изменения диапазона (опциональная)
+  onTemporaryRangeChange?: (action: TournamentActionType, range: string[]) => void; // Функция для временного изменения диапазона
+  temporaryRanges?: Map<string, string[]>; // Map с временными диапазонами
+  playerIndex?: number; // Индекс игрока в массиве
   onActionChange?: (action: PlayerAction | null) => void; // Функция для изменения действия (опциональная)
   onBetChange?: (bet: number) => void; // Функция для изменения ставки (опциональная)
   allPlayersActions: (PlayerAction | null)[]; // Действия всех игроков за столом
@@ -29,6 +34,12 @@ interface PlayerSeatProps {
   fiveBetMultiplier?: number; // Множитель для 5-bet
   enabledPlayStyles?: { tight: boolean; balanced: boolean; aggressor: boolean }; // Включенные стили игры
   enabledStrengths?: { fish: boolean; amateur: boolean; regular: boolean }; // Включенные силы игроков
+  tableType: TableType; // Тип стола (6-max, 8-max, cash)
+  stage: TournamentStage; // Стадия турнира для загрузки диапазонов
+  category: TournamentCategory; // Категория турнира
+  startingStack: number; // Начальный стек турнира в BB
+  bounty: boolean; // Наличие баунти
+  customRangeData?: any; // Данные диапазонов из БД (если есть)
 }
 
 export default function PlayerSeat({
@@ -43,6 +54,9 @@ export default function PlayerSeat({
   onToggleStackSize,
   onCardsChange,
   onRangeChange,
+  onTemporaryRangeChange,
+  temporaryRanges,
+  playerIndex,
   onActionChange,
   onBetChange,
   allPlayersActions,
@@ -53,6 +67,12 @@ export default function PlayerSeat({
   fiveBetMultiplier,
   enabledPlayStyles = { tight: false, balanced: true, aggressor: false },
   enabledStrengths = { fish: false, amateur: true, regular: false },
+  tableType,
+  stage,
+  category,
+  startingStack,
+  bounty,
+  customRangeData,
 }: PlayerSeatProps) {
   const [isRangeSelectorOpen, setIsRangeSelectorOpen] = useState(false);
 
@@ -233,11 +253,20 @@ export default function PlayerSeat({
           playerName={user.name}
           currentRange={user.range}
           onRangeChange={handleRangeChange}
+          onTemporaryRangeChange={onTemporaryRangeChange}
+          temporaryRanges={temporaryRanges}
+          playerIndex={playerIndex}
+          tableType={tableType}
           position={user.position}
           strength={user.strength}
           playStyle={user.playStyle}
           stackSize={user.stackSize}
           currentAction={user.action}
+          stage={stage}
+          category={category}
+          startingStack={startingStack}
+          bounty={bounty}
+          customRangeData={customRangeData}
         />
       )}
     </div>

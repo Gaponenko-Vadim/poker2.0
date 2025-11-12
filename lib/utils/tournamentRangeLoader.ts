@@ -1,5 +1,8 @@
-// Импортируем JSON напрямую
-import tournamentRangesData from "@/lib/constants/tournamentRanges.json";
+// Импортируем все JSON файлы с диапазонами
+import tournamentRangesMicro200 from "@/lib/constants/tournamentRanges_micro_200bb.json";
+import tournamentRangesMicro100 from "@/lib/constants/tournamentRanges_micro_100bb.json";
+import tournamentRangesLow100 from "@/lib/constants/tournamentRanges_low_100bb.json";
+import tournamentRangesMid100 from "@/lib/constants/tournamentRanges_mid_100bb.json";
 import {
   TablePosition,
   PlayerStrength,
@@ -8,6 +11,9 @@ import {
   TournamentStage,
   TournamentCategory
 } from "@/lib/redux/slices/tableSlice";
+
+// Тип для данных диапазонов
+type RangeData = typeof tournamentRangesMicro200;
 
 // Тип категории стека из JSON
 type JsonStackCategory = "very_short" | "short" | "medium" | "big";
@@ -53,8 +59,58 @@ export function convertPokerActionToTournamentAction(
 }
 
 /**
+ * Возвращает доступные значения начального стека для данной категории турнира
+ * @param category - Категория турнира
+ * @param bounty - Наличие баунти
+ * @returns Массив доступных значений начального стека
+ */
+export function getAvailableStartingStacks(category: TournamentCategory, bounty: boolean): number[] {
+  // Только для PKO турниров (bounty = true)
+  if (!bounty) {
+    return [];
+  }
+
+  // Определяем доступные стеки для каждой категории
+  switch (category) {
+    case "micro":
+      return [100, 200]; // Для micro доступны оба варианта
+    case "low":
+      return [100]; // Для low только 100 BB
+    case "mid":
+      return [100]; // Для mid только 100 BB
+    case "high":
+      return []; // Для high пока нет диапазонов
+    default:
+      return [];
+  }
+}
+
+/**
+ * Выбирает правильный JSON файл с диапазонами на основе категории и начального стека
+ */
+function getRangeDataFile(category: TournamentCategory, startingStack: number, bounty: boolean): RangeData | null {
+  // Для PKO турниров (bounty = true)
+  if (bounty) {
+    if (category === "micro" && startingStack === 200) {
+      return tournamentRangesMicro200;
+    }
+    if (category === "micro" && startingStack === 100) {
+      return tournamentRangesMicro100;
+    }
+    if (category === "low" && startingStack === 100) {
+      return tournamentRangesLow100;
+    }
+    if (category === "mid" && startingStack === 100) {
+      return tournamentRangesMid100;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Проверяет, совпадают ли текущие настройки турнира с поддерживаемыми настройками
- * Текущая версия поддерживает только PKO турниры с стеком 200 BB на ранней стадии
+ * Поддерживает PKO турниры с различными категориями и начальными стеками
  */
 export function shouldUseTournamentRanges(
   startingStack: number,
@@ -62,13 +118,21 @@ export function shouldUseTournamentRanges(
   category: TournamentCategory,
   bounty: boolean
 ): boolean {
-  // Поддерживаем только PKO турниры с 200 BB на ранней стадии
-  return (
-    startingStack === 200 &&
-    stage === "early" &&
-    category === "micro" &&
-    bounty === true
-  );
+  const supportedStages: TournamentStage[] = ["early", "middle", "pre-bubble", "late", "pre-final", "final"];
+
+  // Проверяем, что стадия поддерживается
+  if (!supportedStages.includes(stage)) {
+    return false;
+  }
+
+  // Проверяем, что это PKO турнир
+  if (!bounty) {
+    return false;
+  }
+
+  // Проверяем доступность файла для данной комбинации
+  const rangeFile = getRangeDataFile(category, startingStack, bounty);
+  return rangeFile !== null;
 }
 
 /**
@@ -116,27 +180,44 @@ export function generateFullRange(): string[] {
 }
 
 /**
- * Получить диапазон напрямую из tournamentRanges.json
+ * Получить диапазон напрямую из соответствующего JSON файла
+ * @param stage - Стадия турнира
  * @param position - Позиция игрока
  * @param strength - Сила игрока (fish/amateur/regular)
  * @param playStyle - Стиль игры (tight/balanced/aggressor)
  * @param stackSize - Размер стека
  * @param action - Тип действия
+ * @param category - Категория турнира
+ * @param startingStack - Начальный стек
+ * @param bounty - Наличие баунти
  * @returns Массив рук
  */
 export function getTournamentRangeFromJSON(
+  stage: TournamentStage,
   position: TablePosition,
   strength: PlayerStrength,
   playStyle: PlayerPlayStyle,
   stackSize: StackSize,
-  action: TournamentActionType
+  action: TournamentActionType,
+  category: TournamentCategory,
+  startingStack: number,
+  bounty: boolean
 ): string[] {
   try {
-    // Получаем данные из JSON
-    const ranges = tournamentRangesData.ranges;
+    // Выбираем правильный файл данных
+    const rangeData = getRangeDataFile(category, startingStack, bounty);
+    if (!rangeData) {
+      return [];
+    }
 
-    // Навигация по структуре JSON
-    const positionData = ranges?.user?.positions?.[position];
+    // Получаем данные из выбранного JSON
+    const ranges = rangeData.ranges;
+
+    // Навигация по структуре JSON с учетом стадии турнира
+    const stageData = ranges?.user?.stages?.[stage];
+    if (!stageData) return [];
+
+    const positionData = stageData?.positions?.[position];
     if (!positionData) return [];
 
     const strengthData = positionData[strength];
@@ -160,8 +241,91 @@ export function getTournamentRangeFromJSON(
 }
 
 /**
+ * Получает диапазон из переданных данных (для пользовательских наборов из БД)
+ * @param stage - Стадия турнира
+ * @param position - Позиция игрока
+ * @param strength - Сила игрока
+ * @param playStyle - Стиль игры
+ * @param stackSize - Размер стека
+ * @param action - Тип действия
+ * @param rangeData - JSON данные диапазонов
+ * @returns Массив рук
+ */
+export function getRangeFromData(
+  stage: TournamentStage,
+  position: TablePosition,
+  strength: PlayerStrength,
+  playStyle: PlayerPlayStyle,
+  stackSize: StackSize,
+  action: TournamentActionType,
+  rangeData: any
+): string[] {
+  try {
+    // Получаем данные из переданного JSON
+    const ranges = rangeData.ranges;
+
+    // Проверяем, есть ли структура со стадиями (новый формат)
+    const hasStages = ranges?.user?.stages !== undefined;
+
+    let positionData;
+
+    if (hasStages) {
+      // Новый формат: ranges.user.stages[stage].positions[position]
+      const stageData = ranges?.user?.stages?.[stage];
+      if (!stageData) {
+        console.log(`No data for stage: ${stage}`);
+        return [];
+      }
+
+      positionData = stageData?.positions?.[position];
+    } else {
+      // Старый формат (обратная совместимость): ranges.user.positions[position]
+      positionData = ranges?.user?.positions?.[position];
+      console.log(`Using legacy format (no stages) for position: ${position}`);
+    }
+
+    if (!positionData) {
+      console.log(`No data for position: ${position}`);
+      return [];
+    }
+
+    const strengthData = positionData[strength];
+    if (!strengthData) {
+      console.log(`No data for strength: ${strength}`);
+      return [];
+    }
+
+    const playStyleData = strengthData[playStyle];
+    if (!playStyleData) {
+      console.log(`No data for playStyle: ${playStyle}`);
+      return [];
+    }
+
+    const stackCategory = stackSizeToJsonCategory(stackSize);
+    const stackData = playStyleData.ranges_by_stack?.[stackCategory];
+    if (!stackData) {
+      console.log(`No data for stackCategory: ${stackCategory}`);
+      return [];
+    }
+
+    // Получаем строку диапазона по типу действия
+    const rangeString = (stackData as Record<string, string>)[action] || "";
+
+    if (!rangeString) {
+      console.log(`No range for action: ${action}`);
+      return [];
+    }
+
+    return parseRangeString(rangeString);
+  } catch (error) {
+    console.error("Ошибка при загрузке диапазона из данных:", error);
+    return [];
+  }
+}
+
+/**
  * Получает диапазон с учетом настроек турнира
- * Если настройки совпадают с tournamentRanges.json, использует диапазоны оттуда
+ * Если настройки совпадают с доступными JSON файлами, использует диапазоны оттуда
  * Иначе возвращает пустой массив
  *
  * @param position - Позиция игрока
@@ -194,6 +358,16 @@ export function getRangeForTournament(
   // Конвертируем action в формат JSON
   const tournamentAction = convertPokerActionToTournamentAction(action);
 
-  // Получаем диапазон напрямую из JSON
-  return getTournamentRangeFromJSON(position, strength, playStyle, stackSize, tournamentAction);
+  // Получаем диапазон напрямую из соответствующего JSON с учетом всех параметров
+  return getTournamentRangeFromJSON(
+    stage,
+    position,
+    strength,
+    playStyle,
+    stackSize,
+    tournamentAction,
+    category,
+    startingStack,
+    bounty
+  );
 }

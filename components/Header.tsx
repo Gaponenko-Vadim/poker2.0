@@ -114,8 +114,16 @@ export default function Header({
             )}
           </div>
 
-          {/* Правая часть: информация о пользователе и кнопка входа */}
+          {/* Правая часть: навигация, информация о пользователе и кнопка входа */}
           <div className="flex items-center gap-4">
+            {/* Навигационная ссылка на магазин */}
+            <Link
+              href="/shop"
+              className="px-4 py-2 rounded-lg bg-gray-800/50 border border-gray-700 text-gray-300 hover:text-emerald-400 hover:border-emerald-500/50 font-medium transition-all hover:shadow-lg hover:shadow-emerald-500/20"
+            >
+              Магазин диапазонов
+            </Link>
+
             {isAuthenticated && user && (
               <button
                 onClick={onProfileClick}

@@ -1,7 +1,6 @@
 import { CardRank, CardSuit } from "../redux/slices/tableSlice";
 
-// Все возможные ранги и масти
-const RANKS: CardRank[] = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
+// Все возможные масти
 const SUITS: CardSuit[] = ["hearts", "diamonds", "clubs", "spades"];
 
 /**

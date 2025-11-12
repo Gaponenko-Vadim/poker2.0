@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
 import TournamentSettings from "@/components/TournamentSettings";
 import PlayerSettingsPopup from "@/components/PlayerSettingsPopup";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
+import { getRangeFromData } from "@/lib/utils/tournamentRangeLoader";
 import {
   setCashUsersCount,
   rotateCashTable,
@@ -30,10 +31,13 @@ import {
   setCashStartingStack,
   setCashEnabledPlayStyles,
   setCashEnabledStrengths,
+  setCashActiveRangeSet,
+  setCashActiveRangeSetData,
   newCashDeal,
   Card,
   PlayerAction,
   TournamentStage,
+  TournamentCategory,
 } from "@/lib/redux/slices/tableSlice";
 import { getNextStrength } from "@/lib/utils/playerStrength";
 import { getNextPlayStyle } from "@/lib/utils/playerPlayStyle";
@@ -60,6 +64,9 @@ export default function CashPage() {
   const startingStack = useAppSelector(
     (state) => state.table.cashStartingStack
   );
+  // Для cash-игр устанавливаем дефолтные значения для турнирных параметров
+  const category: TournamentCategory = "micro";
+  const bounty = false;
   const autoAllIn = useAppSelector((state) => state.table.cashAutoAllIn);
   const openRaiseSize = useAppSelector((state) => state.table.cashOpenRaiseSize);
   const threeBetMultiplier = useAppSelector((state) => state.table.cashThreeBetMultiplier);
@@ -67,9 +74,74 @@ export default function CashPage() {
   const fiveBetMultiplier = useAppSelector((state) => state.table.cashFiveBetMultiplier);
   const enabledPlayStyles = useAppSelector((state) => state.table.cashEnabledPlayStyles);
   const enabledStrengths = useAppSelector((state) => state.table.cashEnabledStrengths);
+  const activeRangeSetId = useAppSelector((state) => state.table.cashActiveRangeSetId);
+  const activeRangeSetName = useAppSelector((state) => state.table.cashActiveRangeSetName);
+  const activeRangeSetData = useAppSelector((state) => state.table.cashActiveRangeSetData);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
+
+  // Загрузка и применение диапазонов из БД
+  useEffect(() => {
+    const loadAndApplyRanges = async () => {
+      // Если выбран дефолт - очищаем данные из Redux и принудительно перезагружаем дефолтные диапазоны
+      if (activeRangeSetId === null) {
+        console.log("🔄 [Cash] Switching to default ranges");
+
+        // КРИТИЧНО: Сначала очищаем данные диапазонов из БД
+        dispatch(setCashActiveRangeSetData(null));
+
+        // Принудительно перезагружаем дефолтные диапазоны для всех игроков через reducers
+        console.log("🔄 [Cash] Force reloading default ranges for all players");
+        users.forEach((user, index) => {
+          if (index === heroIndex) return;
+          // Триггерим reducer, который автоматически загрузит дефолтные диапазоны
+          dispatch(setCashPlayerStackSize({ index, stackSize: user.stackSize }));
+        });
+
+        return;
+      }
+
+      console.log("📥 [Cash] Loading range set ID:", activeRangeSetId, "Name:", activeRangeSetName);
+
+      try {
+        const response = await fetch(`/api/user-ranges/${activeRangeSetId}`);
+        const result = await response.json();
+
+        console.log("📦 [Cash] API response:", result);
+
+        if (!result.success || !result.data) {
+          console.error("❌ [Cash] Failed to load range set:", result.error);
+          return;
+        }
+
+        // PostgreSQL JSONB поле уже возвращается как объект, парсинг не нужен
+        const rangeData = result.data.range_data;
+        console.log("📊 [Cash] Range data structure:", Object.keys(rangeData));
+
+        // КРИТИЧНО: Сначала сохраняем данные диапазонов в Redux
+        console.log("💾 [Cash] Saving range data to Redux");
+        dispatch(setCashActiveRangeSetData(rangeData));
+
+        // КРИТИЧНО: Теперь принудительно перезагружаем диапазоны для ВСЕХ игроков через reducers
+        // Это гарантирует, что reducers будут использовать только что сохраненные данные из БД
+        console.log("🔄 [Cash] Force reloading ranges for all players via reducers");
+        users.forEach((user, index) => {
+          if (index === heroIndex) return;
+          // Триггерим reducer, который автоматически загрузит диапазоны из БД (через customRangeData)
+          dispatch(setCashPlayerStackSize({ index, stackSize: user.stackSize }));
+        });
+
+        console.log("✅ [Cash] Loaded and applied ranges from set:", activeRangeSetName);
+        console.log("📋 [Cash] All users:", users.map(u => ({ position: u.position, range: u.range.slice(0, 3) + "..." })));
+      } catch (error) {
+        console.error("❌ [Cash] Error loading range set:", error);
+      }
+    };
+
+    loadAndApplyRanges();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeRangeSetId, stage]);
 
   // Обработчик изменения количества игроков
   const handleUsersCountChange = (count: number) => {
@@ -192,6 +264,10 @@ export default function CashPage() {
     dispatch(setCashStartingStack(newStack));
   };
 
+  const handleActiveRangeSetChange = (id: number | null, name: string | null) => {
+    dispatch(setCashActiveRangeSet({ id, name }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
@@ -285,6 +361,7 @@ export default function CashPage() {
 
         {/* Настройки игры */}
         <TournamentSettings
+          tableType="cash"
           averageStack={averageStackSize}
           onAverageStackChange={handleAverageStackChange}
           buyIn={buyIn}
@@ -297,6 +374,9 @@ export default function CashPage() {
           onStartingStackChange={handleStartingStackChange}
           showAnte={false}
           playersCount={users.length}
+          activeRangeSetId={activeRangeSetId}
+          activeRangeSetName={activeRangeSetName}
+          onActiveRangeSetChange={handleActiveRangeSetChange}
         />
 
         {/* Попап глобальных настроек игры */}
@@ -328,6 +408,11 @@ export default function CashPage() {
             heroIndex={heroIndex}
             basePot={pot}
             autoAllIn={autoAllIn}
+            stage="early"
+            category={category}
+            startingStack={startingStack}
+            bounty={bounty}
+            customRangeData={activeRangeSetData}
             onToggleAutoAllIn={handleToggleAutoAllIn}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}

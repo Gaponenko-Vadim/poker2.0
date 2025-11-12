@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { StackSize, TournamentStage, TournamentCategory, PlayerStrength } from "@/lib/redux/slices/tableSlice";
-import { shouldUseTournamentRanges } from "@/lib/utils/tournamentRangeLoader";
+import { useMemo, useState, useEffect } from "react";
+import { StackSize, TournamentStage, TournamentCategory } from "@/lib/redux/slices/tableSlice";
+import { shouldUseTournamentRanges, getAvailableStartingStacks } from "@/lib/utils/tournamentRangeLoader";
+import { UserRangeSet, TableType } from "@/lib/types/userRanges";
 
 interface TournamentSettingsProps {
+  tableType: TableType;
   averageStack: StackSize;
   onAverageStackChange: (stack: StackSize) => void;
   buyIn: number;
@@ -19,6 +21,9 @@ interface TournamentSettingsProps {
   playersCount: number; // Количество игроков для расчета анте на игрока
   bounty?: boolean; // Турнир с баунти
   onBountyChange?: (bounty: boolean) => void;
+  activeRangeSetId: number | null; // ID активного набора диапазонов
+  activeRangeSetName: string | null; // Название активного набора
+  onActiveRangeSetChange: (id: number | null, name: string | null) => void; // Callback для изменения
 }
 
 const stackLabels: Record<StackSize, string> = {
@@ -93,6 +98,7 @@ const getAverageStackByStage = (
 };
 
 export default function TournamentSettings({
+  tableType,
   averageStack,
   onAverageStackChange,
   buyIn,
@@ -107,9 +113,47 @@ export default function TournamentSettings({
   playersCount,
   bounty = false,
   onBountyChange,
+  activeRangeSetId,
+  activeRangeSetName,
+  onActiveRangeSetChange,
 }: TournamentSettingsProps) {
+  const [availableRangeSets, setAvailableRangeSets] = useState<UserRangeSet[]>([]);
+  const [loadingRangeSets, setLoadingRangeSets] = useState(false);
+
   // Вычисляем анте на игрока
   const antePerPlayer = ante / playersCount;
+
+  // Загружаем доступные наборы диапазонов при изменении настроек
+  useEffect(() => {
+    const loadRangeSets = async () => {
+      setLoadingRangeSets(true);
+      try {
+        const category = getBuyInCategory(buyIn);
+        const params = new URLSearchParams({
+          tableType,
+          category,
+          startingStack: startingStack.toString(),
+          bounty: bounty.toString(),
+        });
+
+        const response = await fetch(`/api/user-ranges/get?${params}`);
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          setAvailableRangeSets(data.data);
+        } else {
+          setAvailableRangeSets([]);
+        }
+      } catch (err) {
+        console.error("Error loading range sets:", err);
+        setAvailableRangeSets([]);
+      } finally {
+        setLoadingRangeSets(false);
+      }
+    };
+
+    loadRangeSets();
+  }, [tableType, buyIn, startingStack, bounty]);
 
   // Показываем средний стек только для финала
   const showAverageStack = stage === "final";
@@ -121,18 +165,20 @@ export default function TournamentSettings({
     averageStack
   );
 
-  // Проверяем, доступны ли диапазоны для текущих настроек
-  // Используем useState + useEffect для избежания ошибок гидратации
-  const [rangesAvailable, setRangesAvailable] = useState(false);
+  // Получаем доступные значения начального стека для текущей категории
+  const availableStacks = useMemo(() => {
+    return getAvailableStartingStacks(getBuyInCategory(buyIn), bounty);
+  }, [buyIn, bounty]);
 
-  useEffect(() => {
-    const available = shouldUseTournamentRanges(
+  // Проверяем, доступны ли диапазоны для текущих настроек
+  // Используем useMemo для избежания каскадных рендеров
+  const rangesAvailable = useMemo(() => {
+    return shouldUseTournamentRanges(
       startingStack,
       stage,
       getBuyInCategory(buyIn),
       bounty
     );
-    setRangesAvailable(available);
   }, [startingStack, stage, buyIn, bounty]);
 
   return (
@@ -149,26 +195,38 @@ export default function TournamentSettings({
               Начальный стек
             </label>
             <div className="flex gap-2">
-              <button
-                onClick={() => onStartingStackChange(100)}
-                className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
-                  startingStack === 100
-                    ? "bg-emerald-600 text-white"
-                    : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-                }`}
-              >
-                100 BB
-              </button>
-              <button
-                onClick={() => onStartingStackChange(200)}
-                className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
-                  startingStack === 200
-                    ? "bg-emerald-600 text-white"
-                    : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-                }`}
-              >
-                200 BB
-              </button>
+              {availableStacks.length > 0 ? (
+                <>
+                  {availableStacks.includes(100) && (
+                    <button
+                      onClick={() => onStartingStackChange(100)}
+                      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
+                        startingStack === 100
+                          ? "bg-emerald-600 text-white"
+                          : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                      }`}
+                    >
+                      100 BB
+                    </button>
+                  )}
+                  {availableStacks.includes(200) && (
+                    <button
+                      onClick={() => onStartingStackChange(200)}
+                      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
+                        startingStack === 200
+                          ? "bg-emerald-600 text-white"
+                          : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                      }`}
+                    >
+                      200 BB
+                    </button>
+                  )}
+                </>
+              ) : (
+                <div className="text-sm text-gray-500 italic">
+                  Нет доступных диапазонов для данной категории
+                </div>
+              )}
             </div>
           </div>
 
@@ -241,6 +299,43 @@ export default function TournamentSettings({
               </div>
             </div>
           )}
+
+          {/* Загрузка диапазонов */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Загрузка диапазонов
+            </label>
+            <select
+              value={activeRangeSetId?.toString() || "default"}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "default") {
+                  onActiveRangeSetChange(null, null);
+                } else {
+                  const setId = parseInt(value);
+                  const set = availableRangeSets.find((s) => s.id === setId);
+                  onActiveRangeSetChange(setId, set?.name || null);
+                }
+              }}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              disabled={loadingRangeSets}
+            >
+              <option value="default">Дефолтовый</option>
+              {availableRangeSets.map((set) => (
+                <option key={set.id} value={set.id}>
+                  {set.name}
+                </option>
+              ))}
+            </select>
+            {loadingRangeSets && (
+              <p className="text-xs text-gray-500 mt-1">Загрузка...</p>
+            )}
+            {!loadingRangeSets && availableRangeSets.length === 0 && (
+              <p className="text-xs text-gray-500 mt-1">
+                Нет сохраненных диапазонов
+              </p>
+            )}
+          </div>
 
           {/* Анте (только для турниров) */}
           {showAnte && (

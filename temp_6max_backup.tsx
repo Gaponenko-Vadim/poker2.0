@@ -53,6 +53,7 @@ export default function SixMaxPage() {
   const stage = useAppSelector((state) => state.table.sixMaxStage);
   const startingStack = useAppSelector((state) => state.table.sixMaxStartingStack);
   const bounty = useAppSelector((state) => state.table.sixMaxBounty);
+  const category = useAppSelector((state) => state.table.sixMaxCategory);
   const autoAllIn = useAppSelector((state) => state.table.sixMaxAutoAllIn);
 
   // Вычисляем средний размер стека
@@ -222,6 +223,10 @@ export default function SixMaxPage() {
             heroIndex={heroIndex}
             basePot={pot}
             autoAllIn={autoAllIn}
+            stage={stage}
+            category={category}
+            startingStack={startingStack}
+            bounty={bounty}
             onToggleAutoAllIn={handleToggleAutoAllIn}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}

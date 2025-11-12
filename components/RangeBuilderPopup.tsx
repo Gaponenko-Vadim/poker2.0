@@ -24,6 +24,17 @@ interface RangeBuilderPopupProps {
   onClose: () => void;
 }
 
+// Интерфейс для экспортируемой JSON структуры
+interface ExportedJSON {
+  ranges: {
+    user: {
+      positions: Record<string, Record<string, Record<string, {
+        ranges_by_stack: Record<string, Record<string, string>>
+      }>>>
+    }
+  }
+}
+
 export default function RangeBuilderPopup({ isOpen, onClose }: RangeBuilderPopupProps) {
   // Текущие выбранные параметры
   const [position, setPosition] = useState<Position>("UTG");
@@ -151,7 +162,7 @@ export default function RangeBuilderPopup({ isOpen, onClose }: RangeBuilderPopup
   // Экспорт в JSON формат
   const exportToJSON = () => {
     // Группируем по позициям, силе, стилю, стеку и действию
-    const exported: any = {
+    const exported: ExportedJSON = {
       ranges: {
         user: {
           positions: {},

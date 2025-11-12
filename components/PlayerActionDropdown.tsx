@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { PlayerAction } from "@/lib/redux/slices/tableSlice";
 
@@ -45,6 +45,11 @@ const bettingChain: PlayerAction[] = [
   "raise-4bet",
   "raise-5bet",
 ];
+
+// Функция округления до 1 знака после запятой
+const roundToOneDecimal = (value: number): number => {
+  return Math.round(value * 10) / 10;
+};
 
 // Функция для получения цвета действия
 const getActionColor = (action: PlayerAction): string => {
@@ -120,13 +125,8 @@ export default function PlayerActionDropdown({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Функция округления до 1 знака после запятой
-  const roundToOneDecimal = (value: number): number => {
-    return Math.round(value * 10) / 10;
-  };
-
   // Функция для расчета минимального размера рейза (используется для валидации)
-  const calculateMinimumRaise = (action: PlayerAction): number => {
+  const calculateMinimumRaise = useCallback((action: PlayerAction): number => {
     if (action === "bet-open") {
       return openRaiseSize; // Open raise из настроек
     }
@@ -238,10 +238,10 @@ export default function PlayerActionDropdown({
     }
 
     return 0;
-  };
+  }, [allPlayersActions, allPlayersBets, openRaiseSize]);
 
   // Функция для расчета фактического размера ставки (простое умножение на множители)
-  const calculateBetSize = (action: PlayerAction): number => {
+  const calculateBetSize = useCallback((action: PlayerAction): number => {
     if (action === "bet-open") {
       return openRaiseSize; // Open raise из настроек
     }
@@ -347,7 +347,7 @@ export default function PlayerActionDropdown({
     }
 
     return 0;
-  };
+  }, [allPlayersActions, allPlayersBets, openRaiseSize, threeBetMultiplier, fourBetMultiplier, fiveBetMultiplier]);
 
   // Определяем доступные действия
   const availableActions = useMemo(() => {
@@ -497,7 +497,7 @@ export default function PlayerActionDropdown({
     }
 
     return available;
-  }, [allPlayersActions, allPlayersBets, currentAction, playerStack, currentBet]);
+  }, [allPlayersActions, allPlayersBets, currentAction, playerStack, currentBet, calculateMinimumRaise]);
 
   // Функция для определения правильного действия из цепочки ставок
   const determineAppropriateAction = (): PlayerAction | null => {

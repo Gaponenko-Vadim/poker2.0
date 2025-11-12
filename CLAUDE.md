@@ -65,10 +65,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Настройки стола (для каждого типа: sixMax, eightMax, cash):
   - `stage` (early/middle/pre-bubble/late/pre-final/final) - стадия турнира
   - `category` (micro/low/mid/high) - категория по buy-in
-  - `startingStack` (100 или 200 BB) - начальный стек турнира
+  - `startingStack` (100 или 200 BB) - начальный стек турнира (по умолчанию 100 BB)
   - `bounty` (boolean) - турнир с баунти
   - `autoAllIn` (boolean) - глобальная настройка: всегда ставить весь стек для всех игроков
+  - `activeRangeSetId` (number | null) - ID выбранного набора диапазонов из БД
+  - `activeRangeSetName` (string | null) - название выбранного набора диапазонов
+  - `activeRangeSetData` (any | null) - загруженные данные диапазонов из БД (JSON структура)
 - Редьюсеры для ротации позиций, изменения карт, диапазонов, силы, размера стека, действий и настроек игроков
+- **Ключевая функция**: `getRangeWithTournamentSettings()` - принимает опциональный параметр `customRangeData`
+  - Если `customRangeData` передан - использует `getRangeFromData()` для загрузки из БД
+  - Если нет - использует `getRangeForTournament()` для загрузки из дефолтных JSON файлов
+  - Все reducers, изменяющие параметры игроков, вызывают эту функцию с `state.xxxActiveRangeSetData`
 - `getAvailableActions()` - определяет доступные действия в зависимости от состояния стола (raise возможен только после bet-open, учитывает размер стека)
 
 **Auth Slice** (`lib/redux/slices/authSlice.ts`):
@@ -120,13 +127,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Loader**: `lib/utils/tournamentRangeLoader.ts` - утилита для загрузки диапазонов из JSON
 - Формат нотации: "AA" (пары), "AKs" (suited), "AKo" (offsuit)
-- Структура диапазонов в JSON:
-  - `ranges.user.positions.{POSITION}.{strength}.{playStyle}.ranges_by_stack.{stackSize}.{action}`
-  - Пример пути: UTG → fish → tight → short → open_raise
+- **Новая структура диапазонов в JSON** (обновлено):
+  - `ranges.user.stages.{STAGE}.positions.{POSITION}.{strength}.{playStyle}.ranges_by_stack.{stackSize}.{action}`
+  - Пример пути: early → UTG → fish → tight → short → open_raise
+  - **Стадии турнира** (stages): early, middle, pre-bubble, late, pre-final, final
+  - Стадия турнира теперь является уровнем внутри JSON между `user` и `positions`
 - Типы действий в JSON: `open_raise`, `push_range`, `call_vs_shove`, `defense_vs_open`, `3bet`, `defense_vs_3bet`, `4bet`, `defense_vs_4bet`, `5bet`, `defense_vs_5bet`
-- `getRangeForTournament()` - главная функция для получения диапазона по параметрам игрока
-- Диапазоны автоматически подгружаются при изменении параметров игрока (сила, стиль, стек, действие)
+- `getRangeForTournament()` - главная функция для получения диапазона по параметрам игрока (включая стадию турнира)
+- Диапазоны автоматически подгружаются при изменении параметров игрока (сила, стиль, стек, действие, стадия турнира)
 - Утилита `rangeExpander.ts` - разворачивает нотацию диапазонов в полный список рук
+- **Генерация структуры**: `scripts/generateRangeStructure.js` - скрипт для создания пустой структуры JSON со всеми стадиями
 
 **Конвертация действий** (`convertPlayerActionToPokerAction()` в `tableSlice.ts`):
 
@@ -141,6 +151,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Функция `getRangeWithTournamentSettings()` учитывает все турнирные параметры стола
 - Если диапазон не найден в JSON, возвращается пустой массив
 - Для cash-игр используется упрощенная логика без турнирных параметров
+- **Инициализация при первой загрузке**: При первом заходе на страницу стола, если у игроков пустые диапазоны, автоматически загружаются диапазоны на основе текущих параметров (через `useEffect` в компонентах страниц)
+
+**Пользовательские диапазоны из БД** (критически важная функция):
+
+- **Redux state для хранения**: `sixMaxActiveRangeSetData`, `eightMaxActiveRangeSetData`, `cashActiveRangeSetData` в `tableSlice.ts`
+- **Actions**: `setSixMaxActiveRangeSetData(data | null)`, `setEightMaxActiveRangeSetData(data | null)`, `setCashActiveRangeSetData(data | null)`
+- **Механизм загрузки**:
+  1. Пользователь выбирает набор диапазонов в TournamentSettings (дропдаун "Загрузка диапазонов")
+  2. useEffect на странице загружает данные из API `/api/user-ranges/${id}`
+  3. Данные сохраняются в Redux через `setXxxActiveRangeSetData(rangeData)`
+  4. Все reducers (при изменении параметров игроков) автоматически используют `customRangeData` из state
+  5. При переключении на "Default" очищается `customRangeData` и загружаются дефолтные диапазоны
+- **Передача через props**: Page → PokerTable → PlayerSeat → RangeSelector (prop `customRangeData`)
+- **Условная загрузка**: `getRangeWithTournamentSettings()` проверяет наличие `customRangeData` и использует либо БД, либо дефолтные JSON
+- **RangeSelector**: Имеет helper `loadRange()`, который условно загружает из БД или дефолтных файлов
+- **КРИТИЧНО**: При изменении выбора диапазонов в TournamentSettings:
+  - Сначала сохранить данные в Redux
+  - Затем принудительно перезагрузить диапазоны всех игроков через reducers (например, триггер через `setPlayerStackSize`)
 
 **Устаревшие файлы** (сохранены для совместимости):
 - `lib/constants/defaultRanges.ts` - старая TypeScript структура (больше не используется)
@@ -154,6 +182,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - При аутентификации отображает email пользователя с иконкой профиля
 - **Клик по email пользователя** (`onProfileClick`) открывает глобальные настройки игры (PlayerSettingsPopup)
 - Управляет входом/выходом и регистрацией
+- Содержит ссылку на магазин диапазонов (/shop)
 
 **PokerTable** (`components/PokerTable.tsx`):
 
@@ -180,7 +209,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Компонент для настройки диапазона рук противников (открывается при клике на игрока, кроме Hero)
 - Визуальный выбор из матрицы 13x13
 - Показывает диапазоны для разных действий с возможностью переключения
-- Автоматически загружает диапазоны из JSON на основе параметров игрока
+- Принимает prop `customRangeData` (может быть undefined)
+- **Helper функция** `loadRange(action)`: условная загрузка диапазонов
+  - Если `customRangeData` есть → использует `getRangeFromData()` для загрузки из БД
+  - Если нет → использует `getTournamentRangeFromJSON()` для загрузки из дефолтных файлов
+- Автоматически загружает диапазоны на основе параметров игрока (сила, стиль, стек, позиция, стадия)
 - Режим "только чтение" для просмотра диапазонов других действий
 
 **PlayerActionDropdown**:
@@ -229,10 +262,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `bounty` - флаг турнира с баунти
   - `averageStack` - средний стек стола (связан со стадией)
   - `ante` - размер анте (для турниров)
+  - **Дропдаун "Загрузка диапазонов"**: выбор между дефолтными диапазонами и пользовательскими наборами из БД
+    - Загружает список доступных наборов через API `/api/user-ranges/get`
+    - При выборе вызывает `onActiveRangeSetChange(id, name)`
+    - Опция "Default" для возврата к дефолтным диапазонам
 
 **PotDisplay**:
 
 - Отображение текущего размера банка
+
+**RangeCard** (`components/RangeCard.tsx`):
+
+- Компонент карточки диапазона для магазина
+- Отображает заголовок, категорию (турнир/кеш), цену
+- Информацию о продавце с рейтингом
+- Краткое описание, позиции, примеры рук, теги
+- При клике открывает детальный попап
+
+**RangeDetailsPopup** (`components/RangeDetailsPopup.tsx`):
+
+- Попап с детальной информацией о диапазоне
+- Расширенная информация о продавце и его биография
+- Полное описание диапазона и его целей
+- Все примеры рук, позиции и теги
+- Кнопка покупки с отображением цены
 
 ### Pages Structure
 
@@ -243,6 +296,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `/tables/cash` - кеш игра (2-9 игроков)
 
 Каждая страница использует свой набор Redux actions и отображает PokerTable с соответствующими данными из store.
+
+**Shop**:
+
+- `/shop` - Магазин диапазонов с карточками продуктов
+- Типы определены в `lib/types/shop.ts` (`RangeProduct` интерфейс)
+- Компоненты: `RangeCard` (карточка продукта), `RangeDetailsPopup` (детальный просмотр)
+- При клике на карточку открывается попап с полным описанием и кнопкой покупки
+- Временная реализация с примерами диапазонов (6 продуктов)
 
 **Temporary Files**:
 
@@ -356,6 +417,12 @@ JWT_SECRET=your-secret-key
 - `getRangeForTournament()` - загружает диапазон из JSON с учетом всех турнирных параметров
 - Принимает: позицию, силу, стиль, размер стека, действие, начальный стек, стадию, категорию, bounty
 - `shouldUseTournamentRanges()` - определяет, нужно ли использовать турнирные диапазоны
+  - Поддерживает PKO турниры (bounty=true) с начальным стеком 200 BB категории micro
+  - Поддерживает все стадии турнира: early, middle, pre-bubble, late, pre-final, final
+- `getTournamentRangeFromJSON()` - извлекает диапазон из JSON структуры с учетом стадии турнира
+- `getRangeFromData()` - загружает диапазон из пользовательских данных (JSON из БД)
+  - Используется для загрузки диапазонов из `user_range_sets` таблицы
+  - Принимает те же параметры + дополнительный параметр `rangeData` (JSON объект)
 
 ## Database Setup
 
@@ -366,6 +433,23 @@ JWT_SECRET=your-secret-key
 3. Запустить инициализацию: `npm run db:init`
 
 Подробная инструкция в `DATABASE_SETUP.md`
+
+### Таблица user_range_sets
+
+Таблица для хранения пользовательских наборов диапазонов:
+
+**Поля:**
+- `id` - уникальный идентификатор набора
+- `user_id` - ID пользователя (FK на users.id)
+- `name` - название набора (например, "Мои агрессивные диапазоны")
+- `table_type` - тип стола (6-max, 8-max, cash)
+- `category` - категория турнира (micro, low, mid, high)
+- `starting_stack` - начальный стек турнира (100 или 200 BB)
+- `bounty` - флаг турнира с баунти (true/false)
+- `range_data` - JSONB с полной структурой диапазонов (включает все стадии турнира)
+- `created_at`, `updated_at` - временные метки
+
+**Важно:** Стадия турнира (stage) НЕ сохраняется в БД - это внутренний фильтр для выбора диапазонов из JSON. Наборы фильтруются только по tableType, category, startingStack и bounty.
 
 ## Range Builder Workflow
 

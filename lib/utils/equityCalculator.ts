@@ -88,8 +88,59 @@ export function areAllActionsNull(users: User[]): boolean {
 }
 
 /**
+ * Находит игрока с максимальной ставкой (bet), кроме Hero
+ * @param users - Массив всех игроков
+ * @param heroIndex - Индекс Hero
+ * @returns Игрок с максимальной ставкой или null
+ */
+export function findPlayerWithMaxBet(users: User[], heroIndex: number): User | null {
+  let maxBet = 0;
+  let playerWithMaxBet: User | null = null;
+
+  users.forEach((user, index) => {
+    // Пропускаем Hero
+    if (index === heroIndex) return;
+
+    // Ищем игрока с максимальной ставкой
+    if (user.bet > maxBet) {
+      maxBet = user.bet;
+      playerWithMaxBet = user;
+    }
+  });
+
+  return playerWithMaxBet;
+}
+
+/**
+ * Генерирует полный диапазон из всех 169 покерных комбинаций
+ * @returns Массив всех 169 рук
+ */
+export function generateFullRange(): string[] {
+  const ranks = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
+  const allHands: string[] = [];
+
+  for (let i = 0; i < ranks.length; i++) {
+    for (let j = 0; j < ranks.length; j++) {
+      if (i === j) {
+        // Карманные пары (диагональ)
+        allHands.push(`${ranks[i]}${ranks[j]}`);
+      } else if (i < j) {
+        // Одномастные (выше диагонали)
+        allHands.push(`${ranks[i]}${ranks[j]}s`);
+      } else {
+        // Разномастные (ниже диагонали)
+        allHands.push(`${ranks[j]}${ranks[i]}o`);
+      }
+    }
+  }
+
+  return allHands;
+}
+
+/**
  * Главная функция для вычисления эквити с учетом логики игры
- * Если у всех action = null, считает против BB
+ * Считает против игрока с максимальной ставкой (bet)
+ * Если у него нет диапазона или action = null, использует полный диапазон (169 комбинаций)
  * @param users - Массив всех игроков
  * @param heroIndex - Индекс Hero
  * @returns Процент эквити или null
@@ -98,14 +149,29 @@ export function calculateGameEquity(
   users: User[],
   heroIndex: number
 ): number | null {
-  // Проверяем, все ли действия null
-  if (areAllActionsNull(users)) {
-    // Считаем против BB
+  const hero = users[heroIndex];
+
+  // Проверяем, что карты Hero выбраны
+  if (!hero || !hero.cards || !hero.cards[0] || !hero.cards[1]) {
+    return null;
+  }
+
+  // Находим игрока с максимальной ставкой (кроме Hero)
+  const playerWithMaxBet = findPlayerWithMaxBet(users, heroIndex);
+
+  if (!playerWithMaxBet) {
+    // Если никого не найдено, считаем против BB как fallback
     return calculateHeroEquityVsBB(users, heroIndex);
   }
 
-  // TODO: В будущем здесь можно добавить логику для других ситуаций
-  // Например, считать против игроков, которые сделали call/raise
+  // Получаем диапазон игрока с максимальной ставкой
+  let opponentRange = playerWithMaxBet.range;
 
-  return calculateHeroEquityVsBB(users, heroIndex);
+  // Если диапазон пустой или у игрока нет действия, используем полный диапазон
+  if (!opponentRange || opponentRange.length === 0 || playerWithMaxBet.action === null) {
+    opponentRange = generateFullRange();
+  }
+
+  // Вычисляем эквити против диапазона этого игрока
+  return calculateHeroEquity(hero.cards, opponentRange);
 }

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import PokerTable from "@/components/PokerTable";
 import TournamentSettings from "@/components/TournamentSettings";
 import PlayerSettingsPopup from "@/components/PlayerSettingsPopup";
 import { useAppSelector, useAppDispatch } from "@/lib/redux/hooks";
+import { getAvailableStartingStacks } from "@/lib/utils/tournamentRangeLoader";
 import {
   rotateSixMaxTable,
   setSixMaxPlayerStrength,
@@ -28,6 +29,8 @@ import {
   setSixMaxCategory,
   setSixMaxEnabledPlayStyles,
   setSixMaxEnabledStrengths,
+  setSixMaxActiveRangeSet,
+  setSixMaxActiveRangeSetData,
   newSixMaxDeal,
   PlayerStrength,
   PlayerPlayStyle,
@@ -62,6 +65,7 @@ export default function SixMaxPage() {
     (state) => state.table.sixMaxStartingStack
   );
   const bounty = useAppSelector((state) => state.table.sixMaxBounty);
+  const category = useAppSelector((state) => state.table.sixMaxCategory);
   const autoAllIn = useAppSelector((state) => state.table.sixMaxAutoAllIn);
   const openRaiseSize = useAppSelector((state) => state.table.sixMaxOpenRaiseSize);
   const threeBetMultiplier = useAppSelector((state) => state.table.sixMaxThreeBetMultiplier);
@@ -69,9 +73,128 @@ export default function SixMaxPage() {
   const fiveBetMultiplier = useAppSelector((state) => state.table.sixMaxFiveBetMultiplier);
   const enabledPlayStyles = useAppSelector((state) => state.table.sixMaxEnabledPlayStyles);
   const enabledStrengths = useAppSelector((state) => state.table.sixMaxEnabledStrengths);
+  const activeRangeSetId = useAppSelector((state) => state.table.sixMaxActiveRangeSetId);
+  const activeRangeSetName = useAppSelector((state) => state.table.sixMaxActiveRangeSetName);
+  const activeRangeSetData = useAppSelector((state) => state.table.sixMaxActiveRangeSetData);
 
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
+
+  // Автоматическая корректировка startingStack при загрузке и смене категории
+  useEffect(() => {
+    const availableStacks = getAvailableStartingStacks(category, bounty);
+
+    // Если текущий startingStack недоступен для категории
+    if (availableStacks.length > 0 && !availableStacks.includes(startingStack)) {
+      // Выбираем первый доступный вариант
+      dispatch(setSixMaxStartingStack(availableStacks[0]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, bounty, dispatch]); // Намеренно не включаем startingStack в зависимости
+
+  // Загрузка и применение диапазонов из БД
+  useEffect(() => {
+    const loadAndApplyRanges = async () => {
+      console.log("\n🔄 === НАЧАЛО ЗАГРУЗКИ ДИАПАЗОНОВ ===");
+      console.log("📊 Текущее состояние:");
+      console.log("  - activeRangeSetId:", activeRangeSetId);
+      console.log("  - activeRangeSetName:", activeRangeSetName);
+      console.log("  - stage:", stage);
+      console.log("  - Количество игроков:", users.length);
+
+      // Если выбран дефолтный набор - очищаем данные и перезагружаем дефолтные диапазоны
+      if (activeRangeSetId === null) {
+        console.log("ℹ️ Выбран ДЕФОЛТНЫЙ набор диапазонов");
+        console.log("🗑️ Очищаю пользовательские данные из Redux");
+        dispatch(setSixMaxActiveRangeSetData(null));
+        console.log("✅ Теперь будут использоваться дефолтные JSON файлы (tournamentRanges_micro_200bb.json и т.д.)");
+
+        console.log("\n🔄 ПРИНУДИТЕЛЬНО перезагружаю ДЕФОЛТНЫЕ диапазоны для ВСЕХ игроков...");
+        // Принудительно перезагружаем диапазоны для всех игроков из дефолтных JSON файлов
+        let reloadedCount = 0;
+        users.forEach((user, index) => {
+          if (index === heroIndex) {
+            console.log(`  [Игрок ${index}] HERO - пропускаю`);
+            return;
+          }
+          console.log(`  [Игрок ${index}] ${user.name}: Перезагружаю из дефолтных JSON...`);
+          dispatch(setSixMaxPlayerStackSize({ index, stackSize: user.stackSize }));
+          reloadedCount++;
+        });
+        console.log(`\n📊 Перезагружено ${reloadedCount} диапазонов из дефолтных JSON файлов`);
+        console.log("=== КОНЕЦ ЗАГРУЗКИ ДИАПАЗОНОВ ===\n");
+        return;
+      }
+
+      console.log("📥 Загружаю пользовательский набор из БД...");
+      console.log("  - ID:", activeRangeSetId);
+      console.log("  - Название:", activeRangeSetName);
+
+      try {
+        // Загружаем набор диапазонов по ID
+        const response = await fetch(`/api/user-ranges/${activeRangeSetId}`);
+        const result = await response.json();
+
+        console.log("📦 Ответ от API:", result.success ? "✅ Успешно" : "❌ Ошибка");
+
+        if (!result.success || !result.data) {
+          console.error("❌ Не удалось загрузить набор диапазонов:", result.error);
+          console.log("=== КОНЕЦ ЗАГРУЗКИ ДИАПАЗОНОВ ===\n");
+          return;
+        }
+
+        // PostgreSQL JSONB поле уже возвращается как объект, парсинг не нужен
+        const rangeData = result.data.range_data;
+        console.log("📊 Структура загруженных данных:");
+        console.log("  - Верхний уровень:", Object.keys(rangeData));
+        if (rangeData.ranges) {
+          console.log("  - ranges:", Object.keys(rangeData.ranges));
+          if (rangeData.ranges.user) {
+            console.log("  - ranges.user:", Object.keys(rangeData.ranges.user));
+          }
+        }
+
+        // ВАЖНО: Сохраняем данные диапазонов в Redux СНАЧАЛА!
+        dispatch(setSixMaxActiveRangeSetData(rangeData));
+        console.log("💾 Данные диапазонов сохранены в Redux!");
+        console.log("✅ Теперь при изменении параметров игроков будут использоваться ДАННЫЕ ИЗ БД");
+
+        console.log("\n🔄 ПРИНУДИТЕЛЬНО перезагружаю диапазоны для ВСЕХ игроков через редьюсеры...");
+        console.log("   Это гарантирует использование данных из БД, а не дефолтных JSON файлов!");
+
+        // КРИТИЧЕСКИ ВАЖНО: Принудительно обновляем диапазоны для ВСЕХ игроков
+        // Вызываем редьюсер для каждого игрока, чтобы диапазоны загрузились из БД
+        let reloadedCount = 0;
+        users.forEach((user, index) => {
+          if (index === heroIndex) {
+            console.log(`  [Игрок ${index}] HERO - пропускаю`);
+            return;
+          }
+
+          console.log(`\n  [Игрок ${index}] ${user.name}:`);
+          console.log(`    - Триггерю перезагрузку через setSixMaxPlayerStackSize...`);
+
+          // Вызываем редьюсер для обновления стека, это автоматически перезагрузит диапазон
+          // Редьюсер использует state.sixMaxActiveRangeSetData (который мы только что установили)
+          dispatch(setSixMaxPlayerStackSize({ index, stackSize: user.stackSize }));
+          reloadedCount++;
+          console.log(`    ✅ Диапазон перезагружен из БД!`);
+        });
+
+        console.log("\n📊 Итоговая статистика:");
+        console.log(`  - Всего игроков (без Hero): ${users.length - 1}`);
+        console.log(`  - Перезагружено диапазонов из БД: ${reloadedCount}`);
+        console.log(`\n✅ Загрузка завершена! Набор "${activeRangeSetName}" АКТИВЕН И ИСПОЛЬЗУЕТСЯ!`);
+        console.log("=== КОНЕЦ ЗАГРУЗКИ ДИАПАЗОНОВ ===\n");
+      } catch (error) {
+        console.error("❌ ОШИБКА при загрузке набора диапазонов:", error);
+        console.log("=== КОНЕЦ ЗАГРУЗКИ ДИАПАЗОНОВ ===\n");
+      }
+    };
+
+    loadAndApplyRanges();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeRangeSetId, stage]);
 
   // Вывод всех пользователей в консоль
   console.log("=== 6-Max Users ===");
@@ -217,6 +340,19 @@ export default function SixMaxPage() {
     dispatch(setSixMaxBounty(newBounty));
   };
 
+  const handleActiveRangeSetChange = (id: number | null, name: string | null) => {
+    console.log("🔄 === СМЕНА НАБОРА ДИАПАЗОНОВ ===");
+    console.log("📋 Предыдущий набор:", {
+      id: activeRangeSetId,
+      name: activeRangeSetName
+    });
+    console.log("📋 Новый набор:", {
+      id,
+      name
+    });
+    dispatch(setSixMaxActiveRangeSet({ id, name }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-950">
       {/* Шапка с кнопкой "Назад" */}
@@ -230,6 +366,7 @@ export default function SixMaxPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Настройки турнира */}
         <TournamentSettings
+          tableType="6-max"
           averageStack={averageStackSize}
           onAverageStackChange={handleAverageStackChange}
           buyIn={buyIn}
@@ -244,6 +381,9 @@ export default function SixMaxPage() {
           playersCount={users.length}
           bounty={bounty}
           onBountyChange={handleBountyChange}
+          activeRangeSetId={activeRangeSetId}
+          activeRangeSetName={activeRangeSetName}
+          onActiveRangeSetChange={handleActiveRangeSetChange}
         />
 
         {/* Попап глобальных настроек игры */}
@@ -275,6 +415,10 @@ export default function SixMaxPage() {
             heroIndex={heroIndex}
             basePot={pot}
             autoAllIn={autoAllIn}
+            stage={stage}
+            category={category}
+            startingStack={startingStack}
+            bounty={bounty}
             onToggleAutoAllIn={handleToggleAutoAllIn}
             onRotateTable={handleRotateTable}
             onTogglePlayerStrength={handleTogglePlayerStrength}
@@ -290,6 +434,7 @@ export default function SixMaxPage() {
             fiveBetMultiplier={fiveBetMultiplier}
             enabledPlayStyles={enabledPlayStyles}
             enabledStrengths={enabledStrengths}
+            customRangeData={activeRangeSetData}
           />
         </section>
         {/* Кнопка новой раздачи */}

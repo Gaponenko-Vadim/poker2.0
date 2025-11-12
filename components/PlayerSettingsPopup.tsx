@@ -23,13 +23,17 @@ interface RangeConfig {
 interface ExportedJSON {
   ranges: {
     user: {
-      positions: {
-        [position: string]: {
-          [strength: string]: {
-            [playStyle: string]: {
-              ranges_by_stack: {
-                [stackSize: string]: {
-                  [action: string]: string;
+      stages: {
+        [stage: string]: {
+          positions: {
+            [position: string]: {
+              [strength: string]: {
+                [playStyle: string]: {
+                  ranges_by_stack: {
+                    [stackSize: string]: {
+                      [action: string]: string;
+                    };
+                  };
                 };
               };
             };
@@ -218,10 +222,13 @@ export default function PlayerSettingsPopup({
   };
 
   const exportToJSON = () => {
+    // Все стадии турнира, для которых будут копироваться диапазоны
+    const allStages = ["early", "middle", "pre-bubble", "late", "pre-final", "final"];
+
     const exported: ExportedJSON = {
       ranges: {
         user: {
-          positions: {},
+          stages: {},
         },
       },
     };
@@ -229,23 +236,35 @@ export default function PlayerSettingsPopup({
     savedRanges.forEach((config) => {
       const { position, strength, playStyle, stackSize, action, range } = config;
 
-      if (!exported.ranges.user.positions[position]) {
-        exported.ranges.user.positions[position] = {};
-      }
-      if (!exported.ranges.user.positions[position][strength]) {
-        exported.ranges.user.positions[position][strength] = {};
-      }
-      if (!exported.ranges.user.positions[position][strength][playStyle]) {
-        exported.ranges.user.positions[position][strength][playStyle] = {
-          ranges_by_stack: {},
-        };
-      }
-      if (!exported.ranges.user.positions[position][strength][playStyle].ranges_by_stack[stackSize]) {
-        exported.ranges.user.positions[position][strength][playStyle].ranges_by_stack[stackSize] = {};
-      }
+      // Применяем диапазон для ВСЕХ стадий турнира
+      allStages.forEach((stage) => {
+        // Инициализируем структуру для каждой стадии
+        if (!exported.ranges.user.stages[stage]) {
+          exported.ranges.user.stages[stage] = {
+            positions: {},
+          };
+        }
 
-      exported.ranges.user.positions[position][strength][playStyle].ranges_by_stack[stackSize][action] =
-        range.length > 0 ? range.join(", ") : "NEVER";
+        const stageData = exported.ranges.user.stages[stage];
+
+        if (!stageData.positions[position]) {
+          stageData.positions[position] = {};
+        }
+        if (!stageData.positions[position][strength]) {
+          stageData.positions[position][strength] = {};
+        }
+        if (!stageData.positions[position][strength][playStyle]) {
+          stageData.positions[position][strength][playStyle] = {
+            ranges_by_stack: {},
+          };
+        }
+        if (!stageData.positions[position][strength][playStyle].ranges_by_stack[stackSize]) {
+          stageData.positions[position][strength][playStyle].ranges_by_stack[stackSize] = {};
+        }
+
+        stageData.positions[position][strength][playStyle].ranges_by_stack[stackSize][action] =
+          range.length > 0 ? range.join(", ") : "NEVER";
+      });
     });
 
     return JSON.stringify(exported, null, 2);

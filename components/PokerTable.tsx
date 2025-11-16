@@ -1,9 +1,11 @@
-import { User, PlayerStrength, PlayerPlayStyle, Card, PlayerAction, StackSize, TournamentStage, TournamentCategory } from "@/lib/redux/slices/tableSlice";
+import { User, PlayerStrength, PlayerPlayStyle, Card, PlayerAction, StackSize, TournamentStage, TournamentCategory, CardRank, CardSuit } from "@/lib/redux/slices/tableSlice";
 import PlayerSeat from "./PlayerSeat";
 import PotDisplay from "./PotDisplay";
+import CardPickerPopup from "./CardPickerPopup";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { calculateGameEquity, findBBPlayer } from "@/lib/utils/equityCalculator";
 import { TournamentActionType } from "@/lib/utils/tournamentRangeLoader";
+import { parseCard, createCard } from "@/lib/utils/cardUtils";
 
 interface PokerTableProps {
   users: User[]; // Массив игроков
@@ -96,6 +98,19 @@ export default function PokerTable({
   // Ключ формата: "playerIndex-action" (например, "3-open_raise")
   const [temporaryRanges, setTemporaryRanges] = useState<Map<string, string[]>>(new Map());
 
+  // State для карт борда (флоп, тёрн, ривер)
+  const [boardCards, setBoardCards] = useState<(Card | null)[]>([null, null, null, null, null]);
+  const [showBoardSelector, setShowBoardSelector] = useState(false);
+  const [selectingBoardCardIndex, setSelectingBoardCardIndex] = useState<number | null>(null);
+
+  // State для сворачивания/разворачивания подсказки эквити
+  const [isEquityCollapsed, setIsEquityCollapsed] = useState(false);
+
+  // State для позиции свернутой подсказки эквити
+  const [equityPosition, setEquityPosition] = useState({ x: 0, y: 0 });
+  const [isDraggingEquity, setIsDraggingEquity] = useState(false);
+  const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
+
   // Отслеживаем позиции игроков для очистки временных диапазонов при ротации
   const prevPositionsRef = useRef<string>("");
 
@@ -111,6 +126,19 @@ export default function PokerTable({
 
     prevPositionsRef.current = currentPositions;
   }, [users]);
+
+  // Сбрасываем карты борда при новой раздаче (когда карты Hero очищаются)
+  useEffect(() => {
+    const hero = users[heroIndex];
+    const heroCards = hero?.cards || [null, null];
+
+    // Если обе карты Hero null - это новая раздача, сбрасываем борд
+    if (heroCards[0] === null && heroCards[1] === null) {
+      setBoardCards([null, null, null, null, null]);
+      setIsEquityCollapsed(false);
+      setEquityPosition({ x: 0, y: 0 });
+    }
+  }, [users, heroIndex]);
 
   // Функция для обновления временного диапазона
   const handleTemporaryRangeChange = (
@@ -227,6 +255,76 @@ export default function PokerTable({
     }
   };
 
+  // Обработчики перетаскивания свернутой подсказки эквити
+  const handleEquityMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsDraggingEquity(true);
+    setDragStartPos({
+      x: e.clientX - equityPosition.x,
+      y: e.clientY - equityPosition.y,
+    });
+  };
+
+  const handleEquityMouseMove = (e: React.MouseEvent) => {
+    if (isDraggingEquity) {
+      setEquityPosition({
+        x: e.clientX - dragStartPos.x,
+        y: e.clientY - dragStartPos.y,
+      });
+    }
+  };
+
+  const handleEquityMouseUp = () => {
+    setIsDraggingEquity(false);
+  };
+
+  const handleEquityClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isDraggingEquity) {
+      setIsEquityCollapsed(false);
+    }
+  };
+
+  // Обработчики для выбора карт борда
+  const handleBoardCardClick = (index: number) => {
+    setSelectingBoardCardIndex(index);
+    setShowBoardSelector(true);
+  };
+
+  const handleSelectBoardCard = (rank: CardRank, suit: CardSuit) => {
+    if (selectingBoardCardIndex !== null) {
+      const newBoardCards = [...boardCards];
+      newBoardCards[selectingBoardCardIndex] = createCard(rank, suit);
+      setBoardCards(newBoardCards);
+
+      // Автоматически переходим к следующей пустой карте
+      const nextEmptyIndex = newBoardCards.findIndex((c, i) => i > selectingBoardCardIndex && c === null);
+      if (nextEmptyIndex !== -1 && nextEmptyIndex < 5) {
+        setSelectingBoardCardIndex(nextEmptyIndex);
+      } else {
+        setSelectingBoardCardIndex(null);
+        setShowBoardSelector(false);
+      }
+    }
+  };
+
+  const handleClearBoardCard = () => {
+    if (selectingBoardCardIndex !== null) {
+      const newBoardCards = [...boardCards];
+      newBoardCards[selectingBoardCardIndex] = null;
+      // Очищаем все карты после текущей
+      for (let i = selectingBoardCardIndex + 1; i < 5; i++) {
+        newBoardCards[i] = null;
+      }
+      setBoardCards(newBoardCards);
+    }
+  };
+
+  const handleCloseBoardSelector = () => {
+    setShowBoardSelector(false);
+    setSelectingBoardCardIndex(null);
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto p-8">
       <div className="relative w-full h-[500px]">
@@ -325,18 +423,28 @@ export default function PokerTable({
                   {/* Подсказка при выборе обеих карт */}
                   {hasBothCards && (
                     <div
-                      className="absolute inset-0 flex items-center justify-center"
-                      style={{
-                        animation: "fadeInScale 0.5s ease-out",
-                      }}
+                      className={`absolute inset-0 z-20 ${isDraggingEquity ? 'pointer-events-auto' : 'pointer-events-none'}`}
+                      onMouseMove={handleEquityMouseMove}
+                      onMouseUp={handleEquityMouseUp}
+                      onMouseLeave={handleEquityMouseUp}
                     >
-                      <div className="bg-gradient-to-br from-emerald-900/95 to-emerald-800/95 backdrop-blur-sm border-2 border-emerald-400 rounded-2xl px-10 py-8 shadow-2xl max-w-md">
-                        <div className="flex flex-col items-center gap-4">
-                          {/* Иконка и заголовок */}
+                      {isEquityCollapsed ? (
+                        // Свернутый вид - можно перетаскивать
+                        <div
+                          className="absolute bg-gradient-to-br from-emerald-900/95 to-emerald-800/95 backdrop-blur-sm border-2 border-emerald-400 rounded-xl px-6 py-3 shadow-2xl cursor-move hover:scale-105 transition-transform select-none pointer-events-auto"
+                          style={{
+                            left: '50%',
+                            top: '50%',
+                            transform: `translate(calc(-50% + ${equityPosition.x}px), calc(-50% + ${equityPosition.y}px))`,
+                            animation: "fadeInScale 0.5s ease-out",
+                          }}
+                          onMouseDown={handleEquityMouseDown}
+                          onClick={handleEquityClick}
+                        >
                           <div className="flex items-center gap-3">
-                            <div className="bg-emerald-400 rounded-full p-2 animate-pulse">
+                            <div className="bg-emerald-400 rounded-full p-1.5">
                               <svg
-                                className="w-6 h-6 text-gray-900"
+                                className="w-4 h-4 text-gray-900"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -349,40 +457,167 @@ export default function PokerTable({
                                 />
                               </svg>
                             </div>
-                            <h3 className="text-emerald-300 font-bold text-2xl">
-                              Эквити
-                            </h3>
-                          </div>
-
-                          {/* Эквити */}
-                          {equity !== null ? (
-                            <div className="text-center">
-                              <div className="text-5xl font-bold text-white mb-2">
+                            {equity !== null ? (
+                              <span className="text-white font-bold text-xl">
                                 {equity.toFixed(2)}%
+                              </span>
+                            ) : (
+                              <span className="text-yellow-300 text-sm">N/A</span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        // Развернутый вид - всегда по центру
+                        <div
+                          className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
+                          style={{
+                            animation: "fadeInScale 0.5s ease-out",
+                          }}
+                        >
+                          <div className="bg-gradient-to-br from-emerald-900/95 to-emerald-800/95 backdrop-blur-sm border-2 border-emerald-400 rounded-2xl px-10 py-8 shadow-2xl max-w-md relative">
+                            {/* Кнопка сворачивания */}
+                            <button
+                              onClick={() => setIsEquityCollapsed(true)}
+                              className="absolute top-3 right-3 text-emerald-300 hover:text-white transition-colors"
+                              title="Свернуть"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+
+                            <div className="flex flex-col items-center gap-4">
+                              {/* Иконка и заголовок */}
+                              <div className="flex items-center gap-3">
+                                <div className="bg-emerald-400 rounded-full p-2 animate-pulse">
+                                  <svg
+                                    className="w-6 h-6 text-gray-900"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                    />
+                                  </svg>
+                                </div>
+                                <h3 className="text-emerald-300 font-bold text-2xl">
+                                  Эквити
+                                </h3>
                               </div>
-                              <div className="text-emerald-200 text-sm opacity-80">
-                                против {bbPlayer?.name || "BB"} (
-                                {bbPlayer?.position})
-                              </div>
-                              {bbPlayer?.range && bbPlayer.range.length > 0 && (
-                                <div className="text-emerald-300/70 text-xs mt-1">
-                                  Диапазон: {bbPlayer.range.slice(0, 5).join(", ")}
-                                  {bbPlayer.range.length > 5 && "..."}
+
+                              {/* Эквити */}
+                              {equity !== null ? (
+                                <div className="text-center">
+                                  <div className="text-5xl font-bold text-white mb-2">
+                                    {equity.toFixed(2)}%
+                                  </div>
+                                  <div className="text-emerald-200 text-sm opacity-80">
+                                    против {bbPlayer?.name || "BB"} (
+                                    {bbPlayer?.position})
+                                  </div>
+                                  {bbPlayer?.range && bbPlayer.range.length > 0 && (
+                                    <div className="text-emerald-300/70 text-xs mt-1">
+                                      Диапазон: {bbPlayer.range.slice(0, 5).join(", ")}
+                                      {bbPlayer.range.length > 5 && "..."}
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="text-center">
+                                  <div className="text-yellow-300 text-sm">
+                                    Нет данных для расчета эквити
+                                  </div>
                                 </div>
                               )}
                             </div>
-                          ) : (
-                            <div className="text-center">
-                              <div className="text-yellow-300 text-sm">
-                                Нет данных для расчета эквити
-                              </div>
-                            </div>
-                          )}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>
+
+                {/* Карты борда (флоп, тёрн, ривер) - отдельный элемент */}
+                {(hasFirstCard || hasSecondCard) && (() => {
+                  const selectedCount = boardCards.filter(c => c !== null).length;
+                  const stageName = selectedCount === 0 ? "" : selectedCount <= 3 ? "Флоп" : selectedCount === 4 ? "Тёрн" : "Ривер";
+
+                  const suits: { suit: string; symbol: string; color: string }[] = [
+                    { suit: "hearts", symbol: "♥", color: "text-red-600" },
+                    { suit: "diamonds", symbol: "♦", color: "text-red-600" },
+                    { suit: "clubs", symbol: "♣", color: "text-gray-800" },
+                    { suit: "spades", symbol: "♠", color: "text-gray-800" },
+                  ];
+
+                  const renderBoardCard = (card: Card | null, index: number) => {
+                    if (!card) {
+                      return (
+                        <div
+                          key={index}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleBoardCardClick(index);
+                          }}
+                          className="w-12 h-16 bg-gradient-to-br from-blue-800 to-blue-900 border-2 border-blue-400/30 rounded shadow-lg flex items-center justify-center hover:border-blue-400/60 transition-colors cursor-pointer"
+                          style={{
+                            backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px)'
+                          }}
+                        >
+                          <div className="text-blue-300/40 text-xs font-bold">?</div>
+                        </div>
+                      );
+                    }
+
+                    const parsedCard = parseCard(card);
+                    const suitInfo = suits.find((s) => s.suit === parsedCard.suit);
+                    return (
+                      <div
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBoardCardClick(index);
+                        }}
+                        className="w-12 h-16 bg-white border-2 border-gray-300 rounded shadow-lg relative cursor-pointer hover:scale-105 hover:shadow-xl transition-all"
+                      >
+                        <div className="absolute top-0.5 left-0.5 flex flex-col items-start leading-none">
+                          <span className={`text-sm font-bold ${suitInfo?.color}`}>
+                            {parsedCard.rank}
+                          </span>
+                          <span className={`text-base leading-none ${suitInfo?.color}`}>
+                            {suitInfo?.symbol}
+                          </span>
+                        </div>
+                        <div className="absolute bottom-0.5 right-0.5 flex flex-col items-end rotate-180 leading-none">
+                          <span className={`text-sm font-bold ${suitInfo?.color}`}>
+                            {parsedCard.rank}
+                          </span>
+                          <span className={`text-base leading-none ${suitInfo?.color}`}>
+                            {suitInfo?.symbol}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  };
+
+                  return (
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                      <div className="flex flex-col items-center gap-2">
+                        {stageName && (
+                          <div className="px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold rounded-full shadow-lg">
+                            {stageName}
+                          </div>
+                        )}
+                        <div className="flex gap-2">
+                          {boardCards.map((card, index) => renderBoardCard(card, index))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Игроки */}
                 {users.map((user, index) => {
@@ -460,6 +695,31 @@ export default function PokerTable({
         {/* Отображение банка */}
         <PotDisplay pot={totalPot} />
       </div>
+
+      {/* Модальное окно выбора карт борда */}
+      {showBoardSelector && selectingBoardCardIndex !== null && (() => {
+        // Создаём массив занятых карт (Hero + уже выбранные карты борда)
+        const usedCardsList = [
+          ...heroCards.filter((c): c is Card => c !== null),
+          ...boardCards.filter((c): c is Card => c !== null),
+        ];
+
+        return (
+          <CardPickerPopup
+            isOpen={true}
+            onClose={handleCloseBoardSelector}
+            onSelectCard={handleSelectBoardCard}
+            onClear={handleClearBoardCard}
+            title={`Выбор карты борда ${selectingBoardCardIndex + 1}/5 - ${selectingBoardCardIndex < 3 ? "Флоп" : selectingBoardCardIndex === 3 ? "Тёрн" : "Ривер"}`}
+            selectedCards={[null, null]}
+            currentSelectingIndex={null}
+            usedCards={usedCardsList}
+            boardCards={boardCards}
+            selectingBoardIndex={selectingBoardCardIndex}
+            onBoardCardClick={handleBoardCardClick}
+          />
+        );
+      })()}
     </div>
   );
 }

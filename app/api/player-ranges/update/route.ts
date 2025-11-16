@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db/connection";
-import { UpdateRangeSetRequest } from "@/lib/types/userRanges";
 import { verifyToken } from "@/lib/auth/jwt";
 
-// PUT /api/user-ranges/update
+/**
+ * PUT /api/player-ranges/update
+ * Обновление набора диапазонов игрока (Hero)
+ */
 export async function PUT(request: NextRequest) {
   try {
     // Проверяем авторизацию
@@ -26,7 +28,7 @@ export async function PUT(request: NextRequest) {
 
     const userId = decoded.userId;
 
-    const body: UpdateRangeSetRequest = await request.json();
+    const body = await request.json();
     const { id, name, rangeData } = body;
 
     // Валидация
@@ -41,14 +43,14 @@ export async function PUT(request: NextRequest) {
     }
 
     // Проверяем, принадлежит ли набор пользователю
-    const checkQuery = "SELECT id FROM user_range_sets WHERE id = $1 AND user_id = $2";
+    const checkQuery = "SELECT id FROM player_range_sets WHERE id = $1 AND user_id = $2";
     const checkResult = await pool.query(checkQuery, [id, userId]);
 
     if (checkResult.rows.length === 0) {
       return NextResponse.json(
         {
           success: false,
-          error: "Range set not found or access denied",
+          error: "Player range set not found or access denied",
         },
         { status: 404 }
       );
@@ -66,7 +68,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const query = `
-      UPDATE user_range_sets
+      UPDATE player_range_sets
       SET ${updateFields.join(", ")}
       WHERE id = $${paramIndex} AND user_id = $${paramIndex + 1}
       RETURNING id, name, table_type, category, starting_stack, bounty, range_data, created_at, updated_at
@@ -81,11 +83,11 @@ export async function PUT(request: NextRequest) {
       data: result.rows[0],
     });
   } catch (error) {
-    console.error("Error updating user range set:", error);
+    console.error("Error updating player range set:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to update range set",
+        error: "Failed to update player range set",
       },
       { status: 500 }
     );

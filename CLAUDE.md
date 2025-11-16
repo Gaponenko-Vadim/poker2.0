@@ -13,7 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **TypeScript**: ^5
 - **State Management**: Redux Toolkit 2.9.2 with React-Redux 9.2.0
 - **Database**: PostgreSQL with node-postgres (pg 8.16.3)
-- **Authentication**: JWT (jsonwebtoken 9.0.2) + bcryptjs 3.0.2
+- **Authentication**: JWT (jsonwebtoken 9.0.2) + bcryptjs 3.0.2 + OAuth 2.0 (Google, Yandex)
 - **Styling**: Tailwind CSS 4 with PostCSS
 - **Icons**: Heroicons React 2.2.0
 - **Fonts**: Geist and Geist Mono
@@ -92,8 +92,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Initialization** (`lib/db/init.ts`):
 
-- Создание таблицы `users` (id, email, password_hash, created_at)
+- Создание таблиц `users`, `user_range_sets`, `player_defaults`
+- Таблица `users` включает поля для OAuth:
+  - `provider` (local/google/yandex) - провайдер аутентификации
+  - `google_id` - уникальный ID пользователя Google
+  - `yandex_id` - уникальный ID пользователя Яндекс
+  - `password` - nullable (для OAuth не требуется)
 - Функция `initDatabase()` и `checkTables()` для настройки БД
+- Миграционный скрипт: `scripts/migrate-oauth.sql` для обновления существующих БД
 
 ### Authentication
 
@@ -108,10 +114,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - bcryptjs для хеширования паролей
 - `hashPassword()` и `verifyPassword()` функции
 
+**OAuth 2.0** (`lib/auth/oauth/`):
+
+- **Google OAuth** (`lib/auth/oauth/google.ts`):
+  - `getGoogleAuthUrl()` - генерация URL для авторизации Google
+  - `getGoogleAccessToken(code)` - обмен authorization code на access token
+  - `getGoogleUserInfo(token)` - получение данных пользователя
+- **Yandex OAuth** (`lib/auth/oauth/yandex.ts`):
+  - `getYandexAuthUrl()` - генерация URL для авторизации Яндекс
+  - `getYandexAccessToken(code)` - обмен authorization code на access token
+  - `getYandexUserInfo(token)` - получение данных пользователя
+
 **API Routes**:
 
-- `POST /api/auth/register` - регистрация нового пользователя
+- `POST /api/auth/register` - регистрация нового пользователя (email/password)
 - `POST /api/auth/login` - вход с email/password, возврат JWT
+- `GET /api/auth/google` - инициация OAuth авторизации через Google
+- `GET /api/auth/google/callback` - обработка callback от Google
+- `GET /api/auth/yandex` - инициация OAuth авторизации через Яндекс
+- `GET /api/auth/yandex/callback` - обработка callback от Яндекса
+
+**OAuth Flow**:
+
+1. Пользователь кликает кнопку "Войти через Google/Яндекс" в LoginPopup или RegistrationPopup
+2. Редирект на `/api/auth/google` или `/api/auth/yandex`
+3. Редирект на страницу авторизации провайдера (Google/Яндекс)
+4. После успешной авторизации провайдер редиректит на callback URL
+5. Callback route обрабатывает код авторизации:
+   - Обменивает code на access token
+   - Получает данные пользователя (email, id)
+   - Создает или обновляет запись в БД
+   - Генерирует JWT токен
+   - Редиректит на главную страницу с токеном в URL параметрах
+6. Header компонент перехватывает токен из URL и сохраняет в localStorage
 
 ### Card System
 
@@ -181,8 +216,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Верхний компонент навигации и авторизации
 - При аутентификации отображает email пользователя с иконкой профиля
 - **Клик по email пользователя** (`onProfileClick`) открывает глобальные настройки игры (PlayerSettingsPopup)
-- Управляет входом/выходом и регистрацией
+- Управляет входом/выходом и регистрацией (включая OAuth)
 - Содержит ссылку на магазин диапазонов (/shop)
+- **OAuth callback обработка**: При загрузке проверяет URL параметры `token` и `email`, автоматически авторизует пользователя
+
+**LoginPopup & RegistrationPopup**:
+
+- Попапы для входа и регистрации пользователей
+- Поддерживают как традиционную аутентификацию (email/password), так и OAuth
+- Кнопки "Войти через Google" и "Войти через Яндекс" для OAuth авторизации
+- Переключение между режимами входа/регистрации
 
 **PokerTable** (`components/PokerTable.tsx`):
 
@@ -203,6 +246,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - UI для выбора карт Hero
 - Показывает все возможные карты с учетом уже выбранных
+- **Также используется для выбора карт борда** (флоп, тёрн, ривер)
+- Исключает уже занятые карты (карты Hero + карты борда)
+
+**Board Cards (Карты борда)**:
+
+- Управляются локальным state в PokerTable: `boardCards` - массив из 5 карт `(Card | null)[]`
+- Отображаются по центру стола, когда у Hero есть хотя бы одна карта
+- Визуальные этапы:
+  - Флоп: 3 карты
+  - Тёрн: 4 карты
+  - Ривер: 5 карт
+- Клик по любой карте борда (пустой или заполненной) открывает CardPickerPopup
+- При выборе карты автоматически переходит к следующей пустой карте
+- Очистка карты также очищает все последующие карты
+- **Автоматический сброс**: При нажатии кнопки "Новая раздача" карты борда автоматически очищаются (useEffect отслеживает очистку карт Hero)
+- **BoardCardSelector.tsx** - альтернативный компонент (не используется в текущей версии)
 
 **RangeSelector**:
 
@@ -322,16 +381,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Environment Variables
 
-Создайте `.env.local` для работы с PostgreSQL:
+Создайте `.env.local` для работы с PostgreSQL и OAuth:
 
 ```
+# Database
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=your_password
 DB_NAME=poker
+
+# JWT
 JWT_SECRET=your-secret-key
+
+# Google OAuth (опционально)
+GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+
+# Yandex OAuth (опционально)
+YANDEX_CLIENT_ID=your-yandex-client-id
+YANDEX_CLIENT_SECRET=your-yandex-client-secret
+YANDEX_REDIRECT_URI=http://localhost:3000/api/auth/yandex/callback
 ```
+
+**Настройка OAuth**:
+- См. `.env.example` для шаблона переменных окружения
+- См. `OAUTH_SETUP.md` для подробной инструкции по получению OAuth credentials
+- Google credentials: https://console.cloud.google.com/apis/credentials
+- Yandex credentials: https://oauth.yandex.ru/
 
 ## Key Patterns
 
@@ -431,6 +509,11 @@ JWT_SECRET=your-secret-key
 1. Установить PostgreSQL и создать БД: `CREATE DATABASE poker;`
 2. Настроить `.env.local` с параметрами подключения (см. Environment Variables выше)
 3. Запустить инициализацию: `npm run db:init`
+
+**Миграция для OAuth** (если БД уже существует):
+```bash
+psql -U postgres -d poker -f scripts/migrate-oauth.sql
+```
 
 Подробная инструкция в `DATABASE_SETUP.md`
 

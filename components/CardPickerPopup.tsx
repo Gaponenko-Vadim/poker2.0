@@ -12,6 +12,11 @@ interface CardPickerPopupProps {
   title?: string;
   selectedCards?: [Card | null, Card | null];
   currentSelectingIndex?: 0 | 1 | null;
+  usedCards?: Card[]; // Дополнительный список заблокированных карт (для борда)
+  hideSelectedCards?: boolean; // Скрыть верхнюю секцию с отображением выбранных карт
+  boardCards?: (Card | null)[]; // Карты борда для отображения (если передано, отображаем вместо selectedCards)
+  selectingBoardIndex?: number | null; // Индекс текущей выбираемой карты борда
+  onBoardCardClick?: (index: number) => void; // Колбэк при клике на карту борда
 }
 
 export default function CardPickerPopup({
@@ -22,11 +27,20 @@ export default function CardPickerPopup({
   title = "Выберите карту",
   selectedCards = [null, null],
   currentSelectingIndex = null,
+  usedCards = [],
+  hideSelectedCards = false,
+  boardCards,
+  selectingBoardIndex = null,
+  onBoardCardClick,
 }: CardPickerPopupProps) {
   // Проверка, выбрана ли уже эта карта
   const isCardSelected = (rank: CardRank, suit: CardSuit): boolean => {
     const cardString = createCard(rank, suit);
-    return selectedCards.some((card) => card === cardString);
+    // Проверяем и в selectedCards, и в usedCards
+    return (
+      selectedCards.some((card) => card === cardString) ||
+      usedCards.includes(cardString)
+    );
   };
 
   if (!isOpen) return null;
@@ -79,65 +93,131 @@ export default function CardPickerPopup({
           </div>
 
           {/* Отображение выбранных карт */}
-          <div className="flex gap-2 mb-3 justify-center items-center bg-slate-700/50 rounded-lg p-3">
-            {[0, 1].map((index) => {
-              const card = selectedCards[index];
-              const isCurrentlySelecting = currentSelectingIndex === index;
-              const parsedCard = card ? parseCard(card) : null;
-              const suitInfo = parsedCard
-                ? suits.find((s) => s.suit === parsedCard.suit)
-                : null;
+          {!hideSelectedCards && (
+            <div className="flex gap-2 mb-3 justify-center items-center bg-slate-700/50 rounded-lg p-3">
+              {boardCards ? (
+                // Отображаем карты борда (до 5 штук)
+                boardCards.map((card, index) => {
+                  const isCurrentlySelecting = selectingBoardIndex === index;
+                  const parsedCard = card ? parseCard(card) : null;
+                  const suitInfo = parsedCard
+                    ? suits.find((s) => s.suit === parsedCard.suit)
+                    : null;
 
-              return (
-                <div
-                  key={index}
-                  className={`relative transition-all duration-200 ${
-                    isCurrentlySelecting
-                      ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-700"
-                      : ""
-                  }`}
-                >
-                  {card && parsedCard ? (
-                    <div className="w-16 h-20 bg-white border border-gray-200 rounded shadow-lg">
-                      <div className="absolute top-1 left-1 flex flex-col items-start leading-none">
-                        <span
-                          className={`text-base font-bold ${suitInfo?.color}`}
-                        >
-                          {parsedCard.rank}
-                        </span>
-                        <span
-                          className={`text-xl leading-none ${suitInfo?.color}`}
-                        >
-                          {suitInfo?.symbol}
-                        </span>
-                      </div>
-                      <div className="absolute bottom-1 right-1 flex flex-col items-end rotate-180 leading-none">
-                        <span
-                          className={`text-base font-bold ${suitInfo?.color}`}
-                        >
-                          {parsedCard.rank}
-                        </span>
-                        <span
-                          className={`text-xl leading-none ${suitInfo?.color}`}
-                        >
-                          {suitInfo?.symbol}
-                        </span>
-                      </div>
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => onBoardCardClick && onBoardCardClick(index)}
+                      className={`relative transition-all duration-200 cursor-pointer ${
+                        isCurrentlySelecting
+                          ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-700"
+                          : ""
+                      }`}
+                    >
+                      {card && parsedCard ? (
+                        <div className="w-14 h-18 bg-white border border-gray-200 rounded shadow-lg">
+                          <div className="absolute top-0.5 left-0.5 flex flex-col items-start leading-none">
+                            <span
+                              className={`text-xs font-bold ${suitInfo?.color}`}
+                            >
+                              {parsedCard.rank}
+                            </span>
+                            <span
+                              className={`text-sm leading-none ${suitInfo?.color}`}
+                            >
+                              {suitInfo?.symbol}
+                            </span>
+                          </div>
+                          <div className="absolute bottom-0.5 right-0.5 flex flex-col items-end rotate-180 leading-none">
+                            <span
+                              className={`text-xs font-bold ${suitInfo?.color}`}
+                            >
+                              {parsedCard.rank}
+                            </span>
+                            <span
+                              className={`text-sm leading-none ${suitInfo?.color}`}
+                            >
+                              {suitInfo?.symbol}
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-14 h-18 bg-gradient-to-br from-gray-600 to-gray-700 border-2 border-dashed border-gray-500 rounded flex items-center justify-center">
+                          <span className="text-gray-400 text-lg font-bold">
+                            {index + 1}
+                          </span>
+                        </div>
+                      )}
+                      {isCurrentlySelecting && (
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs text-blue-400 font-semibold whitespace-nowrap">
+                          Выбор
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="w-16 h-20 bg-gradient-to-br from-gray-600 to-gray-700 border-2 border-dashed border-gray-500 rounded flex items-center justify-center">
-                      <span className="text-gray-400 text-2xl font-bold">
-                        {index + 1}
-                      </span>
+                  );
+                })
+              ) : (
+                // Стандартное отображение карт Hero (2 карты)
+                [0, 1].map((index) => {
+                  const card = selectedCards[index];
+                  const isCurrentlySelecting = currentSelectingIndex === index;
+                  const parsedCard = card ? parseCard(card) : null;
+                  const suitInfo = parsedCard
+                    ? suits.find((s) => s.suit === parsedCard.suit)
+                    : null;
+
+                  return (
+                    <div
+                      key={index}
+                      className={`relative transition-all duration-200 ${
+                        isCurrentlySelecting
+                          ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-700"
+                          : ""
+                      }`}
+                    >
+                      {card && parsedCard ? (
+                        <div className="w-16 h-20 bg-white border border-gray-200 rounded shadow-lg">
+                          <div className="absolute top-1 left-1 flex flex-col items-start leading-none">
+                            <span
+                              className={`text-base font-bold ${suitInfo?.color}`}
+                            >
+                              {parsedCard.rank}
+                            </span>
+                            <span
+                              className={`text-xl leading-none ${suitInfo?.color}`}
+                            >
+                              {suitInfo?.symbol}
+                            </span>
+                          </div>
+                          <div className="absolute bottom-1 right-1 flex flex-col items-end rotate-180 leading-none">
+                            <span
+                              className={`text-base font-bold ${suitInfo?.color}`}
+                            >
+                              {parsedCard.rank}
+                            </span>
+                            <span
+                              className={`text-xl leading-none ${suitInfo?.color}`}
+                            >
+                              {suitInfo?.symbol}
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-16 h-20 bg-gradient-to-br from-gray-600 to-gray-700 border-2 border-dashed border-gray-500 rounded flex items-center justify-center">
+                          <span className="text-gray-400 text-2xl font-bold">
+                            {index + 1}
+                          </span>
+                        </div>
+                      )}
+                      {isCurrentlySelecting && (
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs text-blue-400 font-semibold whitespace-nowrap"></div>
+                      )}
                     </div>
-                  )}
-                  {isCurrentlySelecting && (
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs text-blue-400 font-semibold whitespace-nowrap"></div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })
+              )}
+            </div>
+          )}
 
           {/* Сетка карт - компактная горизонтальная */}
           <div className="space-y-2 max-h-64 overflow-y-auto">

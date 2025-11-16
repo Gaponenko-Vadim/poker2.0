@@ -38,6 +38,23 @@ export default function Header({
 
   // Восстановление сессии из localStorage при загрузке
   useEffect(() => {
+    // Проверяем URL параметры на наличие токена из OAuth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get('token');
+    const urlEmail = urlParams.get('email');
+
+    if (urlToken && urlEmail) {
+      // Сохраняем токен из OAuth
+      localStorage.setItem('authToken', urlToken);
+      localStorage.setItem('userEmail', urlEmail);
+      dispatch(login({ token: urlToken, email: urlEmail }));
+
+      // Очищаем URL от параметров
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
+    // Иначе пытаемся восстановить из localStorage
     const token = localStorage.getItem('authToken');
     const email = localStorage.getItem('userEmail');
 

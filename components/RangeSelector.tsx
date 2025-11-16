@@ -44,7 +44,7 @@ interface RangeSelectorProps {
   category: TournamentCategory; // Категория турнира
   startingStack: number; // Начальный стек турнира в BB
   bounty: boolean; // Наличие баунти
-  customRangeData?: any; // НОВОЕ: Данные диапазонов из БД (если есть)
+  customRangeData?: Record<string, unknown>; // НОВОЕ: Данные диапазонов из БД (если есть)
 }
 
 // Маппинг действий игрока в действия из JSON (константа вне компонента)

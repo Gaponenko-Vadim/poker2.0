@@ -1,10 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db/connection";
 import { CreateRangeSetRequest } from "@/lib/types/userRanges";
+import { verifyToken } from "@/lib/auth/jwt";
 
 // POST /api/user-ranges/create
 export async function POST(request: NextRequest) {
   try {
+    // Проверяем авторизацию
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader) {
+      return NextResponse.json(
+        { success: false, error: "Требуется авторизация" },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const decoded = verifyToken(token);
+    if (!decoded || !decoded.userId) {
+      return NextResponse.json(
+        { success: false, error: "Неверный токен" },
+        { status: 401 }
+      );
+    }
+
     const body: CreateRangeSetRequest = await request.json();
     const { name, tableType, category, startingStack, bounty, rangeData } = body;
 
@@ -26,8 +45,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // В реальном приложении получаем user_id из сессии/JWT
-    const userId = 1;
+    const userId = decoded.userId;
 
     const query = `
       INSERT INTO user_range_sets (user_id, name, table_type, category, starting_stack, bounty, range_data, updated_at)

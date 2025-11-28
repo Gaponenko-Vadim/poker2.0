@@ -9,7 +9,8 @@ import {
   StackSize,
   PlayerPlayStyle,
   TournamentStage,
-  TournamentCategory
+  TournamentCategory,
+  RangeSetData
 } from "@/lib/redux/slices/tableSlice";
 
 // Тип для данных диапазонов
@@ -95,13 +96,13 @@ function getRangeDataFile(category: TournamentCategory, startingStack: number, b
       return tournamentRangesMicro200;
     }
     if (category === "micro" && startingStack === 100) {
-      return tournamentRangesMicro100;
+      return tournamentRangesMicro100 as unknown as RangeData;
     }
     if (category === "low" && startingStack === 100) {
-      return tournamentRangesLow100;
+      return tournamentRangesLow100 as unknown as RangeData;
     }
     if (category === "mid" && startingStack === 100) {
-      return tournamentRangesMid100;
+      return tournamentRangesMid100 as unknown as RangeData;
     }
   }
 
@@ -258,29 +259,38 @@ export function getRangeFromData(
   playStyle: PlayerPlayStyle,
   stackSize: StackSize,
   action: TournamentActionType,
-  rangeData: any
+  rangeData: RangeSetData
 ): string[] {
   try {
     // Получаем данные из переданного JSON
-    const ranges = rangeData.ranges;
+    const ranges = (rangeData as Record<string, unknown>).ranges as Record<string, unknown> | undefined;
+    const userData = ranges?.["user"] as Record<string, unknown> | undefined;
+
+    if (!userData) {
+      console.log("No user data in custom ranges");
+      return [];
+    }
 
     // Проверяем, есть ли структура со стадиями (новый формат)
-    const hasStages = ranges?.user?.stages !== undefined;
+    const hasStages = userData["stages"] !== undefined;
 
-    let positionData;
+    let positionData: Record<string, unknown> | undefined;
 
     if (hasStages) {
       // Новый формат: ranges.user.stages[stage].positions[position]
-      const stageData = ranges?.user?.stages?.[stage];
+      const stages = userData["stages"] as Record<string, unknown> | undefined;
+      const stageData = stages?.[stage] as Record<string, unknown> | undefined;
       if (!stageData) {
         console.log(`No data for stage: ${stage}`);
         return [];
       }
 
-      positionData = stageData?.positions?.[position];
+      const positions = stageData["positions"] as Record<string, unknown> | undefined;
+      positionData = positions?.[position] as Record<string, unknown> | undefined;
     } else {
       // Старый формат (обратная совместимость): ranges.user.positions[position]
-      positionData = ranges?.user?.positions?.[position];
+      const positions = userData["positions"] as Record<string, unknown> | undefined;
+      positionData = positions?.[position] as Record<string, unknown> | undefined;
       console.log(`Using legacy format (no stages) for position: ${position}`);
     }
 
@@ -289,20 +299,21 @@ export function getRangeFromData(
       return [];
     }
 
-    const strengthData = positionData[strength];
+    const strengthData = positionData[strength] as Record<string, unknown> | undefined;
     if (!strengthData) {
       console.log(`No data for strength: ${strength}`);
       return [];
     }
 
-    const playStyleData = strengthData[playStyle];
+    const playStyleData = strengthData[playStyle] as Record<string, unknown> | undefined;
     if (!playStyleData) {
       console.log(`No data for playStyle: ${playStyle}`);
       return [];
     }
 
     const stackCategory = stackSizeToJsonCategory(stackSize);
-    const stackData = playStyleData.ranges_by_stack?.[stackCategory];
+    const rangesByStack = playStyleData["ranges_by_stack"] as Record<string, unknown> | undefined;
+    const stackData = rangesByStack?.[stackCategory] as Record<string, unknown> | undefined;
     if (!stackData) {
       console.log(`No data for stackCategory: ${stackCategory}`);
       return [];

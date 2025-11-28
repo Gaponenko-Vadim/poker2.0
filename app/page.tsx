@@ -4,6 +4,7 @@ import {
   UsersIcon,
   CurrencyDollarIcon,
   TrophyIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 
 /**
@@ -52,8 +53,23 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Карточки выбора типа стола */}
-        <section className="max-w-6xl mx-auto">
+        {/* РАЗДЕЛ: Аналитика и тренировка */}
+        <section className="max-w-7xl mx-auto mb-16">
+          {/* Заголовок раздела */}
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-900/50 to-blue-900/50 border border-emerald-500/30 rounded-full mb-4">
+              <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <h2 className="text-2xl font-bold text-gray-100">
+                Аналитика и тренировка
+              </h2>
+            </div>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Тренируйтесь в различных форматах покера, анализируйте позиции и совершенствуйте свою стратегию
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Карточка 8-Max Турнир */}
             <TableCard
@@ -80,6 +96,33 @@ export default function Home() {
               href="/tables/cash"
               icon={<CurrencyDollarIcon className="w-12 h-12" />}
               accentColor="purple"
+            />
+          </div>
+        </section>
+
+        {/* РАЗДЕЛ: Игра с друзьями */}
+        <section className="max-w-7xl mx-auto mb-16">
+          {/* Заголовок раздела */}
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-orange-900/50 to-red-900/50 border border-orange-500/30 rounded-full mb-4">
+              <UserGroupIcon className="w-6 h-6 text-orange-400" />
+              <h2 className="text-2xl font-bold text-gray-100">
+                Игра с друзьями
+              </h2>
+            </div>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Создавайте приватные комнаты и играйте с друзьями в реальном времени
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Карточка Играть с друзьями */}
+            <TableCard
+              title="Играть с друзьями"
+              description="Мультиплеер режим для игры с друзьями в реальном времени. Создавайте комнаты и приглашайте игроков."
+              href="/tables/multiplayer"
+              icon={<UserGroupIcon className="w-12 h-12" />}
+              accentColor="orange"
             />
           </div>
         </section>

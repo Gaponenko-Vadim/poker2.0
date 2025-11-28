@@ -7,12 +7,19 @@ import { createPortal } from "react-dom";
 type TableType = "6-max" | "8-max" | "cash";
 type StartingStack = 100 | 200;
 type Category = "micro" | "low" | "mid" | "high";
-type Stage = "early" | "middle" | "pre-bubble" | "late" | "pre-final" | "final";
+type Stage = "early" | "middle" | "pre-bubble" | "late" | "pre-final" | "final" | string; // Добавлена поддержка пользовательских стадий
 type Position = "UTG" | "UTG+1" | "MP" | "HJ" | "CO" | "BTN" | "SB" | "BB";
 type Strength = "fish" | "amateur" | "regular";
 type PlayStyle = "tight" | "balanced" | "aggressor";
 type StackSize = "very_short" | "short" | "medium" | "big";
 type ActionType = "open_raise" | "push_range" | "call_vs_shove" | "defense_vs_open" | "3bet" | "defense_vs_3bet" | "4bet" | "defense_vs_4bet" | "5bet" | "defense_vs_5bet";
+
+// Интерфейс для пользовательской стадии турнира
+interface CustomStage {
+  id: string;
+  label: string;
+  order: number;
+}
 
 interface RangeConfig {
   // Основные параметры диапазона
@@ -132,6 +139,19 @@ export default function PlayerSettingsPopup({
   const [saveBounty, setSaveBounty] = useState<boolean>(false);
   // Фильтр для баунти (отдельно от saveBounty)
   const [bountyFilter, setBountyFilter] = useState<"all" | "true" | "false">("all");
+
+  // Управление пользовательскими стадиями турнира
+  const [customStages, setCustomStages] = useState<CustomStage[]>([
+    { id: "early", label: "Early (Ранняя)", order: 0 },
+    { id: "middle", label: "Middle (Средняя)", order: 1 },
+    { id: "pre-bubble", label: "Pre-Bubble (Перед баблом)", order: 2 },
+    { id: "late", label: "Late (Поздняя)", order: 3 },
+    { id: "pre-final", label: "Pre-Final (Перед финалом)", order: 4 },
+    { id: "final", label: "Final (Финальная)", order: 5 },
+  ]);
+  const [showStageManager, setShowStageManager] = useState<boolean>(false);
+  const [newStageName, setNewStageName] = useState<string>("");
+  const [insertAfterStageId, setInsertAfterStageId] = useState<string>("");
 
   // Загружаем сохраненные диапазоны из localStorage при монтировании
   useEffect(() => {
@@ -402,6 +422,11 @@ export default function PlayerSettingsPopup({
       return;
     }
 
+    // Загружаем customStages если они есть в rangeData
+    if (rangeData.customStages && Array.isArray(rangeData.customStages)) {
+      setCustomStages(rangeData.customStages);
+    }
+
     try {
       const stageData = rangeData.ranges.user.stages[stage];
       if (!stageData || !stageData.positions) {
@@ -532,6 +557,105 @@ export default function PlayerSettingsPopup({
       });
     });
     setCurrentRange(allHands);
+  };
+
+  // Функции управления стадиями турнира
+  const addCustomStage = () => {
+    if (!newStageName.trim()) {
+      setCopyStatus("Введите название стадии!");
+      setTimeout(() => setCopyStatus(""), 2000);
+      return;
+    }
+
+    const stageId = newStageName.trim().toLowerCase().replace(/\s+/g, '-');
+
+    // Проверка на дублирование
+    if (customStages.find(s => s.id === stageId)) {
+      setCopyStatus("Стадия с таким названием уже существует!");
+      setTimeout(() => setCopyStatus(""), 2000);
+      return;
+    }
+
+    let newOrder: number;
+    if (!insertAfterStageId) {
+      // Добавляем в конец
+      newOrder = customStages.length > 0 ? Math.max(...customStages.map(s => s.order)) + 1 : 0;
+    } else {
+      // Вставляем после выбранной стадии
+      const afterStage = customStages.find(s => s.id === insertAfterStageId);
+      if (!afterStage) {
+        newOrder = customStages.length;
+      } else {
+        newOrder = afterStage.order + 0.5;
+        // Перенормализуем порядок
+        const updatedStages = customStages.map(s =>
+          s.order > afterStage.order ? { ...s, order: s.order + 1 } : s
+        );
+        setCustomStages(updatedStages);
+      }
+    }
+
+    const newStage: CustomStage = {
+      id: stageId,
+      label: newStageName.trim(),
+      order: newOrder,
+    };
+
+    setCustomStages([...customStages, newStage].sort((a, b) => a.order - b.order));
+    setNewStageName("");
+    setInsertAfterStageId("");
+    setCopyStatus("Стадия добавлена!");
+    setTimeout(() => setCopyStatus(""), 2000);
+  };
+
+  const deleteCustomStage = (stageId: string) => {
+    // Нельзя удалить дефолтные стадии
+    const defaultStages = ["early", "middle", "pre-bubble", "late", "pre-final", "final"];
+    if (defaultStages.includes(stageId)) {
+      setCopyStatus("Нельзя удалить дефолтную стадию!");
+      setTimeout(() => setCopyStatus(""), 2000);
+      return;
+    }
+
+    setCustomStages(customStages.filter(s => s.id !== stageId));
+
+    // Если удаляемая стадия была выбрана, сбрасываем на первую
+    if (stage === stageId) {
+      setStage(customStages[0]?.id || "early");
+    }
+
+    setCopyStatus("Стадия удалена!");
+    setTimeout(() => setCopyStatus(""), 2000);
+  };
+
+  const moveStageUp = (stageId: string) => {
+    const index = customStages.findIndex(s => s.id === stageId);
+    if (index <= 0) return;
+
+    const newStages = [...customStages];
+    [newStages[index - 1], newStages[index]] = [newStages[index], newStages[index - 1]];
+
+    // Обновляем order
+    newStages.forEach((stage, idx) => {
+      stage.order = idx;
+    });
+
+    setCustomStages(newStages);
+  };
+
+  const moveStageDown = (stageId: string) => {
+    const index = customStages.findIndex(s => s.id === stageId);
+    if (index < 0 || index >= customStages.length - 1) return;
+
+    const newStages = [...customStages];
+    [newStages[index], newStages[index + 1]] = [newStages[index + 1], newStages[index]];
+
+    // Обновляем order
+    newStages.forEach((stage, idx) => {
+      stage.order = idx;
+    });
+
+    setCustomStages(newStages);
   };
 
   const savePlayerRangeLocally = () => {
@@ -665,6 +789,7 @@ export default function PlayerSettingsPopup({
 
       // Строим структуру range_data из rangesForDb
       const rangeData: any = {
+        customStages: customStages, // Сохраняем пользовательские стадии
         ranges: {
           user: {
             stages: {}
@@ -800,6 +925,7 @@ export default function PlayerSettingsPopup({
       let updatedRangeData;
       if (!editingRangeSet.range_data) {
         updatedRangeData = {
+          customStages: customStages, // Сохраняем пользовательские стадии
           ranges: {
             user: {
               stages: {}
@@ -808,6 +934,8 @@ export default function PlayerSettingsPopup({
         };
       } else {
         updatedRangeData = JSON.parse(JSON.stringify(editingRangeSet.range_data));
+        // Обновляем customStages в существующих данных
+        updatedRangeData.customStages = customStages;
       }
 
       // Создаем путь к диапазону если не существует
@@ -1433,19 +1561,101 @@ export default function PlayerSettingsPopup({
                 <div className="grid grid-cols-2 gap-3">
                   {/* Стадия турнира */}
                   <div className="col-span-2">
-                    <label className="text-xs text-gray-400 block mb-1">Стадия турнира</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs text-gray-400">Стадия турнира</label>
+                      <button
+                        onClick={() => setShowStageManager(!showStageManager)}
+                        className="text-[10px] bg-emerald-600/80 hover:bg-emerald-600 text-white px-2 py-0.5 rounded"
+                        title="Добавить или управлять стадиями"
+                      >
+                        {showStageManager ? "Скрыть" : "Добавить стадию"}
+                      </button>
+                    </div>
                     <select
                       value={stage}
                       onChange={(e) => setStage(e.target.value as Stage)}
                       className="w-full bg-slate-800 text-white text-xs rounded px-2 py-1.5 border border-slate-600"
                     >
-                      <option value="early">Early (Ранняя)</option>
-                      <option value="middle">Middle (Средняя)</option>
-                      <option value="pre-bubble">Pre-Bubble (Перед баблом)</option>
-                      <option value="late">Late (Поздняя)</option>
-                      <option value="pre-final">Pre-Final (Перед финалом)</option>
-                      <option value="final">Final (Финальная)</option>
+                      {customStages.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.label}
+                        </option>
+                      ))}
                     </select>
+                    {showStageManager && (
+                      <div className="mt-2 p-2 bg-slate-800 rounded border border-slate-600 space-y-2">
+                        <div className="text-xs font-semibold text-emerald-300 mb-2">Управление стадиями</div>
+
+                        {/* Список стадий */}
+                        <div className="space-y-1 max-h-40 overflow-y-auto">
+                          {customStages.map((s, index) => {
+                            const isDefault = ["early", "middle", "pre-bubble", "late", "pre-final", "final"].includes(s.id);
+                            return (
+                              <div key={s.id} className="flex items-center justify-between gap-1 bg-slate-700 p-1.5 rounded">
+                                <span className="text-xs text-white flex-1">{s.label}</span>
+                                <div className="flex gap-1">
+                                  <button
+                                    onClick={() => moveStageUp(s.id)}
+                                    disabled={index === 0}
+                                    className="text-[10px] bg-gray-600 hover:bg-gray-500 disabled:bg-gray-800 disabled:text-gray-500 text-white px-1.5 py-0.5 rounded"
+                                    title="Вверх"
+                                  >
+                                    ▲
+                                  </button>
+                                  <button
+                                    onClick={() => moveStageDown(s.id)}
+                                    disabled={index === customStages.length - 1}
+                                    className="text-[10px] bg-gray-600 hover:bg-gray-500 disabled:bg-gray-800 disabled:text-gray-500 text-white px-1.5 py-0.5 rounded"
+                                    title="Вниз"
+                                  >
+                                    ▼
+                                  </button>
+                                  {!isDefault && (
+                                    <button
+                                      onClick={() => deleteCustomStage(s.id)}
+                                      className="text-[10px] bg-red-600/80 hover:bg-red-600 text-white px-1.5 py-0.5 rounded"
+                                      title="Удалить"
+                                    >
+                                      ✕
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Добавление новой стадии */}
+                        <div className="pt-2 border-t border-slate-600 space-y-1">
+                          <div className="text-[10px] text-gray-400">Добавить новую стадию:</div>
+                          <input
+                            type="text"
+                            value={newStageName}
+                            onChange={(e) => setNewStageName(e.target.value)}
+                            placeholder="Название (напр: Early-Middle)"
+                            className="w-full bg-slate-900 text-white text-xs rounded px-2 py-1 border border-slate-600"
+                          />
+                          <select
+                            value={insertAfterStageId}
+                            onChange={(e) => setInsertAfterStageId(e.target.value)}
+                            className="w-full bg-slate-900 text-white text-xs rounded px-2 py-1 border border-slate-600"
+                          >
+                            <option value="">В конец списка</option>
+                            {customStages.map((s) => (
+                              <option key={s.id} value={s.id}>
+                                После: {s.label}
+                              </option>
+                            ))}
+                          </select>
+                          <button
+                            onClick={addCustomStage}
+                            className="w-full text-xs bg-emerald-600/80 hover:bg-emerald-600 text-white px-2 py-1 rounded"
+                          >
+                            Добавить стадию
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Позиция */}

@@ -77,6 +77,9 @@ export default function SixMaxPage() {
   const activeRangeSetName = useAppSelector((state) => state.table.sixMaxActiveRangeSetName);
   const activeRangeSetData = useAppSelector((state) => state.table.sixMaxActiveRangeSetData);
 
+  // Получаем токен авторизации из Redux
+  const authToken = useAppSelector((state) => state.auth.user?.token);
+
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
 
@@ -130,9 +133,19 @@ export default function SixMaxPage() {
       console.log("  - ID:", activeRangeSetId);
       console.log("  - Название:", activeRangeSetName);
 
+      // Проверяем наличие токена
+      if (!authToken) {
+        console.error("❌ [6-max] Токен авторизации не найден");
+        return;
+      }
+
       try {
         // Загружаем набор диапазонов по ID
-        const response = await fetch(`/api/user-ranges/${activeRangeSetId}`);
+        const response = await fetch(`/api/user-ranges/${activeRangeSetId}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
         const result = await response.json();
 
         console.log("📦 Ответ от API:", result.success ? "✅ Успешно" : "❌ Ошибка");
@@ -194,7 +207,7 @@ export default function SixMaxPage() {
 
     loadAndApplyRanges();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeRangeSetId, stage]);
+  }, [activeRangeSetId, stage, authToken]);
 
   // Вывод всех пользователей в консоль
   console.log("=== 6-Max Users ===");
@@ -384,6 +397,7 @@ export default function SixMaxPage() {
           activeRangeSetId={activeRangeSetId}
           activeRangeSetName={activeRangeSetName}
           onActiveRangeSetChange={handleActiveRangeSetChange}
+          customRangeData={activeRangeSetData}
         />
 
         {/* Попап глобальных настроек игры */}
@@ -437,15 +451,27 @@ export default function SixMaxPage() {
             customRangeData={activeRangeSetData}
           />
         </section>
-        {/* Кнопка новой раздачи */}
+        {/* Кнопки управления игрой */}
         <div className="max-w-6xl mx-auto mb-4 mt-20">
-          <button
-            onClick={handleNewDeal}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
-          >
-            <span className="text-xl">🃏</span>
-            <span>Новая раздача</span>
-          </button>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Кнопка смены позиции */}
+            <button
+              onClick={handleRotateTable}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+            >
+              <span className="text-xl">🔄</span>
+              <span>Сменить позицию</span>
+            </button>
+
+            {/* Кнопка новой раздачи */}
+            <button
+              onClick={handleNewDeal}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+            >
+              <span className="text-xl">🃏</span>
+              <span>Новая раздача</span>
+            </button>
+          </div>
         </div>
 
         {/* Панель отладки - отображение всех игроков */}

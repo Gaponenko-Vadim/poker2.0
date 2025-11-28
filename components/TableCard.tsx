@@ -31,6 +31,8 @@ export default function TableCard({
       ? 'from-blue-500/10 to-transparent'
       : accentColor === 'purple'
       ? 'from-purple-500/10 to-transparent'
+      : accentColor === 'orange'
+      ? 'from-orange-500/10 to-transparent'
       : 'from-emerald-500/10 to-transparent';
 
   const borderClasses =
@@ -38,6 +40,8 @@ export default function TableCard({
       ? 'border-blue-500/20 hover:border-blue-500/40'
       : accentColor === 'purple'
       ? 'border-purple-500/20 hover:border-purple-500/40'
+      : accentColor === 'orange'
+      ? 'border-orange-500/20 hover:border-orange-500/40'
       : 'border-emerald-500/20 hover:border-emerald-500/40';
 
   const iconClasses =
@@ -45,6 +49,8 @@ export default function TableCard({
       ? 'text-blue-400'
       : accentColor === 'purple'
       ? 'text-purple-400'
+      : accentColor === 'orange'
+      ? 'text-orange-400'
       : 'text-emerald-400';
 
   return (

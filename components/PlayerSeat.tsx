@@ -83,10 +83,8 @@ export default function PlayerSeat({
   const shouldShowStrengthSelector = enabledStrengths.fish || enabledStrengths.regular;
 
   const handlePlayerClick = () => {
-    if (isHero && onHeroClick) {
-      onHeroClick();
-    } else if (!isHero && onRangeChange) {
-      // Открываем попап диапазона для не-Hero игроков
+    // Открываем попап диапазона для ВСЕХ игроков, включая Hero
+    if (onRangeChange) {
       setIsRangeSelectorOpen(true);
     }
   };
@@ -245,30 +243,29 @@ export default function PlayerSeat({
         </div>
       </div>
 
-      {/* Попап выбора диапазона для не-Hero игроков */}
-      {!isHero && (
-        <RangeSelector
-          isOpen={isRangeSelectorOpen}
-          onClose={() => setIsRangeSelectorOpen(false)}
-          playerName={user.name}
-          currentRange={user.range}
-          onRangeChange={handleRangeChange}
-          onTemporaryRangeChange={onTemporaryRangeChange}
-          temporaryRanges={temporaryRanges}
-          playerIndex={playerIndex}
-          tableType={tableType}
-          position={user.position}
-          strength={user.strength}
-          playStyle={user.playStyle}
-          stackSize={user.stackSize}
-          currentAction={user.action}
-          stage={stage}
-          category={category}
-          startingStack={startingStack}
-          bounty={bounty}
-          customRangeData={customRangeData}
-        />
-      )}
+      {/* Попап выбора диапазона для всех игроков, включая Hero */}
+      <RangeSelector
+        isOpen={isRangeSelectorOpen}
+        onClose={() => setIsRangeSelectorOpen(false)}
+        playerName={user.name}
+        currentRange={user.range}
+        onRangeChange={handleRangeChange}
+        onTemporaryRangeChange={onTemporaryRangeChange}
+        temporaryRanges={temporaryRanges}
+        playerIndex={playerIndex}
+        tableType={tableType}
+        position={user.position}
+        strength={user.strength}
+        playStyle={user.playStyle}
+        stackSize={user.stackSize}
+        currentAction={user.action}
+        stage={stage}
+        category={category}
+        startingStack={startingStack}
+        bounty={bounty}
+        customRangeData={customRangeData}
+        isHero={isHero}
+      />
     </div>
   );
 }

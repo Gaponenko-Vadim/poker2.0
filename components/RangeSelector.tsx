@@ -17,6 +17,10 @@ import {
   TournamentActionType,
   generateFullRange,
 } from "@/lib/utils/tournamentRangeLoader";
+import {
+  getHeroRangeFromJSON,
+  getHeroRangeFromData,
+} from "@/lib/utils/heroRangeLoader";
 import SaveRangeDialog from "./SaveRangeDialog";
 import { createFullJSONWithTemporaryRanges } from "@/lib/utils/rangeDataManager";
 import { TableType } from "@/lib/types/userRanges";
@@ -45,6 +49,7 @@ interface RangeSelectorProps {
   startingStack: number; // Начальный стек турнира в BB
   bounty: boolean; // Наличие баунти
   customRangeData?: Record<string, unknown>; // НОВОЕ: Данные диапазонов из БД (если есть)
+  isHero?: boolean; // Флаг Hero для загрузки диапазонов из heroRanges файлов
 }
 
 // Маппинг действий игрока в действия из JSON (константа вне компонента)
@@ -80,12 +85,53 @@ export default function RangeSelector({
   startingStack,
   bounty,
   customRangeData,
+  isHero = false,
 }: RangeSelectorProps) {
   // Используем ref для отслеживания предыдущего значения isOpen
   const prevIsOpenRef = useRef<boolean>(isOpen);
 
   // Вспомогательная функция для загрузки диапазона (из БД или из дефолтных файлов)
   const loadRange = (action: TournamentActionType): string[] => {
+    // Если это Hero - используем Hero loader
+    if (isHero) {
+      // Если есть данные из БД - используем их
+      if (customRangeData) {
+        console.log(
+          `📥 [RangeSelector] Загружаю Hero диапазон из БД для действия: ${action}`
+        );
+        const range = getHeroRangeFromData(
+          stage,
+          position,
+          playStyle,
+          stackSize,
+          action,
+          customRangeData
+        );
+        console.log(`   ✅ Загружено ${range.length} комбинаций Hero из БД`);
+        return range;
+      }
+
+      // Иначе загружаем Hero диапазоны из дефолтных JSON файлов
+      console.log(
+        `📂 [RangeSelector] Загружаю Hero диапазон из heroRanges файлов для действия: ${action}`
+      );
+      const range = getHeroRangeFromJSON(
+        stage,
+        position,
+        playStyle,
+        stackSize,
+        action,
+        category,
+        startingStack,
+        bounty
+      );
+      console.log(
+        `   ✅ Загружено ${range.length} комбинаций Hero из heroRanges`
+      );
+      return range;
+    }
+
+    // Для оппонентов используем стандартный loader
     // Если есть данные из БД - используем их
     if (customRangeData) {
       console.log(

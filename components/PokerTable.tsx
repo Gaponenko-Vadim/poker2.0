@@ -661,11 +661,7 @@ export default function PokerTable({
                           ? (cards) => onCardsChange(index, cards)
                           : undefined
                       }
-                      onRangeChange={
-                        !isHero
-                          ? (range) => onRangeChange(index, range)
-                          : undefined
-                      }
+                      onRangeChange={(range) => onRangeChange(index, range)}
                       onTemporaryRangeChange={
                         !isHero
                           ? (action, range) => handleTemporaryRangeChange(index, action, range)

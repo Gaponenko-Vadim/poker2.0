@@ -164,9 +164,10 @@ export default function BoardCardSelector({
         {selectingCardIndex !== null && (
           <div className="mb-4">
             <CardPickerPopup
+              isOpen={true}
               usedCards={usedCards}
               onSelectCard={handleSelectCard}
-              onClearCard={handleClearCard}
+              onClear={handleClearCard}
               onClose={handleCloseSelector}
             />
           </div>

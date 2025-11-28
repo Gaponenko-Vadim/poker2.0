@@ -1,304 +1,47 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getRangeForTournament, getRangeFromData } from "@/lib/utils/tournamentRangeLoader";
+import {
+  convertPlayerActionToPokerAction,
+  getRangeWithTournamentSettings,
+  getAvailableActions,
+  getStackValue,
+  generateUsers,
+  rotatePosition,
+} from "../utils/tableUtils";
+import type {
+  PlayerAction,
+  PlayerStrength,
+  PlayerPlayStyle,
+  StackSize,
+  TournamentStage,
+  TournamentCategory,
+  TablePosition,
+  User,
+  Card,
+  CardRank,
+  CardSuit,
+  ParsedCard,
+  TemporaryRangeOverride,
+  RangeSetData,
+} from "../types/tableTypes";
 
-// Тип PokerAction для конвертации
-type PokerAction = "open" | "threeBet" | "fourBet" | "fiveBet" | "allIn";
-
-// Вспомогательная функция для конвертации PlayerAction в PokerAction
-function convertPlayerActionToPokerAction(playerAction: PlayerAction | null): PokerAction {
-  if (!playerAction) return "open";
-  if (playerAction === "raise-3bet") return "threeBet";
-  if (playerAction === "raise-4bet") return "fourBet";
-  if (playerAction === "raise-5bet") return "fiveBet";
-  if (playerAction === "all-in") return "allIn";
-  if (playerAction === "bet-open") return "open";
-  return "open"; // call, check, fold → open
-}
-
-// Вспомогательная функция для получения диапазона с учетом турнирных настроек
-function getRangeWithTournamentSettings(
-  position: TablePosition,
-  strength: PlayerStrength,
-  playStyle: PlayerPlayStyle,
-  stackSize: StackSize,
-  pokerAction: PokerAction,
-  startingStack: number,
-  stage: TournamentStage,
-  category: TournamentCategory,
-  bounty: boolean,
-  customRangeData?: any // Опциональные данные диапазонов из БД
-): string[] {
-  // Если переданы пользовательские данные диапазонов из БД, используем их
-  if (customRangeData) {
-    const tournamentAction = convertPokerActionToTournamentAction(pokerAction);
-    console.log(`📥 getRangeWithTournamentSettings: Используются данные из БД`);
-    console.log(`   - Позиция: ${position}, Сила: ${strength}, Стиль: ${playStyle}`);
-    console.log(`   - Размер стека: ${stackSize}, Действие: ${tournamentAction}, Стадия: ${stage}`);
-    const range = getRangeFromData(
-      stage,
-      position,
-      strength,
-      playStyle,
-      stackSize,
-      tournamentAction,
-      customRangeData
-    );
-    console.log(`   ✅ Получен диапазон: ${range.length} комбинаций`);
-    return range;
-  }
-
-  // Иначе получаем диапазон из дефолтных JSON файлов
-  console.log(`📂 getRangeWithTournamentSettings: Используются дефолтные JSON файлы`);
-  console.log(`   - Позиция: ${position}, Сила: ${strength}, Стиль: ${playStyle}`);
-  console.log(`   - Размер стека: ${stackSize}, Действие: ${pokerAction}, Стадия: ${stage}`);
-  const range = getRangeForTournament(
-    position,
-    strength,
-    playStyle,
-    stackSize,
-    pokerAction,
-    startingStack,
-    stage,
-    category,
-    bounty
-  );
-  console.log(`   ✅ Получен диапазон: ${range.length} комбинаций`);
-  return range;
-}
-
-// Вспомогательная функция для конвертации PokerAction в TournamentActionType
-function convertPokerActionToTournamentAction(
-  action: PokerAction
-): "open_raise" | "push_range" | "call_vs_shove" | "defense_vs_open" | "3bet" | "defense_vs_3bet" | "4bet" | "defense_vs_4bet" | "5bet" | "defense_vs_5bet" {
-  const actionMap: Record<PokerAction, "open_raise" | "push_range" | "call_vs_shove" | "defense_vs_open" | "3bet" | "defense_vs_3bet" | "4bet" | "defense_vs_4bet" | "5bet" | "defense_vs_5bet"> = {
-    "open": "open_raise",
-    "threeBet": "3bet",
-    "fourBet": "4bet",
-    "fiveBet": "5bet",
-    "allIn": "push_range",
-  };
-  return actionMap[action];
-}
-
-// Вспомогательная функция для получения доступных действий игрока
-// Правило: raise-3bet, raise-4bet, raise-5bet доступны только если кто-то сделал bet-open
-// И только если у игрока достаточно фишек для этого действия
-export function getAvailableActions(users: User[], currentPlayerIndex: number): PlayerAction[] {
-  // Базовые действия всегда доступны
-  const baseActions: PlayerAction[] = ["fold", "call", "check", "bet-open", "all-in"];
-
-  const currentPlayer = users[currentPlayerIndex];
-  if (!currentPlayer) return baseActions;
-
-  const playerStack = currentPlayer.stack;
-
-  // Если у игрока уже стоит all-in, то fold недоступен (игрок уже поставил все фишки)
-  const availableActions = currentPlayer.action === "all-in"
-    ? baseActions.filter(action => action !== "fold")
-    : [...baseActions];
-
-  // Функция для получения ставки игрока с определенным действием
-  const getBetForAction = (targetAction: PlayerAction): number => {
-    const user = users.find(u => u.action === targetAction && u.bet > 0);
-    return user ? user.bet : 0;
-  };
-
-  // Находим ставки для каждого действия
-  const openBet = getBetForAction("bet-open");
-  const threeBet = getBetForAction("raise-3bet");
-  const fourBet = getBetForAction("raise-4bet");
-  const fiveBet = getBetForAction("raise-5bet");
-
-  const hasBetOpen = openBet > 0;
-  const hasThreeBet = threeBet > 0;
-  const hasFourBet = fourBet > 0;
-  const hasFiveBet = fiveBet > 0;
-
-  // Получаем all-in ставки для расчета следующих действий
-  const allInBets = users
-    .filter(u => u.action === "all-in" && u.bet > 0)
-    .map(u => u.bet)
-    .sort((a, b) => b - a); // Сортируем по убыванию
-
-  // Функция для определения, от какой ставки считать следующее действие
-  const getEffectiveBetForNextAction = (): { level: string; bet: number; previousBet: number } => {
-    // Сначала проверяем обычные действия
-    if (hasFiveBet) {
-      return { level: "5bet", bet: fiveBet, previousBet: fourBet };
-    }
-    if (hasFourBet) {
-      // Проверяем, есть ли all-in больше fourBet, который может считаться 5bet
-      const raiseSize = fourBet - threeBet;
-      const minFiveBet = fourBet + raiseSize;
-      for (const allinBet of allInBets) {
-        if (allinBet >= minFiveBet && allinBet > fourBet) {
-          // All-in считается как 5bet для расчета следующей ставки
-          return { level: "5bet", bet: allinBet, previousBet: fourBet };
-        }
-      }
-      return { level: "4bet", bet: fourBet, previousBet: threeBet };
-    }
-    if (hasThreeBet) {
-      // Проверяем, есть ли all-in больше threeBet, который может считаться 4bet
-      const raiseSize = threeBet - openBet;
-      const minFourBet = threeBet + raiseSize;
-      for (const allinBet of allInBets) {
-        if (allinBet >= minFourBet && allinBet > threeBet) {
-          // All-in считается как 4bet для расчета следующей ставки
-          return { level: "4bet", bet: allinBet, previousBet: threeBet };
-        }
-      }
-      return { level: "3bet", bet: threeBet, previousBet: openBet };
-    }
-    if (hasBetOpen) {
-      // Проверяем, есть ли all-in больше openBet, который может считаться 3bet
-      const raiseSize = openBet - 1;
-      const minThreeBet = openBet + raiseSize;
-      for (const allinBet of allInBets) {
-        if (allinBet >= minThreeBet && allinBet > openBet) {
-          // All-in считается как 3bet для расчета следующей ставки
-          return { level: "3bet", bet: allinBet, previousBet: openBet };
-        }
-      }
-      return { level: "open", bet: openBet, previousBet: 1 };
-    }
-    return { level: "none", bet: 0, previousBet: 0 };
-  };
-
-  const effectiveBet = getEffectiveBetForNextAction();
-
-  // Рассчитываем минимальные размеры следующих ставок на основе эффективной ставки
-  // Формула: минимальная следующая ставка = текущая ставка + (текущая ставка - предыдущая ставка)
-
-  if (effectiveBet.level === "none") {
-    // Нет ставок на столе - доступен только bet-open
-    // bet-open уже в baseActions
-  } else if (effectiveBet.level === "open") {
-    // Есть open - доступен 3bet
-    const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
-    const minThreeBetSize = effectiveBet.bet + raiseSize;
-    if (playerStack > minThreeBetSize && minThreeBetSize / playerStack < 0.8) {
-      availableActions.push("raise-3bet");
-    }
-  } else if (effectiveBet.level === "3bet") {
-    // Есть 3bet (или all-in, равный 3bet) - доступен 4bet
-    const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
-    const minFourBetSize = effectiveBet.bet + raiseSize;
-    if (playerStack > minFourBetSize && minFourBetSize / playerStack < 0.8) {
-      availableActions.push("raise-4bet");
-    }
-  } else if (effectiveBet.level === "4bet") {
-    // Есть 4bet (или all-in, равный 4bet) - доступен 5bet
-    const raiseSize = effectiveBet.bet - effectiveBet.previousBet;
-    const minFiveBetSize = effectiveBet.bet + raiseSize;
-    if (playerStack > minFiveBetSize && minFiveBetSize / playerStack < 0.8) {
-      availableActions.push("raise-5bet");
-    }
-  }
-  // Если level === "5bet", то больше нет доступных raise действий
-
-  return availableActions;
-}
-
-// Тип силы игрока
-export type PlayerStrength = "fish" | "amateur" | "regular";
-
-// Тип стиля игры
-export type PlayerPlayStyle = "tight" | "balanced" | "aggressor";
-
-// Тип размера стека игрока
-export type StackSize = "very-small" | "small" | "medium" | "big";
-
-// Тип стадии турнира
-export type TournamentStage =
-  | "early"
-  | "middle"
-  | "pre-bubble"
-  | "late"
-  | "pre-final"
-  | "final";
-
-// Категория турнира по buy-in
-export type TournamentCategory = "micro" | "low" | "mid" | "high";
-
-// Тип позиции за столом
-export type TablePosition =
-  | "BTN"
-  | "SB"
-  | "BB"
-  | "UTG"
-  | "UTG+1"
-  | "MP"
-  | "CO"
-  | "HJ";
-
-// Масти карт
-export type CardSuit = "hearts" | "diamonds" | "clubs" | "spades"; // червы, бубны, трефы, пики
-
-// Значения карт
-export type CardRank =
-  | "2"
-  | "3"
-  | "4"
-  | "5"
-  | "6"
-  | "7"
-  | "8"
-  | "9"
-  | "T"
-  | "J"
-  | "Q"
-  | "K"
-  | "A";
-
-// Карта в строковом формате (например: "6hearts", "Aspades")
-export type Card = string;
-
-// Вспомогательные типы для работы с картами
-export interface ParsedCard {
-  rank: CardRank;
-  suit: CardSuit;
-}
-
-// Тип действия игрока
-export type PlayerAction =
-  | "fold"
-  | "call"
-  | "check"
-  | "bet-open"
-  | "raise-3bet"
-  | "raise-4bet"
-  | "raise-5bet"
-  | "all-in";
-
-// Интерфейс для временных изменений диапазонов (не сохраненных в БД)
-export interface TemporaryRangeOverride {
-  position: TablePosition;
-  strength: PlayerStrength;
-  playStyle: PlayerPlayStyle;
-  stackSize: StackSize;
-  action: PlayerAction | null;
-  stage: TournamentStage;
-  category: TournamentCategory;
-  startingStack: number;
-  bounty: boolean;
-  range: string[]; // Измененный диапазон
-}
-
-// Интерфейс игрока (User)
-export interface User {
-  name: string; // Имя игрока
-  stack: number; // Стек игрока (в BB)
-  stackSize: StackSize; // Размер стека (очень маленький, маленький, средний, большой)
-  strength: PlayerStrength; // Сила игрока (фиксированная настройка)
-  playStyle: PlayerPlayStyle; // Стиль игры (тайт, баланс, агрессор)
-  position: TablePosition; // Текущая позиция за столом (меняется каждую раздачу)
-  cards?: [Card | null, Card | null]; // Две карты игрока (только для Hero) - формат: ["6hearts", "5diamonds"]
-  range: string[]; // Диапазон рук игрока - формат: ["AA", "AKs", "AKo", "22"]
-  action: PlayerAction | null; // Выбранное действие игрока (null если не выбрано)
-  bet: number; // Текущая ставка игрока в BB (блайнды/беты, анте не учитывается)
-  // autoAllIn убран - теперь это глобальная настройка на уровне стола
-}
+// Реэкспорт типов и функций для обратной совместимости
+export { getAvailableActions };
+export type {
+  PlayerAction,
+  PlayerStrength,
+  PlayerPlayStyle,
+  StackSize,
+  TournamentStage,
+  TournamentCategory,
+  TablePosition,
+  User,
+  Card,
+  CardRank,
+  CardSuit,
+  ParsedCard,
+  TemporaryRangeOverride,
+  RangeSetData,
+};
 
 // Интерфейс состояния стола
 interface TableState {
@@ -322,7 +65,7 @@ interface TableState {
   // Пользовательские наборы диапазонов
   sixMaxActiveRangeSetId: number | null; // ID активного набора диапазонов из БД
   sixMaxActiveRangeSetName: string | null; // Название активного набора
-  sixMaxActiveRangeSetData: any | null; // Загруженные данные диапазонов из БД (JSON)
+  sixMaxActiveRangeSetData: RangeSetData | null; // Загруженные данные диапазонов из БД (JSON)
   sixMaxTemporaryRanges: Record<number, TemporaryRangeOverride>; // Временные изменения диапазонов (ключ - индекс игрока)
 
   // 8-Max турнир
@@ -345,7 +88,7 @@ interface TableState {
   // Пользовательские наборы диапазонов
   eightMaxActiveRangeSetId: number | null; // ID активного набора диапазонов из БД
   eightMaxActiveRangeSetName: string | null; // Название активного набора
-  eightMaxActiveRangeSetData: any | null; // Загруженные данные диапазонов из БД (JSON)
+  eightMaxActiveRangeSetData: RangeSetData | null; // Загруженные данные диапазонов из БД (JSON)
   eightMaxTemporaryRanges: Record<number, TemporaryRangeOverride>; // Временные изменения диапазонов (ключ - индекс игрока)
 
   // Cash игра
@@ -367,67 +110,10 @@ interface TableState {
   // Пользовательские наборы диапазонов
   cashActiveRangeSetId: number | null; // ID активного набора диапазонов из БД
   cashActiveRangeSetName: string | null; // Название активного набора
-  cashActiveRangeSetData: any | null; // Загруженные данные диапазонов из БД (JSON)
+  cashActiveRangeSetData: RangeSetData | null; // Загруженные данные диапазонов из БД (JSON)
   cashTemporaryRanges: Record<number, TemporaryRangeOverride>; // Временные изменения диапазонов (ключ - индекс игрока)
 }
 
-// Функция для получения значения стека в BB по размеру
-const getStackValue = (stackSize: StackSize): number => {
-  const stackValues: Record<StackSize, number> = {
-    "very-small": 10, // 10 BB
-    "small": 25,      // 25 BB
-    "medium": 50,     // 50 BB
-    "big": 100,       // 100 BB
-  };
-  return stackValues[stackSize];
-};
-
-// Функция для генерации игроков по умолчанию
-const generateUsers = (count: number): User[] => {
-  // Позиции для 6-max
-  const positions6Max: TablePosition[] = ["BTN", "SB", "BB", "UTG", "MP", "CO"];
-  // Позиции для 8-max (и 9-max cash)
-  const positions8Max: TablePosition[] = [
-    "BTN",
-    "SB",
-    "BB",
-    "UTG",
-    "UTG+1",
-    "MP",
-    "HJ",
-    "CO",
-  ];
-
-  const positions = count <= 6 ? positions6Max : positions8Max;
-
-  return Array.from({ length: count }, (_, i) => {
-    const position = positions[i % positions.length];
-    const isHero = i === 0;
-    const defaultStrength: PlayerStrength = "amateur";
-    const defaultPlayStyle: PlayerPlayStyle = "balanced";
-    const defaultStackSize: StackSize = "medium";
-
-    // Автоматически устанавливаем ставку для блайндов
-    let initialBet = 0;
-    if (position === "SB") initialBet = 0.5;
-    if (position === "BB") initialBet = 1;
-
-    return {
-      name: `Игрок ${i + 1}`,
-      stack: 50, // По умолчанию средний стек (50 BB)
-      stackSize: defaultStackSize, // По умолчанию средний размер стека
-      strength: defaultStrength, // По умолчанию все средние
-      playStyle: defaultPlayStyle, // По умолчанию баланс
-      position, // Присвоение начальной позиции
-      // Карты только для Hero (первый игрок)
-      ...(isHero && { cards: [null, null] as [Card | null, Card | null] }),
-      // Диапазон будет загружен из tournamentRanges.json при изменении параметров
-      range: [],
-      action: null as PlayerAction | null, // По умолчанию действие не выбрано
-      bet: initialBet, // Ставка: SB=0.5, BB=1, остальные=0
-    };
-  });
-};
 
 // Функция для сохранения настроек в localStorage
 const saveSettingsToLocalStorage = (state: TableState) => {
@@ -561,16 +247,6 @@ const initialState: TableState = {
   cashActiveRangeSetName: null,
   cashActiveRangeSetData: null,
   cashTemporaryRanges: {},
-};
-
-// Функция для ротации позиций
-const rotatePosition = (
-  position: TablePosition,
-  positions: TablePosition[]
-): TablePosition => {
-  const currentIndex = positions.indexOf(position);
-  const nextIndex = (currentIndex + 1) % positions.length;
-  return positions[nextIndex];
 };
 
 // Слайс для управления состоянием стола
@@ -1683,7 +1359,7 @@ const tableSlice = createSlice({
     },
 
     // 6-Max: Установить данные активного набора диапазонов
-    setSixMaxActiveRangeSetData: (state, action: PayloadAction<any | null>) => {
+    setSixMaxActiveRangeSetData: (state, action: PayloadAction<RangeSetData | null>) => {
       if (action.payload === null) {
         console.log("🗑️ [Redux] Очистка данных диапазонов из БД (переключение на дефолтные)");
       } else {
@@ -1706,7 +1382,7 @@ const tableSlice = createSlice({
     },
 
     // 8-Max: Установить данные активного набора диапазонов
-    setEightMaxActiveRangeSetData: (state, action: PayloadAction<any | null>) => {
+    setEightMaxActiveRangeSetData: (state, action: PayloadAction<RangeSetData | null>) => {
       state.eightMaxActiveRangeSetData = action.payload;
       saveSettingsToLocalStorage(state);
     },
@@ -1723,7 +1399,7 @@ const tableSlice = createSlice({
     },
 
     // Cash: Установить данные активного набора диапазонов
-    setCashActiveRangeSetData: (state, action: PayloadAction<any | null>) => {
+    setCashActiveRangeSetData: (state, action: PayloadAction<RangeSetData | null>) => {
       state.cashActiveRangeSetData = action.payload;
       saveSettingsToLocalStorage(state);
     },

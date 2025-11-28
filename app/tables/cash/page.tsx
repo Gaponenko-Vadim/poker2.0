@@ -78,6 +78,9 @@ export default function CashPage() {
   const activeRangeSetName = useAppSelector((state) => state.table.cashActiveRangeSetName);
   const activeRangeSetData = useAppSelector((state) => state.table.cashActiveRangeSetData);
 
+  // Получаем токен авторизации из Redux
+  const authToken = useAppSelector((state) => state.auth.user?.token);
+
   // Вычисляем средний размер стека
   const averageStackSize: StackSize = users[0]?.stackSize || "medium";
 
@@ -104,8 +107,18 @@ export default function CashPage() {
 
       console.log("📥 [Cash] Loading range set ID:", activeRangeSetId, "Name:", activeRangeSetName);
 
+      // Проверяем наличие токена
+      if (!authToken) {
+        console.error("❌ [Cash] Токен авторизации не найден");
+        return;
+      }
+
       try {
-        const response = await fetch(`/api/user-ranges/${activeRangeSetId}`);
+        const response = await fetch(`/api/user-ranges/${activeRangeSetId}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
         const result = await response.json();
 
         console.log("📦 [Cash] API response:", result);
@@ -141,7 +154,7 @@ export default function CashPage() {
 
     loadAndApplyRanges();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeRangeSetId, stage]);
+  }, [activeRangeSetId, stage, authToken]);
 
   // Обработчик изменения количества игроков
   const handleUsersCountChange = (count: number) => {
@@ -377,6 +390,7 @@ export default function CashPage() {
           activeRangeSetId={activeRangeSetId}
           activeRangeSetName={activeRangeSetName}
           onActiveRangeSetChange={handleActiveRangeSetChange}
+          customRangeData={activeRangeSetData}
         />
 
         {/* Попап глобальных настроек игры */}
@@ -431,15 +445,27 @@ export default function CashPage() {
           />
         </section>
 
-        {/* Кнопка новой раздачи */}
+        {/* Кнопки управления игрой */}
         <div className="max-w-6xl mx-auto mb-4 mt-20">
-          <button
-            onClick={handleNewDeal}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
-          >
-            <span className="text-xl">🃏</span>
-            <span>Новая раздача</span>
-          </button>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Кнопка смены позиции */}
+            <button
+              onClick={handleRotateTable}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+            >
+              <span className="text-xl">🔄</span>
+              <span>Сменить позицию</span>
+            </button>
+
+            {/* Кнопка новой раздачи */}
+            <button
+              onClick={handleNewDeal}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+            >
+              <span className="text-xl">🃏</span>
+              <span>Новая раздача</span>
+            </button>
+          </div>
         </div>
 
         {/* Панель отладки - отображение всех игроков */}

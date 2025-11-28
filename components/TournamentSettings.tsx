@@ -4,6 +4,8 @@ import { useMemo, useState, useEffect } from "react";
 import { StackSize, TournamentStage, TournamentCategory } from "@/lib/redux/slices/tableSlice";
 import { shouldUseTournamentRanges, getAvailableStartingStacks } from "@/lib/utils/tournamentRangeLoader";
 import { UserRangeSet, TableType } from "@/lib/types/userRanges";
+import { useAppSelector } from "@/lib/redux/hooks";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 
 interface TournamentSettingsProps {
   tableType: TableType;
@@ -24,6 +26,14 @@ interface TournamentSettingsProps {
   activeRangeSetId: number | null; // ID активного набора диапазонов
   activeRangeSetName: string | null; // Название активного набора
   onActiveRangeSetChange: (id: number | null, name: string | null) => void; // Callback для изменения
+  customRangeData?: any; // Данные пользовательского набора диапазонов (включая customStages)
+}
+
+// Интерфейс для пользовательской стадии турнира
+interface CustomStage {
+  id: string;
+  label: string;
+  order: number;
 }
 
 const stackLabels: Record<StackSize, string> = {
@@ -116,9 +126,30 @@ export default function TournamentSettings({
   activeRangeSetId,
   activeRangeSetName,
   onActiveRangeSetChange,
+  customRangeData,
 }: TournamentSettingsProps) {
   const [availableRangeSets, setAvailableRangeSets] = useState<UserRangeSet[]>([]);
   const [loadingRangeSets, setLoadingRangeSets] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true); // По умолчанию развёрнуто
+
+  // Получаем токен авторизации из Redux
+  const authToken = useAppSelector((state) => state.auth.user?.token);
+
+  // Извлекаем customStages из rangeData или используем дефолтные
+  const customStages: CustomStage[] = useMemo(() => {
+    if (customRangeData?.customStages && Array.isArray(customRangeData.customStages)) {
+      return customRangeData.customStages;
+    }
+    // Дефолтные стадии
+    return [
+      { id: "early", label: "Ранняя", order: 0 },
+      { id: "middle", label: "Средняя", order: 1 },
+      { id: "pre-bubble", label: "Pre-Bubble + Bubble", order: 2 },
+      { id: "late", label: "Поздняя (ITM)", order: 3 },
+      { id: "pre-final", label: "Предфинал", order: 4 },
+      { id: "final", label: "Финал", order: 5 },
+    ];
+  }, [customRangeData]);
 
   // Вычисляем анте на игрока
   const antePerPlayer = ante / playersCount;
@@ -126,6 +157,13 @@ export default function TournamentSettings({
   // Загружаем доступные наборы диапазонов при изменении настроек
   useEffect(() => {
     const loadRangeSets = async () => {
+      // Если нет токена - не загружаем диапазоны
+      if (!authToken) {
+        console.log("🔒 [TournamentSettings] Токен не найден, пропускаем загрузку диапазонов");
+        setAvailableRangeSets([]);
+        return;
+      }
+
       setLoadingRangeSets(true);
       try {
         const category = getBuyInCategory(buyIn);
@@ -136,16 +174,31 @@ export default function TournamentSettings({
           bounty: bounty.toString(),
         });
 
-        const response = await fetch(`/api/user-ranges/get?${params}`);
+        console.log("📥 [TournamentSettings] Загрузка диапазонов с параметрами:", {
+          tableType,
+          category,
+          startingStack,
+          bounty,
+        });
+
+        const response = await fetch(`/api/user-ranges/get?${params}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
         const data = await response.json();
+
+        console.log("📦 [TournamentSettings] Ответ API:", data);
 
         if (data.success && data.data) {
           setAvailableRangeSets(data.data);
+          console.log("✅ [TournamentSettings] Загружено диапазонов:", data.data.length);
         } else {
           setAvailableRangeSets([]);
+          console.log("⚠️ [TournamentSettings] Диапазоны не найдены");
         }
       } catch (err) {
-        console.error("Error loading range sets:", err);
+        console.error("❌ [TournamentSettings] Ошибка загрузки диапазонов:", err);
         setAvailableRangeSets([]);
       } finally {
         setLoadingRangeSets(false);
@@ -153,7 +206,7 @@ export default function TournamentSettings({
     };
 
     loadRangeSets();
-  }, [tableType, buyIn, startingStack, bounty]);
+  }, [tableType, buyIn, startingStack, bounty, authToken]);
 
   // Показываем средний стек только для финала
   const showAverageStack = stage === "final";
@@ -173,22 +226,82 @@ export default function TournamentSettings({
   // Проверяем, доступны ли диапазоны для текущих настроек
   // Используем useMemo для избежания каскадных рендеров
   const rangesAvailable = useMemo(() => {
+    // Если выбран пользовательский набор диапазонов - они всегда доступны
+    if (activeRangeSetId !== null) {
+      return true;
+    }
+    // Иначе проверяем доступность дефолтных диапазонов
     return shouldUseTournamentRanges(
       startingStack,
       stage,
       getBuyInCategory(buyIn),
       bounty
     );
-  }, [startingStack, stage, buyIn, bounty]);
+  }, [startingStack, stage, buyIn, bounty, activeRangeSetId]);
 
   return (
     <section className="max-w-4xl mx-auto mb-8">
       <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-100 mb-4">
-          Настройки турнира
-        </h2>
+        {/* Заголовок с кнопкой сворачивания */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-100">
+            Настройки турнира
+          </h2>
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+            aria-label={isExpanded ? "Свернуть настройки" : "Развернуть настройки"}
+          >
+            {isExpanded ? (
+              <ChevronUpIcon className="w-6 h-6 text-gray-400" />
+            ) : (
+              <ChevronDownIcon className="w-6 h-6 text-gray-400" />
+            )}
+          </button>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Компактный вид (свёрнуто) */}
+        {!isExpanded && (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="bg-gray-800/50 rounded-lg p-3">
+              <p className="text-xs text-gray-500 mb-1">Средний стек</p>
+              <p className="text-lg font-semibold text-emerald-400">
+                {calculatedAverageStack} BB
+              </p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-3">
+              <p className="text-xs text-gray-500 mb-1">Стадия</p>
+              <p className="text-lg font-semibold text-blue-400">
+                {customStages.find(s => s.id === stage)?.label.split(" ")[0] || stage}
+              </p>
+            </div>
+            {showAnte && (
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <p className="text-xs text-gray-500 mb-1">Анте общее</p>
+                <p className="text-lg font-semibold text-yellow-400">
+                  {ante.toFixed(1)} BB
+                </p>
+              </div>
+            )}
+            <div className="bg-gray-800/50 rounded-lg p-3">
+              <p className="text-xs text-gray-500 mb-1">Диапазоны противника</p>
+              <p className="text-lg font-semibold text-purple-400 truncate" title={activeRangeSetName || "Дефолтовый"}>
+                {activeRangeSetName || "Дефолтовый"}
+              </p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-3">
+              <p className="text-xs text-gray-500 mb-1">Личный диапазон</p>
+              <p className="text-lg font-semibold text-orange-400 truncate" title="Дефолтовый">
+                Дефолтовый
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Полный вид (развёрнуто) */}
+        {isExpanded && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Начальный стек */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -240,12 +353,11 @@ export default function TournamentSettings({
               onChange={(e) => onStageChange(e.target.value as TournamentStage)}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
-              <option value="early">{stageLabels.early}</option>
-              <option value="middle">{stageLabels.middle}</option>
-              <option value="pre-bubble">{stageLabels["pre-bubble"]}</option>
-              <option value="late">{stageLabels.late}</option>
-              <option value="pre-final">{stageLabels["pre-final"]}</option>
-              <option value="final">{stageLabels.final}</option>
+              {customStages.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -300,10 +412,10 @@ export default function TournamentSettings({
             </div>
           )}
 
-          {/* Загрузка диапазонов */}
+          {/* Загрузка диапазонов противника */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Загрузка диапазонов
+              Загрузка диапазонов противника
             </label>
             <select
               value={activeRangeSetId?.toString() || "default"}
@@ -316,6 +428,38 @@ export default function TournamentSettings({
                   const set = availableRangeSets.find((s) => s.id === setId);
                   onActiveRangeSetChange(setId, set?.name || null);
                 }
+              }}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              disabled={loadingRangeSets}
+            >
+              <option value="default">Дефолтовый</option>
+              {availableRangeSets.map((set) => (
+                <option key={set.id} value={set.id}>
+                  {set.name}
+                </option>
+              ))}
+            </select>
+            {loadingRangeSets && (
+              <p className="text-xs text-gray-500 mt-1">Загрузка...</p>
+            )}
+            {!loadingRangeSets && availableRangeSets.length === 0 && (
+              <p className="text-xs text-gray-500 mt-1">
+                Нет сохраненных диапазонов
+              </p>
+            )}
+          </div>
+
+          {/* Загрузка своего диапазона (Hero) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Загрузка своего диапазона
+            </label>
+            <select
+              value="default"
+              onChange={(e) => {
+                const value = e.target.value;
+                // TODO: Реализовать загрузку диапазонов Hero
+                console.log("Hero range selected:", value);
               }}
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               disabled={loadingRangeSets}
@@ -448,6 +592,8 @@ export default function TournamentSettings({
             </div>
           )}
         </div>
+          </>
+        )}
       </div>
     </section>
   );

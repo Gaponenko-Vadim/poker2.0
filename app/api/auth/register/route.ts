@@ -10,12 +10,12 @@ import { generateToken } from "@/lib/auth/jwt";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email, nickname, password } = body;
 
     // Валидация входных данных
-    if (!email || !password) {
+    if (!email || !password || !nickname) {
       return NextResponse.json(
-        { error: "Email и пароль обязательны" },
+        { error: "Email, никнейм и пароль обязательны" },
         { status: 400 }
       );
     }
@@ -56,10 +56,10 @@ export async function POST(request: NextRequest) {
 
     // Создание пользователя
     const result = await pool.query(
-      `INSERT INTO users (email, password)
-       VALUES ($1, $2)
-       RETURNING id, email, created_at`,
-      [email, hashedPassword]
+      `INSERT INTO users (email, nickname, password)
+       VALUES ($1, $2, $3)
+       RETURNING id, email, nickname, created_at`,
+      [email, nickname, hashedPassword]
     );
 
     const newUser = result.rows[0];
@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
           user: {
             id: newUser.id,
             email: newUser.email,
+            nickname: newUser.nickname,
             createdAt: newUser.created_at,
           },
           token,

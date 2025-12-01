@@ -35,6 +35,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npx tsc --noEmit` - Проверка типов
 - `npm run db:init` - Инициализация PostgreSQL БД
 
+**WebSocket сервер для Multiplayer**:
+- `cd server && npx tsx websocket.ts` - Запуск WebSocket сервера (порт 8080)
+- `node server/start-websocket.js` - Альтернативный запуск через Node.js
+
 ## Critical Patterns to Follow
 
 ⚠️ **ВАЖНО**:
@@ -52,14 +56,27 @@ poker2.0/
 ├── app/                    # Next.js App Router
 │   ├── tables/            # Игровые страницы (6-max, 8-max, cash, multiplayer)
 │   └── api/               # API routes (auth, user-ranges)
+├── server/                # WebSocket сервер для multiplayer
+│   ├── websocket.ts       # WebSocket логика
+│   └── start-websocket.js # Запуск сервера
 ├── lib/
-│   ├── redux/             # Redux store, slices, hooks, provider
-│   ├── types/             # TypeScript интерфейсы
+│   ├── redux/             # Redux state management
+│   │   ├── slices/        # Redux slices (tableSlice, authSlice, multiplayerSlice)
+│   │   ├── types/         # TypeScript интерфейсы (tableTypes, multiplayerTypes)
+│   │   ├── utils/         # Утилиты Redux (tableUtils.ts)
+│   │   ├── store.ts       # Redux store
+│   │   ├── hooks.ts       # Типизированные хуки (useAppDispatch, useAppSelector)
+│   │   └── provider.tsx   # Redux Provider
+│   ├── hooks/             # Custom React hooks (useMultiplayerWebSocket)
+│   ├── types/             # Глобальные TypeScript интерфейсы
 │   ├── db/                # PostgreSQL логика
 │   ├── auth/              # JWT, OAuth, password hashing
 │   ├── utils/             # Утилиты (карты, диапазоны, эквити, стеки)
 │   └── constants/         # Константы (диапазоны рук, таблицы эквити)
 ├── components/            # React компоненты
+│   ├── MultiplayerLobby.tsx      # Лобби мультиплеера
+│   ├── MultiplayerTable.tsx      # Стол мультиплеера
+│   └── CreateRoomForm.tsx        # Форма создания комнаты
 └── scripts/               # Утилиты инициализации БД
 ```
 
@@ -80,26 +97,35 @@ Component re-renders with new state
 ### State Management (Redux Toolkit)
 
 **Store Structure** (`lib/redux/store.ts`):
-- `auth` slice - аутентификация (JWT token, email)
+- `auth` slice - аутентификация (JWT token, email, nickname)
 - `table` slice - состояние игровых столов (игроки, позиции, карты, действия)
+- `multiplayer` slice - мультиплеер режим "Игра с друзьями" (комнаты, WebSocket)
 
 **Table Slice** (`lib/redux/slices/tableSlice.ts`) - центральный слайс:
 
 Управляет тремя типами столов: `sixMaxUsers`, `eightMaxUsers`, `cashUsers`
 
+**Модульная архитектура:**
+- `lib/redux/types/tableTypes.ts` - все типы (User, PlayerAction, TablePosition, TournamentStage, RangeSetData и т.д.)
+- `lib/redux/utils/tableUtils.ts` - утилиты (getRangeWithTournamentSettings, getAvailableActions, generateUsers)
+- `lib/redux/slices/tableSlice.ts` - reducers и actions (~1483 строк, оптимизирован)
+
 **Структура игрока (User)**:
 - Основные данные: `name`, `stack`, `bet`, `position` (BTN/SB/BB/UTG/etc.)
 - Характеристики: `strength` (fish/amateur/regular), `playStyle` (tight/balanced/aggressor), `stackSize` (very-small/small/medium/big)
 - Игровые данные: `cards` (только для Hero), `range` (массив строк ["AA", "AKs"]), `action` (fold/call/check/bet-open/raise-3bet/etc.)
+- **Начальные блайнды**: SB начинает с `bet: 0.5` и `stack: 49.5`, BB с `bet: 1` и `stack: 49`
 
 **Настройки стола** (для каждого типа):
 - Турнирные: `stage`, `category`, `startingStack`, `bounty`
 - Глобальные: `autoAllIn` - всегда ставить весь стек для всех игроков
-- Пользовательские диапазоны: `activeRangeSetId`, `activeRangeSetName`, `activeRangeSetData`
+- Пользовательские диапазоны: `activeRangeSetId`, `activeRangeSetName`, `activeRangeSetData` (тип: `RangeSetData | null`)
 
-**Ключевые функции**:
+**Ключевые функции** (в `lib/redux/utils/tableUtils.ts`):
 - `getRangeWithTournamentSettings(customRangeData?)` - загрузка диапазонов (из БД или дефолтных JSON)
 - `getAvailableActions()` - определяет доступные действия в зависимости от состояния стола
+- `generateUsers(count)` - создаёт игроков с дефолтными параметрами (amateur, balanced, medium) и блайндами
+- `convertPlayerActionToPokerAction()` - конвертация между форматами действий UI ↔ JSON
 
 ### Component Architecture
 
@@ -162,17 +188,29 @@ PlayerActionDropdown / RangeSelector / CardSelector
 
 ### Основной источник данных
 
-**Дефолтные диапазоны**: `lib/constants/tournamentRanges.json` - JSON файл со всеми диапазонами для турниров
+**Дефолтные диапазоны для оппонентов**:
+- `lib/constants/tournamentRanges_*.json` - JSON файлы с диапазонами для разных категорий турниров
+- `lib/utils/tournamentRangeLoader.ts` - утилита для загрузки диапазонов оппонентов
 
-**Loader**: `lib/utils/tournamentRangeLoader.ts` - утилита для загрузки диапазонов
+**Дефолтные диапазоны для Hero**:
+- `lib/constants/heroRanges/heroRanges_*.json` - JSON файлы с Hero диапазонами (БЕЗ уровня strength)
+- `lib/utils/heroRangeLoader.ts` - утилита для загрузки диапазонов Hero
+
+**ВАЖНО**: Структура Hero диапазонов отличается от оппонентов - отсутствует уровень `strength`, путь напрямую к `playStyle`
 
 ### Структура диапазонов в JSON
 
+**Для оппонентов (user)**:
 ```
 ranges.user.stages.{STAGE}.positions.{POSITION}.{strength}.{playStyle}.ranges_by_stack.{stackSize}.{action}
 ```
-
 **Пример пути**: `early → UTG → fish → tight → short → open_raise`
+
+**Для Hero**:
+```
+ranges.hero.stages.{STAGE}.positions.{POSITION}.{playStyle}.ranges_by_stack.{stackSize}.{action}
+```
+**Пример пути**: `early → BTN → balanced → medium → open_raise` (БЕЗ strength)
 
 **Стадии турнира** (stages): early, middle, pre-bubble, late, pre-final, final
 
@@ -213,10 +251,18 @@ ranges.user.stages.{STAGE}.positions.{POSITION}.{strength}.{playStyle}.ranges_by
 
 ### Функции загрузки диапазонов
 
+**Для оппонентов** (`lib/utils/tournamentRangeLoader.ts`):
 - `getRangeForTournament()` - загружает из дефолтных JSON файлов
 - `getRangeFromData()` - загружает из пользовательских данных (БД)
 - `getTournamentRangeFromJSON()` - извлекает диапазон из JSON структуры
-- `expandRange()` - разворачивает нотацию (например, "AKs") в массив конкретных рук
+
+**Для Hero** (`lib/utils/heroRangeLoader.ts`):
+- `getHeroRangeFromJSON()` - загружает Hero диапазон из дефолтных JSON файлов (БЕЗ strength)
+- `getHeroRangeFromData()` - загружает Hero диапазон из пользовательских данных (БД)
+
+**Общие**:
+- `expandRange()` (в `lib/utils/rangeExpander.ts`) - разворачивает нотацию (например, "AKs") в массив конкретных рук
+- `parseRangeString()` - конвертирует строку диапазона из JSON в массив рук
 
 ## Card System
 
@@ -248,13 +294,14 @@ ranges.user.stages.{STAGE}.positions.{POSITION}.{strength}.{playStyle}.ranges_by
 
 ### Betting Logic
 
-**Доступные действия** (`getAvailableActions()` в `tableSlice.ts`):
+**Доступные действия** (`getAvailableActions()` в `lib/redux/utils/tableUtils.ts`):
 - Базовые действия всегда доступны: fold, call, check, bet-open, all-in
 - Raise-действия доступны только если:
   1. Есть соответствующее предыдущее действие на столе
   2. У игрока достаточно фишек (>80% стека)
   3. Размер raise >= 2.5x от текущей максимальной ставки
 - Последовательность: bet-open → raise-3bet → raise-4bet → raise-5bet
+- **Начальные блайнды**: SB и BB автоматически инициализируются с блайндами 0.5 и 1 BB соответственно
 
 ### Range Builder Workflow
 
@@ -268,6 +315,199 @@ ranges.user.stages.{STAGE}.positions.{POSITION}.{strength}.{playStyle}.ranges_by
 5. Формат совместим с `lib/constants/tournamentRanges.json`
 
 **Важно**: Конструктор для создания новых диапазонов. Для изменения диапазонов конкретных игроков → RangeSelector (клик по игроку).
+
+## Multiplayer System (Игра с друзьями)
+
+### Architecture Overview
+
+Мультиплеер использует **WebSocket** для real-time синхронизации между клиентами.
+
+**Компоненты**:
+- `server/websocket.ts` - WebSocket сервер (порт 8080)
+- `lib/redux/slices/multiplayerSlice.ts` - Redux state для комнат
+- `lib/hooks/useMultiplayerWebSocket.ts` - React хук для WebSocket подключения
+- `app/tables/multiplayer/page.tsx` - главная страница
+- `components/MultiplayerLobby.tsx` - лобби с списком комнат
+- `components/MultiplayerTable.tsx` - игровой стол
+- `components/CreateRoomForm.tsx` - форма создания комнаты
+
+### Redux State (multiplayerSlice)
+
+```typescript
+MultiplayerState {
+  currentRoom: Room | null          // Текущая комната игрока
+  availableRooms: Room[]            // Список всех комнат
+  currentUserId: string | null      // ID текущего пользователя
+  currentUserName: string | null    // Имя текущего пользователя
+}
+```
+
+**Room Structure**:
+```typescript
+Room {
+  id: string                        // Уникальный ID
+  name: string                      // Название комнаты
+  type: 'tournament' | 'cash'       // Тип игры
+  status: 'waiting' | 'playing' | 'finished'
+  hostId: string                    // ID создателя (неизменный)
+  hostName: string                  // Имя создателя
+  players: MultiplayerPlayer[]      // Игроки в комнате
+  maxPlayers: number                // Максимум игроков (8)
+  settings: TournamentRoomSettings | CashRoomSettings
+}
+```
+
+**MultiplayerPlayer**:
+```typescript
+MultiplayerPlayer {
+  id: string                        // ID игрока
+  name: string                      // Имя игрока
+  isHost: boolean                   // Является ли хостом
+  isReady: boolean                  // Готов к игре
+  seatIndex: number | null          // Место за столом (0-7)
+  user?: User                       // Данные игрока (когда игра началась)
+}
+```
+
+### WebSocket Protocol
+
+**Client → Server Messages**:
+- `register` - регистрация пользователя при подключении
+- `create_room` - создание новой комнаты
+- `join_room` - присоединение к комнате
+- `leave_room` - покинуть комнату
+- `update_room` - обновление состояния комнаты
+- `game_finished` - завершение игры
+- `delete_room` - удаление комнаты (только хост)
+
+**Server → Client Messages**:
+- `rooms_list` - список всех доступных комнат
+- `room_created` - комната создана
+- `joined_room` - успешное присоединение
+- `room_updated` - комната обновлена
+- `room_deleted` - комната удалена
+- `game_finished` - уведомление о завершении игры
+- `error` - ошибка от сервера
+
+### Critical Multiplayer Rules
+
+⚠️ **ВАЖНЫЕ ПРАВИЛА**:
+
+1. **Хост комнаты неизменный**:
+   - `hostId` устанавливается при создании и НЕ меняется
+   - Даже если хост выходит, он остается хостом комнаты
+   - Только хост может: запускать игру, удалять комнату, добавлять стеки
+
+2. **Комнаты не удаляются автоматически**:
+   - При выходе всех игроков комната остается с 0 игроков
+   - Удаление только вручную через кнопку 🗑️ (хост)
+
+3. **User ID и Name**:
+   - `currentUserId` сохраняется в localStorage
+   - `currentUserName` берется из `auth.user.nickname` если залогинен
+   - Если не залогинен - запрашивается через prompt
+   - При изменении nickname в профиле автоматически обновляется
+
+4. **WebSocket Connection**:
+   - Глобальное соединение на уровне страницы
+   - Автоматическое переподключение при обрыве
+   - При закрытии страницы игрок НЕ удаляется из комнаты
+   - Регистрация пользователя при каждом подключении
+
+5. **Синхронизация**:
+   - При входе/выходе всегда отправляется сообщение на сервер
+   - Сервер broadcast обновления всем игрокам в комнате
+   - `room_updated` только для игроков в той же комнате
+   - `rooms_list` отправляется всем подключенным клиентам
+
+### User Authentication Flow
+
+```
+1. Загрузка страницы /tables/multiplayer
+   ↓
+2. useEffect проверяет currentUserId
+   ↓
+3. Если нет → проверяет authUser?.nickname
+   ↓
+4. Если залогинен → userName = authUser.nickname
+   ↓
+5. Если не залогинен → prompt для ввода ника
+   ↓
+6. Сохранение в localStorage и Redux
+   ↓
+7. WebSocket.register отправляет на сервер
+```
+
+### Room Lifecycle
+
+```
+1. CREATE: Host создает комнату
+   → Server создает Room и broadcast rooms_list
+   → Host получает room_created
+
+2. JOIN: Игрок присоединяется
+   → Server добавляет player в room.players
+   → Broadcast room_updated игрокам в комнате
+   → Broadcast rooms_list всем
+
+3. LEAVE: Игрок выходит
+   → Server удаляет player из room.players
+   → Комната остается (не удаляется)
+   → Broadcast room_updated и rooms_list
+
+4. DELETE: Host удаляет комнату
+   → Server отправляет room_deleted всем в комнате
+   → Server удаляет room из памяти
+   → Broadcast rooms_list всем
+```
+
+### Component Data Flow
+
+```
+Page
+  ├─ useMultiplayerWebSocket() - WebSocket хук
+  │   ├─ connect() - подключение к ws://localhost:8080
+  │   ├─ sendMessage() - отправка на сервер
+  │   └─ on message - обработка ответов сервера
+  │
+  ├─ currentRoom === null
+  │   └─ MultiplayerLobby
+  │       ├─ availableRooms (из Redux)
+  │       ├─ CreateRoomForm - форма создания
+  │       └─ Room cards - список комнат
+  │
+  └─ currentRoom !== null
+      └─ MultiplayerTable
+          ├─ Управление (старт, пауза, завершить)
+          ├─ Покерный стол (визуал)
+          └─ Попап завершения игры
+```
+
+### Development Notes
+
+**Очистка localStorage для тестирования**:
+```javascript
+localStorage.removeItem('multiplayer_userId');
+localStorage.removeItem('multiplayer_userName');
+location.reload();
+```
+
+**Перезапуск WebSocket сервера**:
+```bash
+# Найти процесс
+netstat -ano | findstr :8080
+
+# Убить процесс (Windows)
+taskkill //F //PID <PID>
+
+# Запустить заново
+cd server && npx tsx websocket.ts
+```
+
+**Отладка WebSocket**:
+- Логи сервера показывают все события
+- Логи клиента в консоли браузера (F12)
+- `console.log` в `useMultiplayerWebSocket.ts` для debugging
 
 ## Environment Variables
 
@@ -332,10 +572,17 @@ psql -U postgres -d poker -f scripts/migrate-oauth.sql
 - **Target**: ES2017 с JSX: react-jsx
 
 **Важные правила**:
-- Избегайте `any` - создавайте типизированные интерфейсы
+- **НИКОГДА не используйте `any`** - создавайте типизированные интерфейсы
+- Для динамических JSON структур используйте `Record<string, unknown>` или специальный тип `RangeSetData`
 - Все неиспользуемые переменные и импорты должны быть удалены
 - При работе с динамическими структурами используйте `Record<string, T>`
 - Для индексации объектов с динамическими ключами: `(obj as Record<string, string>)[key]`
+- Для несовместимых типов JSON используйте двойное приведение: `as unknown as TargetType`
+
+**Специальные типы**:
+- `RangeSetData` - тип для пользовательских диапазонов из БД (`Record<string, unknown>`)
+- `PokerAction` - действия в формате для JSON ("open", "threeBet", "fourBet", "fiveBet", "allIn")
+- `TournamentActionType` - действия в формате JSON ("open_raise", "3bet", "4bet", "5bet", "push_range")
 
 ## Common Development Patterns
 
@@ -386,9 +633,17 @@ psql -U postgres -d poker -f scripts/migrate-oauth.sql
 - `isValidCard()` - проверка валидности
 - `getAllCards()` - полная колода (52 карты)
 
-### Range Utilities (`lib/utils/rangeExpander.ts`)
-- `expandRange()` - разворачивает нотацию в массив рук
+### Range Utilities
+- `expandRange()` (`lib/utils/rangeExpander.ts`) - разворачивает нотацию в массив рук
+- `filterCombinations()` (`lib/utils/rangeExpander.ts`) - фильтрует комбинации по использованным картам
+- `filterOpponentRange()` (`lib/utils/filterOpponentRange.ts`) - фильтрует диапазон оппонента с учётом карт Hero и борда
 - Поддерживает suited (s), offsuit (o), пары, диапазоны ("22+", "A2s+")
+
+### Hand Evaluation (`lib/utils/evaluateHand.ts`)
+- `evaluateHand()` - оценивает силу покерной комбинации по правилам Техасского Холдема
+- `compareHands()` - сравнивает две руки и определяет победителя
+- `findBestHand()` - находит лучшую комбинацию из 7 карт (2 карты игрока + 5 борда)
+- Поддерживает все 10 типов комбинаций: Royal Flush, Straight Flush, Four of a Kind, Full House, Flush, Straight, Three of a Kind, Two Pair, One Pair, High Card
 
 ### Equity Calculator (`lib/utils/equityCalculator.ts`)
 - Расчет эквити рук Hero против диапазонов оппонентов

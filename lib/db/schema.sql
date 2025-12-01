@@ -2,6 +2,7 @@
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
+    nickname VARCHAR(100), -- Отображаемое имя пользователя
     password VARCHAR(255), -- Nullable для OAuth пользователей
     provider VARCHAR(50) DEFAULT 'local', -- 'local', 'google', 'yandex'
     google_id VARCHAR(255) UNIQUE, -- Google user ID
@@ -12,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Создание индексов для быстрого поиска
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_nickname ON users(nickname);
 CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
 CREATE INDEX IF NOT EXISTS idx_users_yandex_id ON users(yandex_id);
 

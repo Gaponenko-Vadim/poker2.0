@@ -9,6 +9,7 @@ import type {
   TablePosition,
   User,
   RangeSetData,
+  Card,
 } from "../types/tableTypes";
 
 // Тип PokerAction для конвертации
@@ -231,17 +232,27 @@ export function generateUsers(count: number): User[] {
     const strength: PlayerStrength = "amateur";
     const playStyle: PlayerPlayStyle = "balanced";
     const stackSize: StackSize = "medium";
+    const isHero = i === 0;
+
+    // Определяем позицию и начальную ставку (блайнды)
+    const position = actualPositions[i] || "BTN";
+    const isSB = position === "SB";
+    const isBB = position === "BB";
+    const initialBet = isSB ? 0.5 : (isBB ? 1 : 0);
+    const stackValue = getStackValue(stackSize);
 
     return {
-      name: i === 0 ? "Hero" : `Игрок ${i}`,
-      stack: getStackValue(stackSize),
+      name: isHero ? "Hero" : `Игрок ${i}`,
+      stack: stackValue - initialBet, // Вычитаем блайнд из стека
       stackSize,
       strength,
       playStyle,
-      position: actualPositions[i] || "BTN",
+      position,
+      // Карты только для Hero (первый игрок)
+      ...(isHero && { cards: [null, null] as [Card | null, Card | null] }),
       range: [],
       action: null,
-      bet: 0,
+      bet: initialBet, // SB = 0.5, BB = 1, остальные = 0
     };
   });
 }

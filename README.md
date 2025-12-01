@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Poker Trainer
 
-## Getting Started
+Покерное приложение-тренажер для обучения игре в покер. Позволяет симулировать игровые ситуации за столом с настраиваемыми игроками, их позициями и диапазонами рук.
 
-First, run the development server:
+## Возможности
+
+- **Форматы игры**: 6-Max, 8-Max турниры и Cash игры (2-9 игроков)
+- **Настройка противников**: Сила игрока (fish/amateur/regular), стиль игры (tight/balanced/aggressor), размер стека
+- **Диапазоны рук**: Визуальный редактор диапазонов с матрицей 13x13, загрузка из базы данных
+- **Hero диапазоны**: Специальные диапазоны для Hero игрока без уровня strength
+- **Турнирные настройки**: Стадии турнира (early, middle, pre-bubble, late, pre-final, final), категории (micro/low/mid/high), bounty
+- **Аутентификация**: JWT + OAuth 2.0 (Google, Yandex)
+- **Конструктор диапазонов**: Создание и экспорт пользовательских наборов диапазонов
+
+## Быстрый старт
 
 ```bash
+# 1. Установите зависимости
+npm install
+
+# 2. Настройте PostgreSQL и создайте БД
+createdb poker
+
+# 3. Скопируйте .env.example в .env.local и настройте переменные
+cp .env.example .env.local
+
+# 4. Инициализируйте базу данных
+npm run db:init
+
+# 5. Запустите dev-сервер
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Технологии
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend**: Next.js 16, React 19, TypeScript 5
+- **State Management**: Redux Toolkit 2.9.2
+- **Database**: PostgreSQL
+- **Authentication**: JWT + OAuth 2.0
+- **Styling**: Tailwind CSS 4
 
-## Learn More
+## Документация
 
-To learn more about Next.js, take a look at the following resources:
+Подробная документация находится в файле [CLAUDE.md](./CLAUDE.md):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Архитектура приложения
+- Структура Redux Store
+- Система диапазонов
+- API endpoints
+- Настройка OAuth
+- Паттерны разработки
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Дополнительная документация
 
-## Deploy on Vercel
+- [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) - API endpoints
+- [DATABASE_SETUP.md](./DATABASE_SETUP.md) - Настройка PostgreSQL
+- [OAUTH_SETUP.md](./OAUTH_SETUP.md) - Настройка OAuth (Google, Yandex)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Команды разработки
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev        # Запуск dev-сервера
+npm run build      # Production сборка
+npm start          # Запуск production сервера
+npm run lint       # ESLint проверка
+npx tsc --noEmit   # Проверка типов TypeScript
+npm run db:init    # Инициализация PostgreSQL БД
+```
+
+## Структура проекта
+
+```
+poker2.0/
+├── app/                    # Next.js App Router
+│   ├── tables/            # Игровые страницы (6-max, 8-max, cash)
+│   └── api/               # API routes (auth, user-ranges)
+├── lib/
+│   ├── redux/             # Redux store, slices, types, utils
+│   ├── db/                # PostgreSQL
+│   ├── auth/              # JWT, OAuth
+│   ├── utils/             # Утилиты (диапазоны, карты, эквити)
+│   └── constants/         # Константы (диапазоны, таблицы эквити)
+├── components/            # React компоненты
+└── scripts/               # Утилиты инициализации БД
+```
+
+## Лицензия
+
+MIT

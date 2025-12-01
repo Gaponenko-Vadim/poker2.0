@@ -42,12 +42,14 @@ export default function Header({
     const urlParams = new URLSearchParams(window.location.search);
     const urlToken = urlParams.get('token');
     const urlEmail = urlParams.get('email');
+    const urlNickname = urlParams.get('nickname');
 
-    if (urlToken && urlEmail) {
+    if (urlToken && urlEmail && urlNickname) {
       // Сохраняем токен из OAuth
       localStorage.setItem('authToken', urlToken);
       localStorage.setItem('userEmail', urlEmail);
-      dispatch(login({ token: urlToken, email: urlEmail }));
+      localStorage.setItem('userNickname', urlNickname);
+      dispatch(login({ token: urlToken, email: urlEmail, nickname: urlNickname }));
 
       // Очищаем URL от параметров
       window.history.replaceState({}, '', window.location.pathname);
@@ -57,15 +59,16 @@ export default function Header({
     // Иначе пытаемся восстановить из localStorage
     const token = localStorage.getItem('authToken');
     const email = localStorage.getItem('userEmail');
+    const nickname = localStorage.getItem('userNickname');
 
-    if (token && email) {
-      dispatch(restoreSession({ token, email }));
+    if (token && email && nickname) {
+      dispatch(restoreSession({ token, email, nickname }));
     }
   }, [dispatch]);
 
   // Обработчик успешной аутентификации
-  const handleAuthSuccess = (token: string, email: string) => {
-    dispatch(login({ token, email }));
+  const handleAuthSuccess = (token: string, email: string, nickname: string) => {
+    dispatch(login({ token, email, nickname }));
   };
 
   // Обработчик клика по кнопке входа/выхода
@@ -148,7 +151,7 @@ export default function Header({
                 title="Настройки профиля"
               >
                 <UserCircleIcon className="w-6 h-6 text-emerald-400" />
-                <span className="text-sm font-medium text-gray-300">{user.email}</span>
+                <span className="text-sm font-medium text-gray-300">{user.nickname}</span>
               </button>
             )}
             {!isAuthenticated && (

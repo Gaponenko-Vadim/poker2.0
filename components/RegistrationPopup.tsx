@@ -6,7 +6,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 interface RegistrationPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: (token: string, email: string) => void;
+  onSuccess?: (token: string, email: string, nickname: string) => void;
   onSwitchToLogin?: () => void;
 }
 
@@ -17,6 +17,7 @@ export default function RegistrationPopup({
   onSwitchToLogin,
 }: RegistrationPopupProps) {
   const [email, setEmail] = useState("");
+  const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,7 @@ export default function RegistrationPopup({
     setError("");
 
     // Валидация
-    if (!email || !password || !confirmPassword) {
+    if (!email || !nickname || !password || !confirmPassword) {
       setError("Все поля обязательны для заполнения");
       return;
     }
@@ -51,7 +52,7 @@ export default function RegistrationPopup({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, nickname, password }),
       });
 
       const data = await response.json();
@@ -63,13 +64,14 @@ export default function RegistrationPopup({
       // Сохраняем токен в localStorage
       localStorage.setItem("authToken", data.data.token);
       localStorage.setItem("userEmail", data.data.user.email);
+      localStorage.setItem("userNickname", data.data.user.nickname);
 
       setSuccess(true);
       setError("");
 
       // Вызываем callback успеха
       if (onSuccess) {
-        onSuccess(data.data.token, data.data.user.email);
+        onSuccess(data.data.token, data.data.user.email, data.data.user.nickname);
       }
 
       // Закрываем попап через 1.5 секунды
@@ -77,6 +79,7 @@ export default function RegistrationPopup({
         onClose();
         setSuccess(false);
         setEmail("");
+        setNickname("");
         setPassword("");
         setConfirmPassword("");
       }, 1500);
@@ -93,6 +96,7 @@ export default function RegistrationPopup({
 
   const handleClose = () => {
     setEmail("");
+    setNickname("");
     setPassword("");
     setConfirmPassword("");
     setError("");
@@ -153,6 +157,25 @@ export default function RegistrationPopup({
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               placeholder="your@email.com"
+              disabled={loading || success}
+            />
+          </div>
+
+          {/* Никнейм */}
+          <div>
+            <label
+              htmlFor="nickname"
+              className="block text-sm font-medium text-gray-300 mb-2"
+            >
+              Никнейм
+            </label>
+            <input
+              type="text"
+              id="nickname"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="Как вас называть?"
               disabled={loading || success}
             />
           </div>

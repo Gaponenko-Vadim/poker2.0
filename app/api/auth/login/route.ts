@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     // Поиск пользователя по email
     const result = await pool.query(
-      "SELECT id, email, password, created_at FROM users WHERE email = $1",
+      "SELECT id, email, nickname, password, created_at FROM users WHERE email = $1",
       [email]
     );
 
@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
           user: {
             id: user.id,
             email: user.email,
+            nickname: user.nickname,
             createdAt: user.created_at,
           },
           token,

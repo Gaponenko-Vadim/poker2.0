@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h1>WebSocket Connection Test</h1>
+    <div id="status">Подключение...</div>
+    <div id="messages"></div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const messagesDiv = document.getElementById('messages');
+
+        console.log('Попытка подключения к ws://localhost:8080');
+        const ws = new WebSocket('ws://localhost:8080');
+
+        ws.onopen = () => {
+            console.log('✅ WebSocket подключен!');
+            statusDiv.textContent = '✅ Подключено!';
+            statusDiv.style.color = 'green';
+
+            // Отправить регистрацию
+            ws.send(JSON.stringify({
+                type: 'register',
+                payload: {
+                    userId: 'test_user_123',
+                    userName: 'Test User'
+                }
+            }));
+        };
+
+        ws.onmessage = (event) => {
+            console.log('📨 Получено:', event.data);
+            const msg = document.createElement('div');
+            msg.textContent = `📨 ${event.data}`;
+            messagesDiv.appendChild(msg);
+        };
+
+        ws.onerror = (error) => {
+            console.error('❌ Ошибка:', error);
+            statusDiv.textContent = '❌ Ошибка подключения';
+            statusDiv.style.color = 'red';
+        };
+
+        ws.onclose = (event) => {
+            console.log('❌ Отключено. Код:', event.code, 'Причина:', event.reason);
+            statusDiv.textContent = `❌ Отключено (код: ${event.code})`;
+            statusDiv.style.color = 'orange';
+        };
+    </script>
+</body>
+</html>

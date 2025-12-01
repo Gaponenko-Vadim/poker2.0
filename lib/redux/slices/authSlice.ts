@@ -5,6 +5,7 @@ interface AuthState {
   isAuthenticated: boolean;
   user: {
     email: string;
+    nickname: string;
     token: string;
   } | null;
 }
@@ -21,10 +22,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Действие для входа пользователя с JWT токеном
-    login: (state, action: PayloadAction<{ email: string; token: string }>) => {
+    login: (state, action: PayloadAction<{ email: string; nickname: string; token: string }>) => {
       state.isAuthenticated = true;
       state.user = {
         email: action.payload.email,
+        nickname: action.payload.nickname,
         token: action.payload.token,
       };
     },
@@ -36,13 +38,15 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.removeItem('authToken');
         localStorage.removeItem('userEmail');
+        localStorage.removeItem('userNickname');
       }
     },
     // Восстановление сессии из localStorage
-    restoreSession: (state, action: PayloadAction<{ email: string; token: string }>) => {
+    restoreSession: (state, action: PayloadAction<{ email: string; nickname: string; token: string }>) => {
       state.isAuthenticated = true;
       state.user = {
         email: action.payload.email,
+        nickname: action.payload.nickname,
         token: action.payload.token,
       };
     },

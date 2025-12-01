@@ -41,25 +41,29 @@ export async function GET(request: NextRequest) {
     );
 
     let userId: number;
+    let userNickname: string;
 
     if (existingUserResult.rows.length > 0) {
       // Пользователь существует - обновляем google_id если его не было
       const existingUser = existingUserResult.rows[0];
       userId = existingUser.id;
+      userNickname = existingUser.nickname || userInfo.name || userInfo.email.split('@')[0];
 
       if (!existingUser.google_id) {
         await pool.query(
-          'UPDATE users SET google_id = $1, provider = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3',
-          [userInfo.id, 'google', userId]
+          'UPDATE users SET google_id = $1, provider = $2, nickname = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4',
+          [userInfo.id, 'google', userNickname, userId]
         );
       }
     } else {
       // Создаем нового пользователя
+      const nickname = userInfo.name || userInfo.email.split('@')[0];
       const insertResult = await pool.query(
-        'INSERT INTO users (email, google_id, provider) VALUES ($1, $2, $3) RETURNING id',
-        [userInfo.email, userInfo.id, 'google']
+        'INSERT INTO users (email, nickname, google_id, provider) VALUES ($1, $2, $3, $4) RETURNING id, nickname',
+        [userInfo.email, nickname, userInfo.id, 'google']
       );
       userId = insertResult.rows[0].id;
+      userNickname = insertResult.rows[0].nickname;
     }
 
     // Генерируем JWT токен
@@ -69,6 +73,7 @@ export async function GET(request: NextRequest) {
     const redirectUrl = new URL('/', request.url);
     redirectUrl.searchParams.set('token', token);
     redirectUrl.searchParams.set('email', userInfo.email);
+    redirectUrl.searchParams.set('nickname', userNickname);
 
     return NextResponse.redirect(redirectUrl);
   } catch (error) {

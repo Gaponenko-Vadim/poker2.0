@@ -6,7 +6,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 interface LoginPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess?: (token: string, email: string) => void;
+  onSuccess?: (token: string, email: string, nickname: string) => void;
   onSwitchToRegister?: () => void;
 }
 
@@ -52,13 +52,14 @@ export default function LoginPopup({
       // Сохраняем токен в localStorage
       localStorage.setItem("authToken", data.data.token);
       localStorage.setItem("userEmail", data.data.user.email);
+      localStorage.setItem("userNickname", data.data.user.nickname);
 
       setSuccess(true);
       setError("");
 
       // Вызываем callback успеха
       if (onSuccess) {
-        onSuccess(data.data.token, data.data.user.email);
+        onSuccess(data.data.token, data.data.user.email, data.data.user.nickname);
       }
 
       // Закрываем попап через 1.5 секунды
